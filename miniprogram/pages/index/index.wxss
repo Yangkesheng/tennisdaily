@@ -1,6 +1,6 @@
 .index-page {
   min-height: 100vh;
-  padding: 28rpx 28rpx 150rpx;
+  padding: 28rpx 28rpx calc(150rpx + env(safe-area-inset-bottom));
   box-sizing: border-box;
   background: linear-gradient(160deg, #cfd6ff 0%, #8fc3f7 46%, #eef5fb 100%);
 }
@@ -28,36 +28,13 @@
   font-weight: 700;
 }
 
-.empty-panel button {
-  flex: none;
-  width: 88rpx;
-  height: 88rpx;
-  padding: 0;
-  border-radius: 28rpx;
-  background: rgba(255, 255, 255, 0.86);
-  color: #3778db;
-  font-size: 46rpx;
-  font-weight: 700;
-  line-height: 88rpx;
-  text-align: center;
-  box-shadow: 0 16rpx 40rpx rgba(68, 112, 173, 0.18);
-}
-
-.empty-panel button {
-  color: #fff;
-  background: #3778db;
-}
-
 .stats-grid {
-  display: flex;
-  flex-direction: row;
-  flex-wrap: wrap;
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
   gap: 16rpx;
 }
 
 .stat-cell {
-  flex: none;
-  width: calc(50% - 8rpx);
   min-width: 0;
   min-height: 136rpx;
   padding: 24rpx;
@@ -79,10 +56,10 @@
 
 .stat-icon {
   flex: none;
-  width: 60rpx;
-  height: 60rpx;
-  margin-right: 20rpx;
-  border-radius: 20rpx;
+  width: 56rpx;
+  height: 56rpx;
+  margin-right: 16rpx;
+  border-radius: 18rpx;
 }
 
 .stat-copy {
@@ -108,24 +85,32 @@
 
 .stat-value {
   display: block;
+  max-width: 100%;
   color: #05070c;
-  font-size: 44rpx;
+  font-size: 42rpx;
   font-weight: 700;
   line-height: 1.2;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 }
 
 .stat-label {
   display: block;
+  max-width: 100%;
   margin-top: 6rpx;
   color: rgba(13, 23, 40, 0.42);
   font-size: 24rpx;
   font-weight: 700;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 }
 
 .bottom-action {
   position: fixed;
   left: 50%;
-  bottom: 140rpx;
+  bottom: calc(80rpx + env(safe-area-inset-bottom));
   width: 104rpx;
   height: 104rpx;
   padding: 0;

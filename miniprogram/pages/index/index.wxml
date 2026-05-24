@@ -19,7 +19,7 @@
       <view class="stat-icon yellow"></view>
       <view class="stat-copy">
         <text class="stat-value">{{monthHoursText}}</text>
-        <text class="stat-label">时</text>
+        <text class="stat-label">小时</text>
       </view>
     </view>
     <view class="stat-cell tappable" bindtap="goRecentSessions">
