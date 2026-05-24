@@ -29,7 +29,7 @@ Component({
     customDuration: '',
     isCustomDuration: false,
     ratingText: '中规中矩吧',
-    ratingTexts: ['框架满天飞', '状态有些迷', '中规中矩吧', '甜区率很高', '今天我是阿卡'],
+    ratingTexts: ['网球满天飞', '状态有些迷', '中规中矩吧', '甜区率很高', '今天我是阿卡'],
     sessionId: '',
     titleText: '记录',
   } as SessionEditData,

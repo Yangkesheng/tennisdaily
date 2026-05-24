@@ -50,12 +50,58 @@
     </view>
   </view>
 
+  <view class="trend-card">
+    <view class="trend-header">
+      <text class="trend-title">近 5 场手感</text>
+      <text class="trend-subtitle">{{ratingTrendText}}</text>
+    </view>
+    <view wx:if="{{ratingTrend.length}}" class="charts-board">
+      <view wx:for="{{ratingTrend}}" wx:key="key" class="chart-column">
+        <view class="bar-value-box">
+          <text class="bar-value">{{item.rating}}</text>
+        </view>
+        <view class="bar-track">
+          <view class="bar {{item.level}}" style="height: {{item.height}}rpx;"></view>
+        </view>
+        <text class="bar-date">{{item.dateText}}</text>
+      </view>
+    </view>
+    <view wx:else class="trend-empty">记录几场后，这里会展示手感趋势</view>
+  </view>
+
   <view class="recent-card" bindtap="goSessionList">
     <view class="recent-header">
-      <text class="recent-title">最近一次</text>
+      <view class="recent-tag">最近打球</view>
       <text class="recent-date">{{latestSession ? latestSession.date : '暂无'}}</text>
     </view>
-    <text class="recent-content">{{latestSessionSummary}}</text>
+    <view wx:if="{{latestSession}}" class="recent-body">
+      <view class="recent-duration-box">
+        <text class="recent-duration">{{latestSession.durationMinutes}}</text>
+        <text class="recent-unit">分钟</text>
+      </view>
+      <view class="recent-meta-box">
+        <view class="recent-meta-item">
+          <text class="meta-label">类型</text>
+          <text class="meta-value">{{latestSession.typeLabel}}</text>
+        </view>
+        <view class="recent-meta-item" wx:if="{{latestSession.courtName}}">
+          <text class="meta-label">场地</text>
+          <text class="meta-value">{{latestSession.courtName}}</text>
+        </view>
+        <view class="recent-meta-item" wx:if="{{latestSession.racketName}}">
+          <text class="meta-label">球拍</text>
+          <text class="meta-value">{{latestSession.racketName}}</text>
+        </view>
+        <view class="recent-meta-item" wx:if="{{latestSession.shoeName}}">
+          <text class="meta-label">球鞋</text>
+          <text class="meta-value">{{latestSession.shoeName}}</text>
+        </view>
+        <view class="recent-meta-item" wx:if="{{!latestSession.courtName && !latestSession.racketName && !latestSession.shoeName}}">
+          <text class="meta-value">暂无补充信息</text>
+        </view>
+      </view>
+    </view>
+    <text wx:else class="recent-content">{{latestSessionSummary}}</text>
   </view>
 
   <button class="bottom-action" bindtap="goCreateSession">+</button>
