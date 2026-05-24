@@ -37,6 +37,7 @@ export const createDefaultSessionDraft = (): SessionDraft => {
   return {
     date: getTodayText(),
     durationMinutes: 120,
+    rating: 3,
     courtName: '',
     partner: '',
     type: 'doubles',

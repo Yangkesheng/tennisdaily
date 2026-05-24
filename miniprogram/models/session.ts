@@ -4,6 +4,7 @@ export interface TennisSession {
   id: string
   date: string
   durationMinutes: number
+  rating: number
   courtName: string
   partner: string
   type: TennisSessionType
@@ -18,6 +19,7 @@ export interface TennisSession {
 export interface SessionDraft {
   date: string
   durationMinutes: number
+  rating: number
   courtName: string
   partner: string
   type: TennisSessionType

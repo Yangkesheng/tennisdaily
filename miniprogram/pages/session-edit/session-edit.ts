@@ -5,6 +5,8 @@ interface SessionEditData {
   draft: SessionDraft
   customDuration: string
   isCustomDuration: boolean
+  ratingText: string
+  ratingTexts: string[]
   sessionId: string
   titleText: string
 }
@@ -26,6 +28,8 @@ Component({
     draft: createDefaultSessionDraft(),
     customDuration: '',
     isCustomDuration: false,
+    ratingText: '中规中矩吧',
+    ratingTexts: ['框架满天飞', '状态有些迷', '中规中矩吧', '甜区率很高', '今天我是阿卡'],
     sessionId: '',
     titleText: '记录',
   } as SessionEditData,
@@ -69,6 +73,7 @@ Component({
         draft: {
           date: session.date,
           durationMinutes: session.durationMinutes,
+          rating: session.rating || 3,
           courtName: session.courtName || '',
           partner: session.partner || '',
           type: session.type || '',
@@ -77,6 +82,7 @@ Component({
           shoeName: session.shoeName || '',
           note: session.note || '',
         },
+        ratingText: this.data.ratingTexts[(session.rating || 3) - 1],
         customDuration: session.durationMinutes === 60 || session.durationMinutes === 120 ? '' : `${session.durationMinutes}`,
         isCustomDuration: session.durationMinutes !== 60 && session.durationMinutes !== 120,
         sessionId: options.id,
@@ -116,6 +122,14 @@ Component({
       this.setData({
         customDuration: `${this.data.draft.durationMinutes}`,
         isCustomDuration: true,
+      })
+    },
+    selectRating(event: WechatMiniprogram.TouchEvent) {
+      const rating = Number(event.currentTarget.dataset.rating) || 3
+
+      this.setData({
+        'draft.rating': rating,
+        ratingText: this.data.ratingTexts[rating - 1],
       })
     },
     onDateChange(event: PickerChangeEvent) {

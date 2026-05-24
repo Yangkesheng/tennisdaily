@@ -34,6 +34,30 @@
     </view>
   </view>
 
+  <view class="field-group rating-group">
+    <text class="field-label">今日手感</text>
+    <view class="rating-card">
+      <view class="stars-container">
+        <view class="star-box" data-rating="1" bindtap="selectRating">
+          <text class="star-char {{draft.rating >= 1 ? 'active' : ''}}">★</text>
+        </view>
+        <view class="star-box" data-rating="2" bindtap="selectRating">
+          <text class="star-char {{draft.rating >= 2 ? 'active' : ''}}">★</text>
+        </view>
+        <view class="star-box" data-rating="3" bindtap="selectRating">
+          <text class="star-char {{draft.rating >= 3 ? 'active' : ''}}">★</text>
+        </view>
+        <view class="star-box" data-rating="4" bindtap="selectRating">
+          <text class="star-char {{draft.rating >= 4 ? 'active' : ''}}">★</text>
+        </view>
+        <view class="star-box" data-rating="5" bindtap="selectRating">
+          <text class="star-char {{draft.rating >= 5 ? 'active' : ''}}">★</text>
+        </view>
+      </view>
+      <text class="rating-tips">{{ratingText}}</text>
+    </view>
+  </view>
+
   <view class="field-grid">
     <view class="input-card">
       <text>场地</text>
