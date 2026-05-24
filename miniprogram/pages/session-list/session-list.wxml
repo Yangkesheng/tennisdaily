@@ -1,0 +1,30 @@
+<navigation-bar title="打球记录" back="{{true}}" color="#17251c" background="#f5f7f3"></navigation-bar>
+<scroll-view class="page list-page" scroll-y type="list">
+  <view class="list-header">
+    <text>{{titleText}}</text>
+  </view>
+
+  <view wx:if="{{sessions.length}}" class="session-list">
+    <view wx:for="{{sessions}}" wx:key="id" class="session-item" data-id="{{item.id}}" bindtap="goEditSession">
+      <view class="session-topline">
+        <view class="session-title-row">
+          <text class="session-date">{{item.date}}</text>
+          <text class="session-type">{{item.typeLabel}}</text>
+        </view>
+        <text class="session-duration">{{item.durationMinutes}} 分钟</text>
+      </view>
+      <view class="session-meta">
+        <text wx:if="{{item.courtName}}">{{item.courtName}}</text>
+        <text wx:if="{{item.partner}}">{{item.partner}}</text>
+        <text wx:if="{{item.racketName}}">{{item.racketName}}</text>
+        <text wx:if="{{item.shoeName}}">{{item.shoeName}}</text>
+        <text wx:if="{{item.cost}}">¥{{item.cost}}</text>
+      </view>
+      <text wx:if="{{item.note}}" class="session-note">{{item.note}}</text>
+    </view>
+  </view>
+
+  <view wx:else class="empty-panel">
+    <text>0</text>
+  </view>
+</scroll-view>

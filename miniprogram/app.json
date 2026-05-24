@@ -1,0 +1,31 @@
+{
+  "pages": [
+    "pages/index/index",
+    "pages/calendar/calendar",
+    "pages/session-edit/session-edit",
+    "pages/session-list/session-list",
+    "pages/logs/logs"
+  ],
+  "window": {
+    "navigationBarTextStyle": "black",
+    "navigationStyle": "custom"
+  },
+  "style": "v2",
+  "sitemapLocation": "sitemap.json",
+  "tabBar": {
+    "color": "#a8aab0",
+    "selectedColor": "#3778db",
+    "backgroundColor": "#f7f7f9",
+    "borderStyle": "white",
+    "list": [
+      {
+        "pagePath": "pages/index/index",
+        "text": "统计"
+      },
+      {
+        "pagePath": "pages/calendar/calendar",
+        "text": "日历"
+      }
+    ]
+  }
+}

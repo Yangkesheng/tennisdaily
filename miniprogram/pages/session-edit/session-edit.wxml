@@ -1,0 +1,61 @@
+<navigation-bar title="" back="{{true}}" color="#0d1728" background="transparent"></navigation-bar>
+<scroll-view class="page edit-page" scroll-y type="list">
+  <view class="edit-hero">
+    <text class="edit-title">{{titleText}}</text>
+  </view>
+
+  <view class="field-group">
+    <text class="field-label">类型</text>
+    <view class="choice-options type-options">
+      <button class="choice-option {{draft.type === 'doubles' ? 'active' : ''}}" data-type="doubles" bindtap="selectType">双打</button>
+      <button class="choice-option {{draft.type === 'singles' ? 'active' : ''}}" data-type="singles" bindtap="selectType">单打</button>
+      <button class="choice-option {{draft.type === 'training' ? 'active' : ''}}" data-type="training" bindtap="selectType">训练</button>
+      <button class="choice-option {{draft.type === 'match' ? 'active' : ''}}" data-type="match" bindtap="selectType">比赛</button>
+    </view>
+  </view>
+
+  <view class="field-group">
+    <text class="field-label">日期</text>
+    <picker mode="date" value="{{draft.date}}" bindchange="onDateChange">
+      <view class="picker-value">{{draft.date}}</view>
+    </picker>
+  </view>
+
+  <view class="field-group">
+    <text class="field-label">时长（分钟）</text>
+    <view class="choice-options">
+      <button class="choice-option {{!isCustomDuration && draft.durationMinutes === 60 ? 'active' : ''}}" bindtap="selectSixtyMinutes">60</button>
+      <button class="choice-option {{!isCustomDuration && draft.durationMinutes === 120 ? 'active' : ''}}" bindtap="selectOneTwentyMinutes">120</button>
+      <button class="choice-option {{isCustomDuration ? 'active' : ''}}" bindtap="showCustomDuration">自定义</button>
+    </view>
+    <view wx:if="{{isCustomDuration}}" class="input-card custom-duration-card">
+      <text>分钟</text>
+      <input value="{{customDuration}}" type="number" placeholder="90" bindinput="onDurationInput" />
+    </view>
+  </view>
+
+  <view class="field-grid">
+    <view class="input-card">
+      <text>场地</text>
+      <input value="{{draft.courtName}}" placeholder="球场" bindinput="onCourtInput" />
+    </view>
+    <view class="input-card">
+      <text>搭档</text>
+      <input value="{{draft.partner}}" placeholder="名字" bindinput="onPartnerInput" />
+    </view>
+    <view class="input-card">
+      <text>花费</text>
+      <input value="{{draft.cost}}" type="number" placeholder="0" bindinput="onCostInput" />
+    </view>
+    <view class="input-card">
+      <text>球拍</text>
+      <input value="{{draft.racketName}}" placeholder="球拍" bindinput="onRacketInput" />
+    </view>
+    <view class="input-card">
+      <text>球鞋</text>
+      <input value="{{draft.shoeName}}" placeholder="球鞋" bindinput="onShoeInput" />
+    </view>
+  </view>
+
+  <button class="submit-button" bindtap="submitSession">保存</button>
+</scroll-view>

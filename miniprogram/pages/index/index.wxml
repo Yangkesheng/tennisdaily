@@ -1,0 +1,42 @@
+<navigation-bar title="" back="{{false}}" color="#0d1728" background="transparent"></navigation-bar>
+<scroll-view class="page index-page" scroll-y type="list">
+  <view class="hero">
+    <view>
+      <text class="title">网球</text>
+      <text class="year">{{currentYear}}</text>
+    </view>
+  </view>
+
+  <view class="stats-grid">
+    <view class="stat-cell">
+      <view class="stat-icon cyan"></view>
+      <view class="stat-copy">
+        <text class="stat-value">{{stats.monthCount}}</text>
+        <text class="stat-label">场</text>
+      </view>
+    </view>
+    <view class="stat-cell">
+      <view class="stat-icon yellow"></view>
+      <view class="stat-copy">
+        <text class="stat-value">{{monthHoursText}}</text>
+        <text class="stat-label">时</text>
+      </view>
+    </view>
+    <view class="stat-cell tappable" bindtap="goRecentSessions">
+      <view class="stat-icon blue"></view>
+      <view class="stat-copy">
+        <text class="stat-value">{{stats.totalCount}}</text>
+        <text class="stat-label">总</text>
+      </view>
+    </view>
+    <view class="stat-cell">
+      <view class="stat-icon green"></view>
+      <view class="stat-copy">
+        <text class="stat-value">{{stats.monthCost}}</text>
+        <text class="stat-label">¥</text>
+      </view>
+    </view>
+  </view>
+
+  <button class="bottom-action" bindtap="goCreateSession">+</button>
+</scroll-view>

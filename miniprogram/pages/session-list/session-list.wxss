@@ -1,0 +1,109 @@
+.list-page {
+  padding: 28rpx;
+  box-sizing: border-box;
+}
+
+.list-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin: 18rpx 0 24rpx;
+}
+
+.list-header text {
+  font-size: 42rpx;
+  font-weight: 700;
+}
+
+.list-header button,
+.empty-panel button {
+  width: 76rpx;
+  height: 76rpx;
+  padding: 0;
+  border-radius: 8rpx;
+  background: #1f7a4d;
+  color: #fff;
+  font-size: 40rpx;
+  font-weight: 700;
+  line-height: 76rpx;
+}
+
+.session-list {
+  display: flex;
+  flex-direction: column;
+  gap: 18rpx;
+}
+
+.session-item,
+.empty-panel {
+  padding: 26rpx;
+  border-radius: 8rpx;
+  background: #fff;
+  box-sizing: border-box;
+}
+
+.session-item:active {
+  opacity: 0.78;
+}
+
+.session-topline {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 20rpx;
+}
+
+.session-title-row {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 12rpx;
+}
+
+.session-date {
+  font-size: 32rpx;
+  font-weight: 700;
+}
+
+.session-type {
+  padding: 6rpx 14rpx;
+  border-radius: 999rpx;
+  background: #e8f4ee;
+  color: #1f7a4d;
+  font-size: 22rpx;
+  font-weight: 700;
+}
+
+.session-duration {
+  color: #1f7a4d;
+  font-size: 30rpx;
+  font-weight: 700;
+  white-space: nowrap;
+}
+
+.session-meta {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12rpx;
+  margin-top: 16rpx;
+  color: #607166;
+  font-size: 26rpx;
+}
+
+.session-note {
+  display: block;
+  margin-top: 18rpx;
+  color: #425047;
+  font-size: 28rpx;
+  line-height: 1.6;
+}
+
+.empty-panel {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: space-between;
+  color: #607166;
+  font-size: 48rpx;
+  font-weight: 700;
+}
