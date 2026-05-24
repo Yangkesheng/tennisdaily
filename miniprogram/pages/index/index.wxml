@@ -11,31 +11,51 @@
     <view class="stat-cell">
       <view class="stat-icon cyan"></view>
       <view class="stat-copy">
-        <text class="stat-value">{{stats.monthCount}}</text>
-        <text class="stat-label">场</text>
+        <view class="stat-value-wrap">
+          <text class="stat-value">{{stats.monthCount}}</text>
+          <text class="stat-unit">场</text>
+        </view>
+        <text class="stat-label">本月</text>
       </view>
     </view>
     <view class="stat-cell">
       <view class="stat-icon yellow"></view>
       <view class="stat-copy">
-        <text class="stat-value">{{monthHoursText}}</text>
-        <text class="stat-label">小时</text>
+        <view class="stat-value-wrap">
+          <text class="stat-value">{{monthHoursText}}</text>
+          <text class="stat-unit">小时</text>
+        </view>
+        <text class="stat-label">本月时长</text>
       </view>
     </view>
     <view class="stat-cell tappable" bindtap="goRecentSessions">
       <view class="stat-icon blue"></view>
       <view class="stat-copy">
-        <text class="stat-value">{{stats.totalCount}}</text>
-        <text class="stat-label">总</text>
+        <view class="stat-value-wrap">
+          <text class="stat-value">{{stats.totalCount}}</text>
+          <text class="stat-unit">次</text>
+        </view>
+        <text class="stat-label">全部记录</text>
       </view>
     </view>
     <view class="stat-cell">
       <view class="stat-icon green"></view>
       <view class="stat-copy">
-        <text class="stat-value">{{stats.monthCost}}</text>
-        <text class="stat-label">¥</text>
+        <view class="stat-value-wrap">
+          <text class="stat-value">{{stats.monthCost}}</text>
+          <text class="stat-unit">元</text>
+        </view>
+        <text class="stat-label">本月花费</text>
       </view>
     </view>
+  </view>
+
+  <view class="recent-card" bindtap="goSessionList">
+    <view class="recent-header">
+      <text class="recent-title">最近一次</text>
+      <text class="recent-date">{{latestSession ? latestSession.date : '暂无'}}</text>
+    </view>
+    <text class="recent-content">{{latestSessionSummary}}</text>
   </view>
 
   <button class="bottom-action" bindtap="goCreateSession">+</button>

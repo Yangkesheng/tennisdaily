@@ -3,14 +3,34 @@ import { getLatestSession, getSessionStats } from '../../services/session-servic
 
 interface IndexData {
   latestSession: TennisSession | null
+  latestSessionSummary: string
   stats: SessionStats
   monthHoursText: string
   currentYear: number
 }
 
+const createLatestSessionSummary = (session: TennisSession | null) => {
+  if (!session) {
+    return '还没有打球记录，点击下方 + 快速记录一次'
+  }
+
+  const parts = [`${session.durationMinutes} 分钟`]
+
+  if (session.courtName) {
+    parts.push(session.courtName)
+  }
+
+  if (session.partner) {
+    parts.push(`搭档 ${session.partner}`)
+  }
+
+  return parts.join(' · ')
+}
+
 Component({
   data: {
     latestSession: null,
+    latestSessionSummary: '还没有打球记录，点击下方 + 快速记录一次',
     stats: {
       monthCount: 0,
       monthMinutes: 0,
@@ -28,10 +48,12 @@ Component({
   methods: {
     refreshData() {
       const stats = getSessionStats()
+      const latestSession = getLatestSession()
       const currentYear = new Date().getFullYear()
 
       this.setData({
-        latestSession: getLatestSession(),
+        latestSession,
+        latestSessionSummary: createLatestSessionSummary(latestSession),
         stats,
         monthHoursText: (stats.monthMinutes / 60).toFixed(1),
         currentYear,
