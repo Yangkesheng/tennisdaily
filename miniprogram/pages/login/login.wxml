@@ -1,0 +1,11 @@
+<navigation-bar title="" back="{{false}}" color="#0d1728" background="transparent"></navigation-bar>
+<view class="page login-page">
+  <view class="login-card">
+    <view class="brand-mark">网</view>
+    <text class="login-title">网球日记</text>
+    <text class="login-subtitle">快速记录每一次打球</text>
+
+    <button class="login-button" bindtap="loginAndEnter">开始使用</button>
+    <text class="login-tip">本地保存记录，30 秒完成一次记录</text>
+  </view>
+</view>
