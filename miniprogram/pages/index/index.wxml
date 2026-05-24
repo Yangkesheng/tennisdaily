@@ -51,9 +51,9 @@
   </view>
 
   <view class="trend-card">
-    <view class="trend-header">
-      <text class="trend-title">近 5 场手感</text>
-      <text class="trend-subtitle">{{ratingTrendText}}</text>
+    <view class="card-section-header">
+      <text class="card-section-title">近 5 场手感</text>
+      <text class="card-section-subtitle">{{ratingTrendText}}</text>
     </view>
     <view wx:if="{{ratingTrend.length}}" class="charts-board">
       <view wx:for="{{ratingTrend}}" wx:key="key" class="chart-column">
@@ -70,35 +70,22 @@
   </view>
 
   <view class="recent-card" bindtap="goSessionList">
-    <view class="recent-header">
-      <view class="recent-tag">最近打球</view>
-      <text class="recent-date">{{latestSession ? latestSession.date : '暂无'}}</text>
+    <view class="card-section-header">
+      <text class="card-section-title">最近打球</text>
+      <text class="card-section-date">{{latestSession ? latestSession.date : '暂无'}}</text>
     </view>
-    <view wx:if="{{latestSession}}" class="recent-body">
-      <view class="recent-duration-box">
-        <text class="recent-duration">{{latestSession.durationMinutes}}</text>
-        <text class="recent-unit">分钟</text>
+    <view wx:if="{{latestSession}}" class="recent-double-row-body">
+      <view class="recent-main-row">
+        <view class="recent-duration-highlight">
+          <text class="num">{{latestSession.durationMinutes}}</text>
+          <text class="unit">分钟</text>
+        </view>
+        <text class="recent-type-tag">{{latestSession.typeLabel}}</text>
       </view>
-      <view class="recent-meta-box">
-        <view class="recent-meta-item">
-          <text class="meta-label">类型</text>
-          <text class="meta-value">{{latestSession.typeLabel}}</text>
-        </view>
-        <view class="recent-meta-item" wx:if="{{latestSession.courtName}}">
-          <text class="meta-label">场地</text>
-          <text class="meta-value">{{latestSession.courtName}}</text>
-        </view>
-        <view class="recent-meta-item" wx:if="{{latestSession.racketName}}">
-          <text class="meta-label">球拍</text>
-          <text class="meta-value">{{latestSession.racketName}}</text>
-        </view>
-        <view class="recent-meta-item" wx:if="{{latestSession.shoeName}}">
-          <text class="meta-label">球鞋</text>
-          <text class="meta-value">{{latestSession.shoeName}}</text>
-        </view>
-        <view class="recent-meta-item" wx:if="{{!latestSession.courtName && !latestSession.racketName && !latestSession.shoeName}}">
-          <text class="meta-value">暂无补充信息</text>
-        </view>
+      <view class="recent-sub-row">
+        <text class="sub-item" wx:if="{{latestSession.courtName}}">{{latestSession.courtName}}</text>
+        <text class="sub-item" wx:if="{{latestSession.racketName}}">{{latestSession.racketName}}</text>
+        <text class="sub-item" wx:if="{{latestSession.shoeName}}">{{latestSession.shoeName}}</text>
       </view>
     </view>
     <text wx:else class="recent-content">{{latestSessionSummary}}</text>
