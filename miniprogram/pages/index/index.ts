@@ -31,8 +31,10 @@ const getSessionTypeLabel = (type: TennisSessionType) => {
       return '双打'
     case 'training':
       return '训练'
-    case 'match':
-      return '比赛'
+    case 'singlesMatch':
+      return '单打比赛'
+    case 'doublesMatch':
+      return '双打比赛'
     default:
       return '未分类'
   }

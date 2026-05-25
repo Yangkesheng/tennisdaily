@@ -1,4 +1,5 @@
-export type TennisSessionType = '' | 'training' | 'singles' | 'doubles' | 'match'
+export type TennisSessionType = '' | 'training' | 'singles' | 'doubles' | 'match' | 'singlesMatch' | 'doublesMatch'
+export type MatchRank = '' | 'champion' | 'runnerUp' | 'semiFinal' | 'quarterFinal' | 'groupStage'
 
 export interface TennisSession {
   id: string
@@ -8,6 +9,7 @@ export interface TennisSession {
   courtName: string
   partner: string
   type: TennisSessionType
+  matchRank: MatchRank
   cost: number
   racketName: string
   shoeName: string
@@ -23,6 +25,7 @@ export interface SessionDraft {
   courtName: string
   partner: string
   type: TennisSessionType
+  matchRank: MatchRank
   cost: number
   racketName: string
   shoeName: string

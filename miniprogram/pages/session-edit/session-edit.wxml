@@ -5,20 +5,32 @@
   </view>
 
   <view class="field-group">
+    <text class="field-label">日期</text>
+    <picker mode="date" value="{{draft.date}}" bindchange="onDateChange">
+      <view class="picker-value">{{draft.date}}</view>
+    </picker>
+  </view>
+
+  <view class="field-group">
     <text class="field-label">类型</text>
     <view class="choice-options type-options">
       <button class="choice-option {{draft.type === 'doubles' ? 'active' : ''}}" data-type="doubles" bindtap="selectType">双打</button>
       <button class="choice-option {{draft.type === 'singles' ? 'active' : ''}}" data-type="singles" bindtap="selectType">单打</button>
       <button class="choice-option {{draft.type === 'training' ? 'active' : ''}}" data-type="training" bindtap="selectType">训练</button>
-      <button class="choice-option {{draft.type === 'match' ? 'active' : ''}}" data-type="match" bindtap="selectType">比赛</button>
+      <button class="choice-option {{draft.type === 'singlesMatch' ? 'active' : ''}}" data-type="singlesMatch" bindtap="selectType">单打比赛</button>
+      <button class="choice-option {{draft.type === 'doublesMatch' ? 'active' : ''}}" data-type="doublesMatch" bindtap="selectType">双打比赛</button>
     </view>
   </view>
 
-  <view class="field-group">
-    <text class="field-label">日期</text>
-    <picker mode="date" value="{{draft.date}}" bindchange="onDateChange">
-      <view class="picker-value">{{draft.date}}</view>
-    </picker>
+  <view wx:if="{{isMatchType}}" class="field-group">
+    <text class="field-label">成绩</text>
+    <view class="choice-options rank-options">
+      <button class="choice-option {{draft.matchRank === 'champion' ? 'active' : ''}}" data-rank="champion" bindtap="selectMatchRank">冠军</button>
+      <button class="choice-option {{draft.matchRank === 'runnerUp' ? 'active' : ''}}" data-rank="runnerUp" bindtap="selectMatchRank">亚军</button>
+      <button class="choice-option {{draft.matchRank === 'semiFinal' ? 'active' : ''}}" data-rank="semiFinal" bindtap="selectMatchRank">四强</button>
+      <button class="choice-option {{draft.matchRank === 'quarterFinal' ? 'active' : ''}}" data-rank="quarterFinal" bindtap="selectMatchRank">八强</button>
+      <button class="choice-option {{draft.matchRank === 'groupStage' ? 'active' : ''}}" data-rank="groupStage" bindtap="selectMatchRank">小组赛</button>
+    </view>
   </view>
 
   <view class="field-group">
@@ -62,10 +74,6 @@
     <view class="input-card">
       <text>场地</text>
       <input value="{{draft.courtName}}" placeholder="球场" bindinput="onCourtInput" />
-    </view>
-    <view class="input-card">
-      <text>搭档</text>
-      <input value="{{draft.partner}}" placeholder="名字" bindinput="onPartnerInput" />
     </view>
     <view class="input-card">
       <text>花费</text>

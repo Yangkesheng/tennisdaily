@@ -1,10 +1,11 @@
-import type { SessionDraft, TennisSessionType } from '../../models/session'
+import type { MatchRank, SessionDraft, TennisSessionType } from '../../models/session'
 import { createDefaultSessionDraft, getSessionById, saveSession, updateSession } from '../../services/session-service'
 
 interface SessionEditData {
   draft: SessionDraft
   customDuration: string
   isCustomDuration: boolean
+  isMatchType: boolean
   isPageReady: boolean
   ratingText: string
   ratingTexts: string[]
@@ -34,6 +35,7 @@ Component({
     draft: createDefaultSessionDraft(),
     customDuration: '',
     isCustomDuration: false,
+    isMatchType: false,
     isPageReady: false,
     ratingText: '中规中矩吧',
     ratingTexts: ['网球满天飞', '状态有些迷', '中规中矩吧', '甜区率很高', '今天我是阿卡'],
@@ -80,6 +82,7 @@ Component({
           },
           customDuration: '',
           isCustomDuration: false,
+          isMatchType: draft.type === 'singlesMatch' || draft.type === 'doublesMatch',
           isPageReady: true,
           ratingText: this.data.ratingTexts[draft.rating - 1],
           sessionId: '',
@@ -96,6 +99,7 @@ Component({
           draft,
           customDuration: '',
           isCustomDuration: false,
+          isMatchType: draft.type === 'singlesMatch' || draft.type === 'doublesMatch',
           isPageReady: true,
           ratingText: this.data.ratingTexts[draft.rating - 1],
           sessionId: '',
@@ -119,6 +123,7 @@ Component({
           courtName: session.courtName || '',
           partner: session.partner || '',
           type: session.type || '',
+          matchRank: session.matchRank || '',
           cost: session.cost || 0,
           racketName: session.racketName || '',
           shoeName: session.shoeName || '',
@@ -127,6 +132,7 @@ Component({
         ratingText: this.data.ratingTexts[(session.rating || 3) - 1],
         customDuration: session.durationMinutes === 60 || session.durationMinutes === 120 ? '' : `${session.durationMinutes}`,
         isCustomDuration: session.durationMinutes !== 60 && session.durationMinutes !== 120,
+        isMatchType: session.type === 'singlesMatch' || session.type === 'doublesMatch',
         isPageReady: true,
         sessionId: options.id,
         titleText: '编辑',
@@ -134,9 +140,19 @@ Component({
     },
     selectType(event: WechatMiniprogram.TouchEvent) {
       const type = event.currentTarget.dataset.type as TennisSessionType
+      const isMatchType = type === 'singlesMatch' || type === 'doublesMatch'
 
       this.setData({
         'draft.type': type,
+        'draft.matchRank': isMatchType ? this.data.draft.matchRank : '',
+        isMatchType,
+      })
+    },
+    selectMatchRank(event: WechatMiniprogram.TouchEvent) {
+      const rank = event.currentTarget.dataset.rank as MatchRank
+
+      this.setData({
+        'draft.matchRank': rank,
       })
     },
     onDurationInput(event: InputEvent) {
