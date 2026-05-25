@@ -1,4 +1,4 @@
-import type { TennisSession, TennisSessionType } from '../../models/session'
+import type { MatchRank, TennisSession, TennisSessionType } from '../../models/session'
 import { deleteSession, listRecentSessions, listSessions, listSessionsByDate } from '../../services/session-service'
 
 interface SessionListItem extends TennisSession {
@@ -24,11 +24,41 @@ const getSessionTypeLabel = (type: TennisSessionType) => {
       return '双打'
     case 'training':
       return '训练'
-    case 'match':
-      return '比赛'
+    case 'singlesMatch':
+      return '单打比赛'
+    case 'doublesMatch':
+      return '双打比赛'
     default:
       return '未分类'
   }
+}
+
+const getMatchRankLabel = (rank: MatchRank) => {
+  switch (rank) {
+    case 'champion':
+      return '冠军'
+    case 'runnerUp':
+      return '亚军'
+    case 'semiFinal':
+      return '四强'
+    case 'quarterFinal':
+      return '八强'
+    case 'groupStage':
+      return '小组赛'
+    default:
+      return ''
+  }
+}
+
+const getSessionTypeDisplay = (session: TennisSession) => {
+  const typeLabel = getSessionTypeLabel(session.type)
+  const rankLabel = getMatchRankLabel(session.matchRank)
+
+  if ((session.type === 'singlesMatch' || session.type === 'doublesMatch') && rankLabel) {
+    return `${typeLabel} ${rankLabel}`
+  }
+
+  return typeLabel
 }
 
 const getDeleteWidthPx = () => {
@@ -40,7 +70,7 @@ const getDeleteWidthPx = () => {
 const withTypeLabel = (sessions: TennisSession[]): SessionListItem[] => {
   return sessions.map((session) => ({
     ...session,
-    typeLabel: getSessionTypeLabel(session.type),
+    typeLabel: getSessionTypeDisplay(session),
     offsetX: 0,
     deleteOpacity: 0,
   }))

@@ -275,17 +275,18 @@
 
 .recent-type-tag {
   margin-bottom: 4rpx;
-  padding: 4rpx 14rpx;
-  border-radius: 8rpx;
-  background: rgba(55, 120, 219, 0.08);
-  color: #3778db;
-  font-size: 24rpx;
+  padding: 6rpx 14rpx;
+  border-radius: 999rpx;
+  background: #e8f4ee;
+  color: #1f7a4d;
+  font-size: 22rpx;
   font-weight: 700;
 }
 
 .recent-sub-row {
   display: flex;
   align-items: center;
+  gap: 18rpx;
   width: 100%;
   min-width: 0;
 }
@@ -298,13 +299,6 @@
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
-}
-
-.sub-item:not(:first-child)::before {
-  content: "·";
-  margin: 0 14rpx;
-  color: rgba(13, 23, 40, 0.18);
-  font-weight: 800;
 }
 
 .recent-content {

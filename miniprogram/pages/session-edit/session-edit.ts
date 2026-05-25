@@ -25,12 +25,7 @@ interface PickerChangeEvent {
   }
 }
 
-Component({
-  lifetimes: {
-    attached() {
-      this.loadRouteSession()
-    },
-  },
+Page({
   data: {
     draft: createDefaultSessionDraft(),
     customDuration: '',
@@ -42,78 +37,71 @@ Component({
     sessionId: '',
     titleText: '记录',
   } as SessionEditData,
-  pageLifetimes: {
-    show() {
-      if (!this.data.isPageReady) {
-        this.loadRouteSession()
-      }
-    },
+  onLoad(options: { id?: string; date?: string }) {
+    this.loadRouteSession(options)
   },
-  methods: {
-    loadRouteSession() {
-      const pages = getCurrentPages()
-      const currentPage = pages[pages.length - 1] as WechatMiniprogram.Page.Instance<WechatMiniprogram.IAnyObject, WechatMiniprogram.IAnyObject> & {
-        options?: {
-          id?: string
-          date?: string
-        }
-      }
-      const options = currentPage.options || {}
+  onShow() {
+    if (!this.data.isPageReady) {
+      this.loadRouteSession()
+    }
+  },
+  loadRouteSession(routeOptions?: { id?: string; date?: string }) {
+      const options = routeOptions || {}
 
-      if (options.id && options.id === this.data.sessionId && this.data.isPageReady) {
-        return
-      }
+    if (options.id && options.id === this.data.sessionId && this.data.isPageReady) {
+      return
+    }
 
-      if (!options.id && this.data.isPageReady && !this.data.sessionId) {
-        return
-      }
+    if (!options.id && this.data.isPageReady && !this.data.sessionId) {
+      return
+    }
+
+    this.setData({
+      isPageReady: false,
+    })
+
+    if (!options.id && options.date) {
+      const draft = createDefaultSessionDraft()
 
       this.setData({
-        isPageReady: false,
+        draft: {
+          ...draft,
+          date: options.date,
+        },
+        customDuration: '',
+        isCustomDuration: false,
+        isMatchType: draft.type === 'singlesMatch' || draft.type === 'doublesMatch',
+        isPageReady: true,
+        ratingText: this.data.ratingTexts[draft.rating - 1],
+        sessionId: '',
+        titleText: '记录',
       })
 
-      if (!options.id && options.date) {
-        const draft = createDefaultSessionDraft()
+      return
+    }
 
-        this.setData({
-          draft: {
-            ...draft,
-            date: options.date,
-          },
-          customDuration: '',
-          isCustomDuration: false,
-          isMatchType: draft.type === 'singlesMatch' || draft.type === 'doublesMatch',
-          isPageReady: true,
-          ratingText: this.data.ratingTexts[draft.rating - 1],
-          sessionId: '',
-          titleText: '记录',
-        })
+    if (!options.id) {
+      const draft = createDefaultSessionDraft()
 
-        return
-      }
+      this.setData({
+        draft,
+        customDuration: '',
+        isCustomDuration: false,
+        isMatchType: draft.type === 'singlesMatch' || draft.type === 'doublesMatch',
+        isPageReady: true,
+        ratingText: this.data.ratingTexts[draft.rating - 1],
+        sessionId: '',
+        titleText: '记录',
+      })
 
-      if (!options.id) {
-        const draft = createDefaultSessionDraft()
+      return
+    }
 
-        this.setData({
-          draft,
-          customDuration: '',
-          isCustomDuration: false,
-          isMatchType: draft.type === 'singlesMatch' || draft.type === 'doublesMatch',
-          isPageReady: true,
-          ratingText: this.data.ratingTexts[draft.rating - 1],
-          sessionId: '',
-          titleText: '记录',
-        })
+    const session = getSessionById(options.id)
 
-        return
-      }
-
-      const session = getSessionById(options.id)
-
-      if (!session) {
-        return
-      }
+    if (!session) {
+      return
+    }
 
       this.setData({
         draft: {
@@ -136,9 +124,9 @@ Component({
         isPageReady: true,
         sessionId: options.id,
         titleText: '编辑',
-      })
-    },
-    selectType(event: WechatMiniprogram.TouchEvent) {
+    })
+  },
+  selectType(event: WechatMiniprogram.TouchEvent) {
       const type = event.currentTarget.dataset.type as TennisSessionType
       const isMatchType = type === 'singlesMatch' || type === 'doublesMatch'
 
@@ -221,20 +209,19 @@ Component({
         'draft.shoeName': event.detail.value.trim(),
       })
     },
-    submitSession() {
-      if (this.data.sessionId) {
+  submitSession() {
+    if (this.data.sessionId) {
         updateSession(this.data.sessionId, this.data.draft)
-      } else {
-        saveSession(this.data.draft)
-      }
+    } else {
+      saveSession(this.data.draft)
+    }
 
-      wx.showToast({
-        title: this.data.sessionId ? '已保存' : '已记录',
-        icon: 'success',
-        complete: () => {
-          wx.navigateBack()
-        },
-      })
-    },
+    wx.showToast({
+      title: this.data.sessionId ? '已保存' : '已记录',
+      icon: 'success',
+      complete: () => {
+        wx.navigateBack()
+      },
+    })
   },
 })

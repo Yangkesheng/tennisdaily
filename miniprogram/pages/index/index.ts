@@ -1,4 +1,4 @@
-import type { SessionStats, TennisSession, TennisSessionType } from '../../models/session'
+import type { MatchRank, SessionStats, TennisSession, TennisSessionType } from '../../models/session'
 import { getLatestSession, getSessionStats, listSessions } from '../../services/session-service'
 
 interface RatingTrendItem {
@@ -40,6 +40,34 @@ const getSessionTypeLabel = (type: TennisSessionType) => {
   }
 }
 
+const getMatchRankLabel = (rank: MatchRank) => {
+  switch (rank) {
+    case 'champion':
+      return '冠军'
+    case 'runnerUp':
+      return '亚军'
+    case 'semiFinal':
+      return '四强'
+    case 'quarterFinal':
+      return '八强'
+    case 'groupStage':
+      return '小组赛'
+    default:
+      return ''
+  }
+}
+
+const getSessionTypeDisplay = (session: TennisSession) => {
+  const typeLabel = getSessionTypeLabel(session.type)
+  const rankLabel = getMatchRankLabel(session.matchRank)
+
+  if ((session.type === 'singlesMatch' || session.type === 'doublesMatch') && rankLabel) {
+    return `${typeLabel} ${rankLabel}`
+  }
+
+  return typeLabel
+}
+
 const createLatestSessionView = (session: TennisSession | null): LatestSessionView | null => {
   if (!session) {
     return null
@@ -47,7 +75,7 @@ const createLatestSessionView = (session: TennisSession | null): LatestSessionVi
 
   return {
     ...session,
-    typeLabel: getSessionTypeLabel(session.type),
+    typeLabel: getSessionTypeDisplay(session),
   }
 }
 

@@ -1,4 +1,4 @@
-export type TennisSessionType = '' | 'training' | 'singles' | 'doubles' | 'match' | 'singlesMatch' | 'doublesMatch'
+export type TennisSessionType = '' | 'training' | 'singles' | 'doubles' | 'singlesMatch' | 'doublesMatch'
 export type MatchRank = '' | 'champion' | 'runnerUp' | 'semiFinal' | 'quarterFinal' | 'groupStage'
 
 export interface TennisSession {
