@@ -52,7 +52,7 @@
 
   <view class="trend-card">
     <view class="card-section-header">
-      <text class="card-section-title">近 5 场手感</text>
+      <text class="card-section-title">近几场手感</text>
       <text class="card-section-subtitle">{{ratingTrendText}}</text>
     </view>
     <view wx:if="{{ratingTrend.length}}" class="charts-board">

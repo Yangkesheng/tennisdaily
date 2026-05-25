@@ -4,6 +4,11 @@
   box-sizing: border-box;
   background: linear-gradient(45deg, #f5efe6 0%, #eed6ca 50%, #e2bda9 100%);
   background-attachment: fixed;
+  opacity: 0;
+}
+
+.edit-page.ready {
+  opacity: 1;
 }
 
 .edit-hero {

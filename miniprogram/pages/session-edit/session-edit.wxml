@@ -1,5 +1,5 @@
 <navigation-bar title="" back="{{true}}" color="#0d1728" background="transparent"></navigation-bar>
-<scroll-view class="page edit-page" scroll-y type="list">
+<view class="page edit-page {{isPageReady ? 'ready' : ''}}">
   <view class="edit-hero">
     <text class="edit-title">{{titleText}}</text>
   </view>
@@ -81,5 +81,6 @@
     </view>
   </view>
 
+  <view class="submit-safe-space"></view>
   <button class="submit-button" bindtap="submitSession">保存</button>
-</scroll-view>
+</view>

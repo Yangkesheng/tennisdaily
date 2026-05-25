@@ -96,6 +96,19 @@ export const updateSession = (id: string, draft: SessionDraft): TennisSession | 
   return updatedSession
 }
 
+export const deleteSession = (id: string): boolean => {
+  const sessions = listSessions()
+  const nextSessions = sessions.filter((session) => session.id !== id)
+
+  if (nextSessions.length === sessions.length) {
+    return false
+  }
+
+  wx.setStorageSync(STORAGE_KEY, sortSessions(nextSessions))
+
+  return true
+}
+
 export const getSessionById = (id: string): TennisSession | null => {
   return listSessions().find((session) => session.id === id) || null
 }

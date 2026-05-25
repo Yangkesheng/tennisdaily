@@ -5,22 +5,33 @@
   </view>
 
   <view wx:if="{{sessions.length}}" class="session-list">
-    <view wx:for="{{sessions}}" wx:key="id" class="session-item" data-id="{{item.id}}" bindtap="goEditSession">
-      <view class="session-topline">
-        <view class="session-title-row">
-          <text class="session-date">{{item.date}}</text>
-          <text class="session-type">{{item.typeLabel}}</text>
+    <view wx:for="{{sessions}}" wx:key="id" class="session-swipe">
+      <view class="delete-action" style="opacity: {{item.deleteOpacity}};" data-id="{{item.id}}" catchtap="confirmDeleteSession">删除</view>
+      <view
+        class="session-item"
+        style="transform: translateX({{item.offsetX}}px);"
+        data-id="{{item.id}}"
+        bindtouchstart="onSwipeStart"
+        bindtouchmove="onSwipeMove"
+        bindtouchend="onSwipeEnd"
+        bindtap="goEditSession"
+      >
+        <view class="session-topline">
+          <view class="session-title-row">
+            <text class="session-date">{{item.date}}</text>
+            <text class="session-type">{{item.typeLabel}}</text>
+          </view>
+          <text class="session-duration">{{item.durationMinutes}} 分钟</text>
         </view>
-        <text class="session-duration">{{item.durationMinutes}} 分钟</text>
+        <view class="session-meta">
+          <text wx:if="{{item.courtName}}">{{item.courtName}}</text>
+          <text wx:if="{{item.partner}}">{{item.partner}}</text>
+          <text wx:if="{{item.racketName}}">{{item.racketName}}</text>
+          <text wx:if="{{item.shoeName}}">{{item.shoeName}}</text>
+          <text wx:if="{{item.cost}}">¥{{item.cost}}</text>
+        </view>
+        <text wx:if="{{item.note}}" class="session-note">{{item.note}}</text>
       </view>
-      <view class="session-meta">
-        <text wx:if="{{item.courtName}}">{{item.courtName}}</text>
-        <text wx:if="{{item.partner}}">{{item.partner}}</text>
-        <text wx:if="{{item.racketName}}">{{item.racketName}}</text>
-        <text wx:if="{{item.shoeName}}">{{item.shoeName}}</text>
-        <text wx:if="{{item.cost}}">¥{{item.cost}}</text>
-      </view>
-      <text wx:if="{{item.note}}" class="session-note">{{item.note}}</text>
     </view>
   </view>
 

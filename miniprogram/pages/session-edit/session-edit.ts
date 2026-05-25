@@ -5,6 +5,7 @@ interface SessionEditData {
   draft: SessionDraft
   customDuration: string
   isCustomDuration: boolean
+  isPageReady: boolean
   ratingText: string
   ratingTexts: string[]
   sessionId: string
@@ -24,10 +25,16 @@ interface PickerChangeEvent {
 }
 
 Component({
+  lifetimes: {
+    attached() {
+      this.loadRouteSession()
+    },
+  },
   data: {
     draft: createDefaultSessionDraft(),
     customDuration: '',
     isCustomDuration: false,
+    isPageReady: false,
     ratingText: '中规中矩吧',
     ratingTexts: ['网球满天飞', '状态有些迷', '中规中矩吧', '甜区率很高', '今天我是阿卡'],
     sessionId: '',
@@ -35,7 +42,9 @@ Component({
   } as SessionEditData,
   pageLifetimes: {
     show() {
-      this.loadRouteSession()
+      if (!this.data.isPageReady) {
+        this.loadRouteSession()
+      }
     },
   },
   methods: {
@@ -49,17 +58,50 @@ Component({
       }
       const options = currentPage.options || {}
 
-      if (options.id && options.id === this.data.sessionId) {
+      if (options.id && options.id === this.data.sessionId && this.data.isPageReady) {
         return
       }
 
+      if (!options.id && this.data.isPageReady && !this.data.sessionId) {
+        return
+      }
+
+      this.setData({
+        isPageReady: false,
+      })
+
       if (!options.id && options.date) {
+        const draft = createDefaultSessionDraft()
+
         this.setData({
-          'draft.date': options.date,
+          draft: {
+            ...draft,
+            date: options.date,
+          },
+          customDuration: '',
+          isCustomDuration: false,
+          isPageReady: true,
+          ratingText: this.data.ratingTexts[draft.rating - 1],
+          sessionId: '',
+          titleText: '记录',
         })
+
+        return
       }
 
       if (!options.id) {
+        const draft = createDefaultSessionDraft()
+
+        this.setData({
+          draft,
+          customDuration: '',
+          isCustomDuration: false,
+          isPageReady: true,
+          ratingText: this.data.ratingTexts[draft.rating - 1],
+          sessionId: '',
+          titleText: '记录',
+        })
+
         return
       }
 
@@ -85,6 +127,7 @@ Component({
         ratingText: this.data.ratingTexts[(session.rating || 3) - 1],
         customDuration: session.durationMinutes === 60 || session.durationMinutes === 120 ? '' : `${session.durationMinutes}`,
         isCustomDuration: session.durationMinutes !== 60 && session.durationMinutes !== 120,
+        isPageReady: true,
         sessionId: options.id,
         titleText: '编辑',
       })
