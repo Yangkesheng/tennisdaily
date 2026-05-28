@@ -9,9 +9,22 @@ interface DeviceInfo {
   platform: string
 }
 
+interface SystemInfoCompat extends WindowInfo, DeviceInfo {}
+
 interface WxInfoCompat {
   getWindowInfo?: () => WindowInfo
   getDeviceInfo?: () => DeviceInfo
+  getSystemInfoSync?: () => SystemInfoCompat
+}
+
+const getFallbackInfo = (): SystemInfoCompat => {
+  return {
+    windowWidth: 375,
+    safeArea: {
+      top: 0,
+    },
+    platform: 'devtools',
+  }
 }
 
 Component({
@@ -77,7 +90,7 @@ Component({
     attached() {
       const rect = wx.getMenuButtonBoundingClientRect()
       const wxInfo = wx as unknown as WxInfoCompat
-      const fallbackInfo = wx.getSystemInfoSync()
+      const fallbackInfo = wxInfo.getSystemInfoSync ? wxInfo.getSystemInfoSync() : getFallbackInfo()
       const windowInfo = wxInfo.getWindowInfo ? wxInfo.getWindowInfo() : fallbackInfo
       const deviceInfo = wxInfo.getDeviceInfo ? wxInfo.getDeviceInfo() : fallbackInfo
       const isAndroid = deviceInfo.platform === 'android'

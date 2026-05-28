@@ -1,5 +1,5 @@
 import type { MatchRank, SessionStats, TennisSession, TennisSessionType } from '../../models/session'
-import { getLatestSession, getSessionStats, listSessions } from '../../services/session-service'
+import { getLatestSessionFromApi, getSessionStatsFromApi, listSessionsFromApi } from '../../services/session-service'
 
 interface RatingTrendItem {
   key: string
@@ -155,22 +155,30 @@ Component({
     },
   },
   methods: {
-    refreshData() {
-      const stats = getSessionStats()
-      const sessions = listSessions()
-      const latestSession = createLatestSessionView(getLatestSession())
-      const ratingTrend = createRatingTrend(sessions)
+    async refreshData() {
       const currentYear = new Date().getFullYear()
 
-      this.setData({
-        latestSession,
-        latestSessionSummary: createLatestSessionSummary(latestSession),
-        ratingTrend,
-        ratingTrendText: createRatingTrendText(ratingTrend),
-        stats,
-        monthHoursText: (stats.monthMinutes / 60).toFixed(1),
-        currentYear,
-      })
+      try {
+        const sessions = await listSessionsFromApi()
+        const stats = await getSessionStatsFromApi()
+        const latestSession = createLatestSessionView(await getLatestSessionFromApi())
+        const ratingTrend = createRatingTrend(sessions)
+
+        this.setData({
+          latestSession,
+          latestSessionSummary: createLatestSessionSummary(latestSession),
+          ratingTrend,
+          ratingTrendText: createRatingTrendText(ratingTrend),
+          stats,
+          monthHoursText: (stats.monthMinutes / 60).toFixed(1),
+          currentYear,
+        })
+      } catch (error) {
+        wx.showToast({
+          title: error instanceof Error ? error.message : '服务暂时不可用',
+          icon: 'none',
+        })
+      }
     },
     goCreateSession() {
       wx.navigateTo({

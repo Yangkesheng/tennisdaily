@@ -3,6 +3,7 @@
   "version": "1.0.0",
   "description": "",
   "scripts": {
+    "generate:config": "node scripts/generate-miniprogram-config.js",
     "typecheck": "tsc --noEmit"
   },
   "keywords": [],

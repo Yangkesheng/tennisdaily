@@ -1,0 +1,3 @@
+// This file is generated from miniprogram/app-config.yaml. Do not edit manually.
+export const API_BASE_URL = 'http://localhost:8081'
+export const TOKEN_STORAGE_KEY = 'token'

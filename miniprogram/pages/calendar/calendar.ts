@@ -1,5 +1,5 @@
 import type { TennisSession } from '../../models/session'
-import { getTodayText, listSessions } from '../../services/session-service'
+import { getTodayText, listSessionsFromApi } from '../../services/session-service'
 
 interface CalendarDay {
   key: string
@@ -83,15 +83,24 @@ Component({
     },
   },
   methods: {
-    refreshCalendar() {
+    async refreshCalendar() {
       const currentYear = new Date().getFullYear()
-      const activeDates = getActiveDates(listSessions())
 
-      this.setData({
-        currentYear,
-        activeDayCount: activeDates.length,
-        calendarMonths: createCalendarMonths(currentYear, activeDates),
-      })
+      try {
+        const sessions = await listSessionsFromApi()
+        const activeDates = getActiveDates(sessions)
+
+        this.setData({
+          currentYear,
+          activeDayCount: activeDates.length,
+          calendarMonths: createCalendarMonths(currentYear, activeDates),
+        })
+      } catch (error) {
+        wx.showToast({
+          title: error instanceof Error ? error.message : '服务暂时不可用',
+          icon: 'none',
+        })
+      }
     },
     goDaySessions(event: WechatMiniprogram.TouchEvent) {
       const date = event.currentTarget.dataset.date as string | undefined

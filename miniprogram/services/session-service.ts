@@ -1,28 +1,13 @@
 import type { SessionDraft, SessionStats, TennisSession } from '../models/session'
-
-const STORAGE_KEY = 'tennis_sessions'
-
-const isCurrentMonth = (dateText: string) => {
-  const sessionDate = new Date(`${dateText}T00:00:00`)
-  const now = new Date()
-
-  return (
-    sessionDate.getFullYear() === now.getFullYear() &&
-    sessionDate.getMonth() === now.getMonth()
-  )
-}
-
-const sortSessions = (sessions: TennisSession[]) => {
-  return sessions.sort((a, b) => {
-    const dateDiff = new Date(b.date).getTime() - new Date(a.date).getTime()
-
-    if (dateDiff !== 0) {
-      return dateDiff
-    }
-
-    return b.createdAt - a.createdAt
-  })
-}
+import {
+  deleteSessionRemote,
+  getLatestSessionRemote,
+  getSessionByIdRemote,
+  getSessionStatsRemote,
+  listSessionsRemote,
+  saveSessionRemote,
+  updateSessionRemote,
+} from './session-api-service'
 
 export const getTodayText = () => {
   const now = new Date()
@@ -49,101 +34,49 @@ export const createDefaultSessionDraft = (): SessionDraft => {
   }
 }
 
-export const listSessions = (): TennisSession[] => {
-  const sessions = wx.getStorageSync(STORAGE_KEY) as TennisSession[] | ''
-
-  if (!Array.isArray(sessions)) {
-    return []
-  }
-
-  return sortSessions(sessions)
+export const listSessionsFromApi = async (): Promise<TennisSession[]> => {
+  return listSessionsRemote()
 }
 
-export const saveSession = (draft: SessionDraft): TennisSession => {
-  const now = Date.now()
-  const session: TennisSession = {
-    ...draft,
-    id: `session_${now}`,
-    createdAt: now,
-    updatedAt: now,
-  }
-  const sessions = listSessions()
+export const listSessionsByDateFromApi = async (dateText: string): Promise<TennisSession[]> => {
+  const sessions = await listSessionsFromApi()
 
-  wx.setStorageSync(STORAGE_KEY, sortSessions([session, ...sessions]))
-
-  return session
+  return sessions.filter((session) => session.date === dateText)
 }
 
-export const updateSession = (id: string, draft: SessionDraft): TennisSession | null => {
-  const sessions = listSessions()
-  const targetSession = sessions.find((session) => session.id === id)
-
-  if (!targetSession) {
-    return null
-  }
-
-  const updatedSession: TennisSession = {
-    ...targetSession,
-    ...draft,
-    id,
-    updatedAt: Date.now(),
-  }
-
-  wx.setStorageSync(
-    STORAGE_KEY,
-    sortSessions(sessions.map((session) => (session.id === id ? updatedSession : session))),
-  )
-
-  return updatedSession
-}
-
-export const deleteSession = (id: string): boolean => {
-  const sessions = listSessions()
-  const nextSessions = sessions.filter((session) => session.id !== id)
-
-  if (nextSessions.length === sessions.length) {
-    return false
-  }
-
-  wx.setStorageSync(STORAGE_KEY, sortSessions(nextSessions))
-
-  return true
-}
-
-export const getSessionById = (id: string): TennisSession | null => {
-  return listSessions().find((session) => session.id === id) || null
-}
-
-export const listSessionsByDate = (dateText: string): TennisSession[] => {
-  return listSessions().filter((session) => session.date === dateText)
-}
-
-export const listRecentSessions = (days: number): TennisSession[] => {
+export const listRecentSessionsFromApi = async (days: number): Promise<TennisSession[]> => {
+  const sessions = await listSessionsFromApi()
   const now = new Date(`${getTodayText()}T23:59:59`)
   const start = new Date(now)
   start.setDate(start.getDate() - days + 1)
 
-  return listSessions().filter((session) => {
+  return sessions.filter((session) => {
     const sessionDate = new Date(`${session.date}T00:00:00`)
 
     return sessionDate >= start && sessionDate <= now
   })
 }
 
-export const getLatestSession = (): TennisSession | null => {
-  const [latestSession] = listSessions()
-
-  return latestSession || null
+export const getLatestSessionFromApi = async (): Promise<TennisSession | null> => {
+  return getLatestSessionRemote()
 }
 
-export const getSessionStats = (): SessionStats => {
-  const sessions = listSessions()
-  const monthSessions = sessions.filter((session) => isCurrentMonth(session.date))
+export const getSessionByIdFromApi = async (id: string): Promise<TennisSession | null> => {
+  return getSessionByIdRemote(id)
+}
 
-  return {
-    monthCount: monthSessions.length,
-    monthMinutes: monthSessions.reduce((total, session) => total + session.durationMinutes, 0),
-    monthCost: monthSessions.reduce((total, session) => total + session.cost, 0),
-    totalCount: sessions.length,
-  }
+export const saveSessionToApi = async (draft: SessionDraft): Promise<TennisSession> => {
+  return saveSessionRemote(draft)
+}
+
+export const updateSessionToApi = async (id: string, draft: SessionDraft): Promise<TennisSession | null> => {
+  return updateSessionRemote(id, draft)
+}
+
+export const deleteSessionFromApi = async (id: string): Promise<boolean> => {
+  return deleteSessionRemote(id)
+}
+
+export const getSessionStatsFromApi = async (): Promise<SessionStats> => {
+  return getSessionStatsRemote()
 }

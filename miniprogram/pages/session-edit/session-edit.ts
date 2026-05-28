@@ -1,5 +1,10 @@
 import type { MatchRank, SessionDraft, TennisSessionType } from '../../models/session'
-import { createDefaultSessionDraft, getSessionById, saveSession, updateSession } from '../../services/session-service'
+import {
+  createDefaultSessionDraft,
+  getSessionByIdFromApi,
+  saveSessionToApi,
+  updateSessionToApi,
+} from '../../services/session-service'
 
 interface SessionEditData {
   draft: SessionDraft
@@ -45,8 +50,8 @@ Page({
       this.loadRouteSession()
     }
   },
-  loadRouteSession(routeOptions?: { id?: string; date?: string }) {
-      const options = routeOptions || {}
+  async loadRouteSession(routeOptions?: { id?: string; date?: string }) {
+    const options = routeOptions || {}
 
     if (options.id && options.id === this.data.sessionId && this.data.isPageReady) {
       return
@@ -97,7 +102,17 @@ Page({
       return
     }
 
-    const session = getSessionById(options.id)
+    let session = null
+
+    try {
+      session = await getSessionByIdFromApi(options.id)
+    } catch (error) {
+      wx.showToast({
+        title: error instanceof Error ? error.message : '记录加载失败',
+        icon: 'none',
+      })
+      return
+    }
 
     if (!session) {
       return
@@ -209,19 +224,26 @@ Page({
         'draft.shoeName': event.detail.value.trim(),
       })
     },
-  submitSession() {
-    if (this.data.sessionId) {
-        updateSession(this.data.sessionId, this.data.draft)
-    } else {
-      saveSession(this.data.draft)
-    }
+  async submitSession() {
+    try {
+      if (this.data.sessionId) {
+        await updateSessionToApi(this.data.sessionId, this.data.draft)
+      } else {
+        await saveSessionToApi(this.data.draft)
+      }
 
-    wx.showToast({
-      title: this.data.sessionId ? '已保存' : '已记录',
-      icon: 'success',
-      complete: () => {
-        wx.navigateBack()
-      },
-    })
+      wx.showToast({
+        title: this.data.sessionId ? '已保存' : '已记录',
+        icon: 'success',
+        complete: () => {
+          wx.navigateBack()
+        },
+      })
+    } catch (error) {
+      wx.showToast({
+        title: error instanceof Error ? error.message : '保存失败',
+        icon: 'none',
+      })
+    }
   },
 })

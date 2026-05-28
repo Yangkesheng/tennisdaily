@@ -1,5 +1,10 @@
 import type { MatchRank, TennisSession, TennisSessionType } from '../../models/session'
-import { deleteSession, listRecentSessions, listSessions, listSessionsByDate } from '../../services/session-service'
+import {
+  deleteSessionFromApi,
+  listRecentSessionsFromApi,
+  listSessionsByDateFromApi,
+  listSessionsFromApi,
+} from '../../services/session-service'
 
 interface SessionListItem extends TennisSession {
   typeLabel: string
@@ -61,10 +66,19 @@ const getSessionTypeDisplay = (session: TennisSession) => {
   return typeLabel
 }
 
-const getDeleteWidthPx = () => {
-  const systemInfo = wx.getSystemInfoSync()
+interface WindowInfoCompat {
+  windowWidth: number
+}
 
-  return Math.round((systemInfo.windowWidth * 150) / 750)
+interface WxWindowInfoCompat {
+  getWindowInfo?: () => WindowInfoCompat
+}
+
+const getDeleteWidthPx = () => {
+  const wxInfo = wx as unknown as WxWindowInfoCompat
+  const windowWidth = wxInfo.getWindowInfo ? wxInfo.getWindowInfo().windowWidth : 375
+
+  return Math.round((windowWidth * 150) / 750)
 }
 
 const withTypeLabel = (sessions: TennisSession[]): SessionListItem[] => {
@@ -91,7 +105,7 @@ Component({
     },
   },
   methods: {
-    refreshSessions() {
+    async refreshSessions() {
       const pages = getCurrentPages()
       const currentPage = pages[pages.length - 1] as WechatMiniprogram.Page.Instance<WechatMiniprogram.IAnyObject, WechatMiniprogram.IAnyObject> & {
         options?: {
@@ -101,17 +115,25 @@ Component({
       }
       const dateFilter = currentPage.options?.date || ''
       const rangeFilter = currentPage.options?.range || ''
-      const sessions = dateFilter
-        ? listSessionsByDate(dateFilter)
-        : rangeFilter === 'recent'
-          ? listRecentSessions(30)
-          : listSessions()
       const titleText = dateFilter ? dateFilter : rangeFilter === 'recent' ? '近 30 天' : '记录'
 
-      this.setData({
-        sessions: withTypeLabel(sessions),
-        titleText,
-      })
+      try {
+        const sessions = dateFilter
+          ? await listSessionsByDateFromApi(dateFilter)
+          : rangeFilter === 'recent'
+            ? await listRecentSessionsFromApi(30)
+            : await listSessionsFromApi()
+
+        this.setData({
+          sessions: withTypeLabel(sessions),
+          titleText,
+        })
+      } catch (error) {
+        wx.showToast({
+          title: error instanceof Error ? error.message : '服务暂时不可用',
+          icon: 'none',
+        })
+      }
     },
     onSwipeStart(event: WechatMiniprogram.TouchEvent) {
       const id = event.currentTarget.dataset.id as string | undefined
@@ -181,18 +203,25 @@ Component({
         content: '确定删除这次打球记录吗？',
         confirmText: '删除',
         confirmColor: '#e85d75',
-        success: (result) => {
+        success: async (result) => {
           if (!result.confirm) {
             return
           }
 
-          deleteSession(id)
-          this.refreshSessions()
+          try {
+            await deleteSessionFromApi(id)
+            this.refreshSessions()
 
-          wx.showToast({
-            title: '已删除',
-            icon: 'success',
-          })
+            wx.showToast({
+              title: '已删除',
+              icon: 'success',
+            })
+          } catch (error) {
+            wx.showToast({
+              title: error instanceof Error ? error.message : '删除失败',
+              icon: 'none',
+            })
+          }
         },
       })
     },
