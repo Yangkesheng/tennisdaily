@@ -1,0 +1,216 @@
+.rackets-page {
+  min-height: 100vh;
+  padding: 34rpx 28rpx calc(180rpx + env(safe-area-inset-bottom));
+  background: linear-gradient(45deg, #f5efe6 0%, #eed6ca 50%, #e2bda9 100%);
+  box-sizing: border-box;
+  color: #05070c;
+}
+
+.filter-tabs {
+  display: flex;
+  gap: 12rpx;
+  margin: 18rpx 0 28rpx;
+  padding: 8rpx;
+  border-radius: 30rpx;
+  background: rgba(255, 255, 255, 0.45);
+}
+
+.filter-tab {
+  flex: 1;
+  height: 64rpx;
+  border-radius: 24rpx;
+  color: rgba(13, 23, 40, 0.52);
+  font-size: 24rpx;
+  font-weight: 800;
+  line-height: 64rpx;
+}
+
+.filter-tab.active {
+  background: rgba(255, 255, 255, 0.82);
+  color: #3778db;
+}
+
+.racket-list {
+  display: flex;
+  flex-direction: column;
+  gap: 22rpx;
+}
+
+.swipe-row {
+  position: relative;
+  overflow: hidden;
+  border-radius: 32rpx;
+}
+
+.delete-action {
+  position: absolute;
+  top: 0;
+  right: 0;
+  width: 180rpx;
+  height: 100%;
+  border-radius: 0 32rpx 32rpx 0;
+  padding-left: 30rpx;
+  background: #d93025;
+  color: #fff;
+  font-size: 28rpx;
+  font-weight: 900;
+  line-height: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1;
+}
+
+.racket-card {
+  position: relative;
+  z-index: 2;
+  width: 100%;
+  display: flex;
+  gap: 24rpx;
+  padding: 28rpx;
+  border: 1rpx solid rgba(255, 255, 255, 0.7);
+  border-radius: 32rpx;
+  background: rgba(255, 255, 255, 0.55);
+  backdrop-filter: blur(25px);
+  box-sizing: border-box;
+  transform: translateX(0);
+  transition: transform 0.18s ease;
+}
+
+.racket-card.opened {
+  transform: translateX(-180rpx);
+}
+
+.racket-mark {
+  flex: none;
+  width: 116rpx;
+  height: 144rpx;
+  border-radius: 26rpx;
+  background: rgba(255, 255, 255, 0.58);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.racket-mark text {
+  max-width: 92rpx;
+  color: rgba(13, 23, 40, 0.62);
+  font-size: 28rpx;
+  font-weight: 900;
+  text-align: center;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.racket-content {
+  flex: 1;
+  min-width: 0;
+}
+
+.racket-title-row,
+.life-row,
+.racket-meta {
+  display: flex;
+  align-items: center;
+}
+
+.racket-title-row,
+.racket-meta {
+  justify-content: space-between;
+  gap: 16rpx;
+}
+
+.racket-title {
+  min-width: 0;
+  font-size: 32rpx;
+  font-weight: 900;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.status-badge {
+  flex: none;
+  padding: 8rpx 16rpx;
+  border-radius: 999rpx;
+  color: #fff;
+  font-size: 20rpx;
+  font-weight: 900;
+}
+
+.status-badge.primary {
+  background: rgba(55, 120, 219, 0.76);
+}
+
+.status-badge.retired {
+  background: rgba(13, 23, 40, 0.34);
+}
+
+.racket-model {
+  display: block;
+  margin-top: 12rpx;
+  color: rgba(13, 23, 40, 0.56);
+  font-size: 24rpx;
+  font-weight: 700;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.usage-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 12rpx;
+  margin-top: 18rpx;
+}
+
+.usage-cell {
+  min-width: 0;
+  padding: 14rpx 16rpx;
+  border-radius: 20rpx;
+  background: rgba(255, 255, 255, 0.48);
+}
+
+.usage-value {
+  display: block;
+  color: #05070c;
+  font-size: 28rpx;
+  font-weight: 900;
+  line-height: 1.1;
+}
+
+.usage-label {
+  display: block;
+  margin-top: 6rpx;
+  color: rgba(13, 23, 40, 0.42);
+  font-size: 20rpx;
+  font-weight: 800;
+  white-space: nowrap;
+}
+
+.empty-equipment {
+  height: 220rpx;
+  border-radius: 32rpx;
+  background: rgba(255, 255, 255, 0.52);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: rgba(13, 23, 40, 0.46);
+  font-size: 28rpx;
+  font-weight: 800;
+}
+
+.add-racket {
+  position: fixed;
+  right: 32rpx;
+  bottom: calc(64rpx + env(safe-area-inset-bottom));
+  height: 78rpx;
+  padding: 0 34rpx;
+  border-radius: 999rpx;
+  background: #2b61b3;
+  color: #fff;
+  font-size: 28rpx;
+  font-weight: 900;
+  line-height: 78rpx;
+  box-shadow: 0 18rpx 42rpx rgba(43, 97, 179, 0.36);
+}

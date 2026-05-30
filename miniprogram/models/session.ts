@@ -11,6 +11,7 @@ export interface TennisSession {
   type: TennisSessionType
   matchRank: MatchRank
   cost: number
+  racketId: number
   racketName: string
   shoeName: string
   note: string
@@ -27,6 +28,7 @@ export interface SessionDraft {
   type: TennisSessionType
   matchRank: MatchRank
   cost: number
+  racketId: number
   racketName: string
   shoeName: string
   note: string

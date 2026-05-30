@@ -1,4 +1,6 @@
 import type { MatchRank, SessionDraft, TennisSessionType } from '../../models/session'
+import type { Racket } from '../../models/racket'
+import { listMyRacketsFromApi } from '../../services/racket-api-service'
 import {
   createDefaultSessionDraft,
   getSessionByIdFromApi,
@@ -16,6 +18,8 @@ interface SessionEditData {
   ratingTexts: string[]
   sessionId: string
   titleText: string
+  selectableRackets: Racket[]
+  racketNames: string[]
 }
 
 interface InputEvent {
@@ -41,13 +45,30 @@ Page({
     ratingTexts: ['网球满天飞', '状态有些迷', '中规中矩吧', '甜区率很高', '今天我是阿卡'],
     sessionId: '',
     titleText: '记录',
+    selectableRackets: [],
+    racketNames: [],
   } as SessionEditData,
   onLoad(options: { id?: string; date?: string }) {
     this.loadRouteSession(options)
   },
   onShow() {
+    this.loadSelectableRackets()
     if (!this.data.isPageReady) {
       this.loadRouteSession()
+    }
+  },
+  async loadSelectableRackets() {
+    try {
+      const rackets = await listMyRacketsFromApi()
+      this.setData({
+        selectableRackets: rackets,
+        racketNames: rackets.map((racket) => racket.name),
+      })
+    } catch (error) {
+      wx.showToast({
+        title: error instanceof Error ? error.message : '球拍加载失败',
+        icon: 'none',
+      })
     }
   },
   async loadRouteSession(routeOptions?: { id?: string; date?: string }) {
@@ -128,6 +149,7 @@ Page({
           type: session.type || '',
           matchRank: session.matchRank || '',
           cost: session.cost || 0,
+          racketId: session.racketId || 0,
           racketName: session.racketName || '',
           shoeName: session.shoeName || '',
           note: session.note || '',
@@ -214,9 +236,17 @@ Page({
         'draft.cost': Number(event.detail.value) || 0,
       })
     },
-    onRacketInput(event: InputEvent) {
+    onRacketChange(event: PickerChangeEvent) {
+      const index = Number(event.detail.value)
+      const racket = this.data.selectableRackets[index]
+
+      if (!racket) {
+        return
+      }
+
       this.setData({
-        'draft.racketName': event.detail.value.trim(),
+        'draft.racketId': racket.id,
+        'draft.racketName': racket.name,
       })
     },
     onShoeInput(event: InputEvent) {

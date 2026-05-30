@@ -1,0 +1,47 @@
+<navigation-bar title="球拍" back="{{true}}" color="#05070c" background="transparent"></navigation-bar>
+<scroll-view class="page rackets-page" scroll-y type="list">
+  <view class="filter-tabs">
+    <button class="filter-tab {{filter === 'using' ? 'active' : ''}}" data-filter="using" bindtap="selectFilter">使用中</button>
+    <button class="filter-tab {{filter === 'retired' ? 'active' : ''}}" data-filter="retired" bindtap="selectFilter">已退役</button>
+  </view>
+
+  <view wx:if="{{visibleRackets.length}}" class="racket-list">
+    <view wx:for="{{visibleRackets}}" wx:key="id" class="swipe-row">
+      <button wx:if="{{openedRacketId === item.id}}" class="delete-action" data-id="{{item.id}}" catchtap="deleteRacket">删除</button>
+      <view
+        class="racket-card {{openedRacketId === item.id ? 'opened' : ''}}"
+        data-id="{{item.id}}"
+        bindtouchstart="onTouchStart"
+        bindtouchend="onTouchEnd"
+        bindtap="goDetail"
+      >
+        <view class="racket-mark">
+          <text>{{item.brand || 'T'}}</text>
+        </view>
+        <view class="racket-content">
+          <view class="racket-title-row">
+            <text class="racket-title">{{item.name}}</text>
+            <text wx:if="{{item.statusLabel}}" class="status-badge {{item.statusClass}}">{{item.statusLabel}}</text>
+          </view>
+          <text class="racket-model">{{item.brand}} {{item.model}}</text>
+          <view class="usage-grid compact">
+            <view class="usage-cell">
+              <text class="usage-value">{{item.usage.totalCount}}</text>
+              <text class="usage-label">累计次数</text>
+            </view>
+            <view class="usage-cell">
+              <text class="usage-value">{{item.usage.totalHours}}h</text>
+              <text class="usage-label">累计时间</text>
+            </view>
+          </view>
+        </view>
+      </view>
+    </view>
+  </view>
+
+  <view wx:else class="empty-equipment">
+    <text>暂无球拍</text>
+  </view>
+
+  <button class="add-racket" bindtap="addRacket">+ 新增球拍</button>
+</scroll-view>

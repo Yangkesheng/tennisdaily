@@ -177,7 +177,8 @@
   font-weight: 700;
 }
 
-.input-card input {
+.input-card input,
+.picker-inline {
   flex: 1;
   min-width: 0;
   color: #17251c;

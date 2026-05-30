@@ -1,0 +1,96 @@
+.profile-page {
+  min-height: 100vh;
+  padding: 34rpx 28rpx calc(180rpx + env(safe-area-inset-bottom));
+  background: linear-gradient(45deg, #f5efe6 0%, #eed6ca 50%, #e2bda9 100%);
+  box-sizing: border-box;
+  color: #05070c;
+}
+
+.profile-header {
+  padding: 20rpx 0 28rpx;
+}
+
+.brand {
+  display: block;
+  font-size: 38rpx;
+  font-weight: 800;
+  letter-spacing: 2rpx;
+}
+
+.brand-line {
+  height: 2rpx;
+  margin-top: 18rpx;
+  background: rgba(13, 23, 40, 0.18);
+}
+
+.dashboard-card {
+  padding: 34rpx;
+  border-radius: 34rpx;
+  background: rgba(255, 255, 255, 0.55);
+  backdrop-filter: blur(20px);
+  box-shadow: inset 0 0 0 1rpx rgba(255, 255, 255, 0.8);
+}
+
+.dashboard-card:active {
+  opacity: 0.78;
+}
+
+.dashboard-row {
+  display: flex;
+  justify-content: space-between;
+  gap: 24rpx;
+}
+
+.metric-label {
+  color: rgba(13, 23, 40, 0.52);
+  font-size: 24rpx;
+  font-weight: 700;
+}
+
+.metric-value-row {
+  display: flex;
+  align-items: flex-end;
+  margin-top: 12rpx;
+}
+
+.metric-value {
+  font-size: 54rpx;
+  font-weight: 900;
+  line-height: 1;
+}
+
+.metric-unit {
+  margin-left: 8rpx;
+  margin-bottom: 6rpx;
+  font-size: 24rpx;
+  font-weight: 700;
+}
+
+.cost-list {
+  display: flex;
+  flex-direction: column;
+  gap: 16rpx;
+  margin-top: 34rpx;
+}
+
+.cost-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 20rpx;
+  color: rgba(13, 23, 40, 0.72);
+  font-size: 28rpx;
+  font-weight: 800;
+}
+
+.cost-row text:last-child {
+  color: #05070c;
+}
+
+.enter-tip {
+  display: block;
+  margin-top: 18rpx;
+  color: #3778db;
+  font-size: 26rpx;
+  font-weight: 900;
+}

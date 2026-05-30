@@ -1,0 +1,62 @@
+<navigation-bar title="新增球拍" back="{{true}}" color="#05070c" background="transparent"></navigation-bar>
+<view class="page racket-edit-page">
+  <scroll-view class="racket-edit-scroll" scroll-y>
+    <view class="racket-edit-content">
+      <view class="edit-hero">
+        <text class="edit-title">球拍</text>
+      </view>
+
+      <view wx:if="{{hasSelectedLibrary}}" class="racket-detail-card">
+        <view class="detail-image-wrap">
+          <image wx:if="{{draft.imageUrl}}" class="detail-image" src="{{draft.imageUrl}}" mode="aspectFit"></image>
+          <text wx:else class="detail-mark">{{draft.brand}}</text>
+        </view>
+        <view class="detail-copy">
+          <text class="detail-name">{{draft.model}}</text>
+          <text class="detail-brand">{{draft.brand}}</text>
+          <view class="detail-specs">
+            <text>{{draft.weight || '-'}}g</text>
+            <text>{{draft.headSize || '-'}} in²</text>
+          </view>
+        </view>
+      </view>
+
+      <view class="field-grid">
+        <view class="input-card">
+          <text>别名</text>
+          <input value="{{draft.name}}" placeholder="EZONE 主力拍" bindinput="onNameInput" />
+        </view>
+        <view wx:if="{{!hasSelectedLibrary}}" class="input-card">
+          <text>品牌</text>
+          <input value="{{draft.brand}}" placeholder="Yonex" bindinput="onBrandInput" />
+        </view>
+        <view wx:if="{{!hasSelectedLibrary}}" class="input-card">
+          <text>型号</text>
+          <input value="{{draft.model}}" placeholder="EZONE 100" bindinput="onModelInput" />
+        </view>
+        <view wx:if="{{!hasSelectedLibrary}}" class="input-card">
+          <text>克重</text>
+          <input value="{{draft.weight}}" type="number" placeholder="300" bindinput="onWeightInput" />
+        </view>
+        <view wx:if="{{!hasSelectedLibrary}}" class="input-card">
+          <text>拍面</text>
+          <input value="{{draft.headSize}}" type="number" placeholder="100" bindinput="onHeadSizeInput" />
+        </view>
+        <picker mode="date" value="{{draft.purchaseDate}}" bindchange="onPurchaseDateChange">
+          <view class="input-card">
+            <text>购入</text>
+            <view class="picker-inline">{{draft.purchaseDate}}</view>
+          </view>
+        </picker>
+        <view class="input-card">
+          <text>价格</text>
+          <input value="{{draft.purchasePrice}}" type="digit" placeholder="0" bindinput="onPurchasePriceInput" />
+        </view>
+      </view>
+    </view>
+  </scroll-view>
+
+  <view class="bottom-action-area">
+    <button class="submit-button" loading="{{saving}}" bindtap="submitRacket">保存</button>
+  </view>
+</view>

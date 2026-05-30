@@ -2,6 +2,12 @@
   "pages": [
     "pages/index/index",
     "pages/calendar/calendar",
+    "pages/profile/profile",
+    "pages/rackets/rackets",
+    "pages/racket-detail/racket-detail",
+    "pages/racket-library/racket-library",
+    "pages/racket-edit/racket-edit",
+    "pages/stringing-edit/stringing-edit",
     "pages/session-edit/session-edit",
     "pages/session-list/session-list",
     "pages/logs/logs"
@@ -25,6 +31,10 @@
       {
         "pagePath": "pages/calendar/calendar",
         "text": "日历"
+      },
+      {
+        "pagePath": "pages/profile/profile",
+        "text": "我的"
       }
     ]
   }

@@ -1,0 +1,37 @@
+<navigation-bar title="选拍" back="{{true}}" color="#05070c" background="transparent"></navigation-bar>
+<view class="page library-page">
+  <view class="library-body">
+    <scroll-view class="brand-sidebar" scroll-y>
+      <view
+        wx:for="{{brands}}"
+        wx:key="*this"
+        class="brand-item {{activeBrandIndex === index ? 'active' : ''}}"
+        data-index="{{index}}"
+        bindtap="selectBrand"
+      >
+        {{item}}
+      </view>
+      <view class="brand-item manual-brand" bindtap="manualInput">手动</view>
+    </scroll-view>
+
+    <scroll-view class="product-panel" scroll-y>
+      <view wx:if="{{visibleItems.length}}" class="product-grid">
+        <view
+          wx:for="{{visibleItems}}"
+          wx:key="id"
+          class="product-card"
+          data-index="{{index}}"
+          bindtap="selectRacket"
+        >
+          <view class="product-image-wrap">
+            <image wx:if="{{item.imageUrl}}" class="product-image" src="{{item.imageUrl}}" mode="aspectFit"></image>
+            <text wx:else class="product-mark">{{item.brand}}</text>
+          </view>
+          <text class="product-name">{{item.model}}</text>
+        </view>
+      </view>
+      <view wx:else class="empty-library">暂无球拍</view>
+    </scroll-view>
+  </view>
+</view>
+

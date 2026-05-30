@@ -28,6 +28,7 @@ export const createDefaultSessionDraft = (): SessionDraft => {
     type: 'doubles',
     matchRank: '',
     cost: 0,
+    racketId: 0,
     racketName: '',
     shoeName: '',
     note: '',
