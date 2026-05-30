@@ -26,11 +26,11 @@
           <text class="racket-model">{{item.brand}} {{item.model}}</text>
           <view class="usage-grid compact">
             <view class="usage-cell">
-              <text class="usage-value">{{item.usage.totalCount}}</text>
+              <text class="usage-value">{{item.usageCount}}</text>
               <text class="usage-label">累计次数</text>
             </view>
             <view class="usage-cell">
-              <text class="usage-value">{{item.usage.totalHours}}h</text>
+              <text class="usage-value">{{item.usageHours}}h</text>
               <text class="usage-label">累计时间</text>
             </view>
           </view>

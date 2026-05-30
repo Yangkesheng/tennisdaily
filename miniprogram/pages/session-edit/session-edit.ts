@@ -34,6 +34,10 @@ interface PickerChangeEvent {
   }
 }
 
+const getRacketDisplayName = (racket: Racket) => {
+  return racket.name || racket.model || racket.brand || '未命名球拍'
+}
+
 Page({
   data: {
     draft: createDefaultSessionDraft(),
@@ -62,7 +66,7 @@ Page({
       const rackets = await listMyRacketsFromApi()
       this.setData({
         selectableRackets: rackets,
-        racketNames: rackets.map((racket) => racket.name),
+        racketNames: rackets.map(getRacketDisplayName),
       })
     } catch (error) {
       wx.showToast({
@@ -246,7 +250,7 @@ Page({
 
       this.setData({
         'draft.racketId': racket.id,
-        'draft.racketName': racket.name,
+        'draft.racketName': getRacketDisplayName(racket),
       })
     },
     onShoeInput(event: InputEvent) {

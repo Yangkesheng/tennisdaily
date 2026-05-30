@@ -17,19 +17,19 @@
 
     <view class="stats-grid">
       <view class="stat-card">
-        <text class="stat-value">{{usage.totalCount}}</text>
+        <text class="stat-value">{{racket.usageCount}}</text>
         <text class="stat-label">累计次数</text>
       </view>
       <view class="stat-card">
-        <text class="stat-value">{{usage.totalHours}}h</text>
+        <text class="stat-value">{{racket.usageHours}}h</text>
         <text class="stat-label">累计时间</text>
       </view>
       <view class="stat-card">
-        <text class="stat-value">{{usage.afterStringingCount}}</text>
+        <text class="stat-value">{{racket.afterStringingUsageCount}}</text>
         <text class="stat-label">穿线后次数</text>
       </view>
       <view class="stat-card">
-        <text class="stat-value">{{usage.afterStringingHours}}h</text>
+        <text class="stat-value">{{racket.afterStringingUsageHours}}h</text>
         <text class="stat-label">穿线后时间</text>
       </view>
     </view>

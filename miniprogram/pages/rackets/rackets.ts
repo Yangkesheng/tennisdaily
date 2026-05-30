@@ -1,57 +1,25 @@
 import type { Racket, RacketFilter } from '../../models/racket'
-import type { TennisSession } from '../../models/session'
 import { deleteRacketFromApi, listRacketsFromApi } from '../../services/racket-api-service'
-import { listSessionsFromApi } from '../../services/session-service'
-
-interface RacketUsageSummary {
-  totalCount: number
-  totalMinutes: number
-  totalHours: number
-  afterStringingCount: number
-  afterStringingMinutes: number
-  afterStringingHours: number
-}
 
 interface RacketView extends Racket {
   statusLabel: string
   statusClass: string
-  usage: RacketUsageSummary
 }
 
 interface RacketsData {
   filter: RacketFilter
   rackets: Racket[]
-  sessions: TennisSession[]
   visibleRackets: RacketView[]
   touchStartX: number
   touchStartY: number
   openedRacketId: number
 }
 
-const getUsageSummary = (racket: Racket, sessions: TennisSession[]): RacketUsageSummary => {
-  const racketSessions = sessions.filter((session) => session.racketId === racket.id)
-  const totalMinutes = racketSessions.reduce((sum, session) => sum + session.durationMinutes, 0)
-  const afterStringingSessions = racket.lastStringDate
-    ? racketSessions.filter((session) => session.date >= racket.lastStringDate)
-    : []
-  const afterStringingMinutes = afterStringingSessions.reduce((sum, session) => sum + session.durationMinutes, 0)
-
-  return {
-    totalCount: racketSessions.length,
-    totalMinutes,
-    totalHours: Math.floor(totalMinutes / 60),
-    afterStringingCount: afterStringingSessions.length,
-    afterStringingMinutes,
-    afterStringingHours: Math.floor(afterStringingMinutes / 60),
-  }
-}
-
-const createRacketView = (racket: Racket, sessions: TennisSession[]): RacketView => {
+const createRacketView = (racket: Racket): RacketView => {
   return {
     ...racket,
     statusLabel: racket.status === 1 ? '主力' : racket.status === 3 ? '退役' : '',
     statusClass: racket.status === 1 ? 'primary' : racket.status === 3 ? 'retired' : '',
-    usage: getUsageSummary(racket, sessions),
   }
 }
 
@@ -67,7 +35,6 @@ Component({
   data: {
     filter: 'using',
     rackets: [],
-    sessions: [],
     visibleRackets: [],
     touchStartX: 0,
     touchStartY: 0,
@@ -81,12 +48,11 @@ Component({
   methods: {
     async refreshRackets() {
       try {
-        const [rackets, sessions] = await Promise.all([listRacketsFromApi(true), listSessionsFromApi()])
+        const rackets = await listRacketsFromApi(true)
 
         this.setData({
           rackets,
-          sessions,
-          visibleRackets: filterRackets(rackets, this.data.filter).map((racket) => createRacketView(racket, sessions)),
+          visibleRackets: filterRackets(rackets, this.data.filter).map(createRacketView),
         })
       } catch (error) {
         wx.showToast({
@@ -100,7 +66,7 @@ Component({
 
       this.setData({
         filter,
-        visibleRackets: filterRackets(this.data.rackets, filter).map((racket) => createRacketView(racket, this.data.sessions)),
+        visibleRackets: filterRackets(this.data.rackets, filter).map(createRacketView),
       })
     },
     onTouchStart(event: WechatMiniprogram.TouchEvent) {

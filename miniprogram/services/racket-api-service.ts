@@ -20,6 +20,12 @@ interface ApiRacket {
   lastStringCost?: number
   totalMinutes?: number
   totalHours?: number
+  usageCount?: number
+  usageMinutes?: number
+  usageHours?: number
+  afterStringingUsageCount?: number
+  afterStringingUsageMinutes?: number
+  afterStringingUsageHours?: number
   createdAt?: string
   updatedAt?: string
 }
@@ -78,8 +84,14 @@ const mapApiRacket = (racket: ApiRacket): Racket => {
     tension: racket.tension || 0,
     lastStringDate: racket.lastStringDate || '',
     lastStringCost: racket.lastStringCost || 0,
-    totalMinutes: racket.totalMinutes || 0,
-    totalHours: racket.totalHours || 0,
+    totalMinutes: racket.totalMinutes || racket.usageMinutes || 0,
+    totalHours: racket.totalHours || racket.usageHours || 0,
+    usageCount: racket.usageCount || 0,
+    usageMinutes: racket.usageMinutes || racket.totalMinutes || 0,
+    usageHours: racket.usageHours || racket.totalHours || 0,
+    afterStringingUsageCount: racket.afterStringingUsageCount || 0,
+    afterStringingUsageMinutes: racket.afterStringingUsageMinutes || 0,
+    afterStringingUsageHours: racket.afterStringingUsageHours || 0,
     createdAt: racket.createdAt,
     updatedAt: racket.updatedAt,
   }

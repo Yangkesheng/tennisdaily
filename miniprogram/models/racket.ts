@@ -19,6 +19,12 @@ export interface Racket {
   lastStringCost: number
   totalMinutes: number
   totalHours: number
+  usageCount: number
+  usageMinutes: number
+  usageHours: number
+  afterStringingUsageCount: number
+  afterStringingUsageMinutes: number
+  afterStringingUsageHours: number
   createdAt?: string
   updatedAt?: string
 }
