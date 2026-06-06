@@ -13,6 +13,7 @@
     "pages/session-list/session-list",
     "pages/logs/logs"
   ],
+  "lazyCodeLoading": "requiredComponents",
   "window": {
     "navigationBarTextStyle": "black",
     "navigationStyle": "custom"
@@ -39,4 +40,5 @@
       }
     ]
   }
+
 }

@@ -10,7 +10,7 @@
     <view class="feature-card">
       <view class="feature-row">
         <text class="feature-dot"></text>
-        <text>手机号用于账号识别和数据同步</text>
+        <text>微信登录用于识别账号和同步数据</text>
       </view>
       <view class="feature-row">
         <text class="feature-dot"></text>
@@ -18,27 +18,19 @@
       </view>
       <view class="feature-row">
         <text class="feature-dot"></text>
-        <text>不会公开展示你的手机号</text>
+        <text>不会公开展示你的个人信息</text>
       </view>
     </view>
   </view>
 
   <view class="login-bottom">
-    <view class="agreement-row" bindtap="toggleAgreement">
-      <view class="checkbox {{agreed ? 'checked' : ''}}">
-        <text wx:if="{{agreed}}">✓</text>
-      </view>
-      <text class="agreement-text">我已阅读并同意《用户协议》和《隐私政策》</text>
-    </view>
-
     <button
       class="login-button {{isLoggingIn ? 'disabled' : ''}}"
-      open-type="getPhoneNumber"
-      bindgetphonenumber="onGetPhoneNumber"
+      bindtap="onLogin"
       loading="{{isLoggingIn}}"
       disabled="{{isLoggingIn}}"
     >
-      手机号快捷登录
+      微信快捷登录
     </button>
   </view>
 </view>
