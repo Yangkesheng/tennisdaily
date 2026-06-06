@@ -1,4 +1,5 @@
 import type { MatchRank, SessionStats, TennisSession, TennisSessionType } from '../../models/session'
+import { requireLoginPage } from '../../services/auth-service'
 import { getLatestSessionFromApi, getSessionStatsFromApi, listSessionsFromApi } from '../../services/session-service'
 
 interface RatingTrendItem {
@@ -156,6 +157,10 @@ Component({
   },
   methods: {
     async refreshData() {
+      if (requireLoginPage()) {
+        return
+      }
+
       const currentYear = new Date().getFullYear()
 
       try {

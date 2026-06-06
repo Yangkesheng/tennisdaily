@@ -1,4 +1,5 @@
 import type { TennisSession } from '../../models/session'
+import { requireLoginPage } from '../../services/auth-service'
 import { getTodayText, listSessionsFromApi } from '../../services/session-service'
 
 interface CalendarDay {
@@ -84,6 +85,10 @@ Component({
   },
   methods: {
     async refreshCalendar() {
+      if (requireLoginPage()) {
+        return
+      }
+
       const currentYear = new Date().getFullYear()
 
       try {

@@ -1,10 +1,26 @@
 import { TOKEN_STORAGE_KEY } from './api-config'
 import { request } from './request'
 
+export interface UserProfile {
+  id: number
+  phone: string
+  maskedPhone: string
+  nickname: string
+  avatarUrl: string
+  createdAt: string
+  updatedAt: string
+}
+
 interface WechatLoginResponse {
   token: string
   userId: number
   openid: string
+}
+
+interface PhoneLoginResponse {
+  token: string
+  user: UserProfile
+  isNewUser: boolean
 }
 
 const requestWechatCode = (): Promise<string> => {
@@ -49,14 +65,63 @@ export const loginWithWechat = async (): Promise<WechatLoginResponse> => {
   return loginResult
 }
 
+export const loginWithPhone = async (phoneCode: string): Promise<PhoneLoginResponse> => {
+  const loginCode = await requestWechatCode()
+  const loginResult = await request<PhoneLoginResponse>({
+    url: '/api/auth/phone-login',
+    method: 'POST',
+    data: {
+      loginCode,
+      phoneCode,
+    },
+    auth: false,
+  })
+
+  wx.setStorageSync(TOKEN_STORAGE_KEY, loginResult.token)
+
+  return loginResult
+}
+
+export const getCurrentUserFromApi = async (): Promise<UserProfile> => {
+  return request<UserProfile>({
+    url: '/api/auth/me',
+  })
+}
+
+export const logoutFromApi = async (): Promise<void> => {
+  const token = getToken()
+  if (token) {
+    await request<WechatMiniprogram.IAnyObject>({
+      url: '/api/auth/logout',
+      method: 'POST',
+    })
+  }
+
+  clearToken()
+}
+
+export const redirectToLogin = () => {
+  wx.redirectTo({
+    url: '/pages/login/login',
+  })
+}
+
+export const requireLoginPage = () => {
+  if (getToken()) {
+    return false
+  }
+
+  redirectToLogin()
+  return true
+}
+
 export const ensureLogin = async () => {
   const token = getToken()
 
-  if (token) {
-    return token
+  if (!token) {
+    redirectToLogin()
+    throw new Error('请先登录')
   }
 
-  const loginResult = await loginWithWechat()
-
-  return loginResult.token
+  return token
 }

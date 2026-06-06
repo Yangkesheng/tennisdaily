@@ -27,4 +27,12 @@
     </view>
     <text class="enter-tip">查看球拍</text>
   </view>
+  <view class="account-card" wx:if="{{user}}">
+    <text class="account-title">账号</text>
+    <view class="account-row">
+      <text>手机号</text>
+      <text>{{user.maskedPhone || user.phone}}</text>
+    </view>
+    <button class="logout-button" bindtap="logout">退出登录</button>
+  </view>
 </scroll-view>

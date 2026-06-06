@@ -1,11 +1,44 @@
-<navigation-bar title="" back="{{false}}" color="#0d1728" background="transparent"></navigation-bar>
+<navigation-bar title="" back="{{false}}" color="#05070c" background="transparent"></navigation-bar>
 <view class="page login-page">
-  <view class="login-card">
-    <view class="brand-mark">网</view>
-    <text class="login-title">网球日记</text>
-    <text class="login-subtitle">快速记录每一次打球</text>
+  <view class="login-content">
+    <view class="brand-block">
+      <text class="brand">TENNIS DAY</text>
+      <text class="title">记录每一次上场</text>
+      <text class="subtitle">10 秒记录打球，管理球拍、穿线和网球投入。</text>
+    </view>
 
-    <button class="login-button" bindtap="loginAndEnter">开始使用</button>
-    <text class="login-tip">本地保存记录，30 秒完成一次记录</text>
+    <view class="feature-card">
+      <view class="feature-row">
+        <text class="feature-dot"></text>
+        <text>手机号用于账号识别和数据同步</text>
+      </view>
+      <view class="feature-row">
+        <text class="feature-dot"></text>
+        <text>换设备后可继续查看你的记录</text>
+      </view>
+      <view class="feature-row">
+        <text class="feature-dot"></text>
+        <text>不会公开展示你的手机号</text>
+      </view>
+    </view>
+  </view>
+
+  <view class="login-bottom">
+    <view class="agreement-row" bindtap="toggleAgreement">
+      <view class="checkbox {{agreed ? 'checked' : ''}}">
+        <text wx:if="{{agreed}}">✓</text>
+      </view>
+      <text class="agreement-text">我已阅读并同意《用户协议》和《隐私政策》</text>
+    </view>
+
+    <button
+      class="login-button {{isLoggingIn ? 'disabled' : ''}}"
+      open-type="getPhoneNumber"
+      bindgetphonenumber="onGetPhoneNumber"
+      loading="{{isLoggingIn}}"
+      disabled="{{isLoggingIn}}"
+    >
+      手机号快捷登录
+    </button>
   </view>
 </view>
