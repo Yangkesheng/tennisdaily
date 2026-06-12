@@ -21,16 +21,39 @@
         <text>不会公开展示你的个人信息</text>
       </view>
     </view>
+    <view wx:if="{{needsNickname}}" class="nickname-card">
+      <text class="nickname-title">设置昵称</text>
+      <text class="nickname-desc">首次登录请设置一个昵称，之后会展示在我的页面。</text>
+      <text wx:if="{{showNicknameTip}}" class="nickname-tip">请点击昵称输入框授权微信昵称，或手动输入昵称</text>
+      <input
+        class="nickname-input"
+        type="nickname"
+        value="{{nickname}}"
+        placeholder="请输入昵称"
+        focus="{{nicknameInputFocus}}"
+        bindinput="onNicknameInput"
+      />
+    </view>
   </view>
 
   <view class="login-bottom">
     <button
+      wx:if="{{!needsNickname}}"
       class="login-button {{isLoggingIn ? 'disabled' : ''}}"
       bindtap="onLogin"
       loading="{{isLoggingIn}}"
       disabled="{{isLoggingIn}}"
     >
-      微信快捷登录
+      登录
+    </button>
+    <button
+      wx:else
+      class="login-button {{isSavingNickname ? 'disabled' : ''}}"
+      bindtap="enterWithNickname"
+      loading="{{isSavingNickname}}"
+      disabled="{{isSavingNickname}}"
+    >
+      进入
     </button>
   </view>
 </view>

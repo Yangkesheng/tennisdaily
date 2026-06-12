@@ -88,6 +88,14 @@ export const getCurrentUserFromApi = async (): Promise<UserProfile> => {
   })
 }
 
+export const updateUserProfile = async (profile: Pick<UserProfile, 'nickname' | 'avatarUrl'>): Promise<UserProfile> => {
+  return request<UserProfile>({
+    url: '/api/auth/profile',
+    method: 'PUT',
+    data: profile,
+  })
+}
+
 export const logoutFromApi = async (): Promise<void> => {
   const token = getToken()
   if (token) {

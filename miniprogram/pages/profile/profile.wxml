@@ -1,7 +1,7 @@
 <navigation-bar title="" back="{{false}}" color="#fff" background="transparent"></navigation-bar>
 <scroll-view class="page profile-page" scroll-y type="list">
   <view class="profile-header">
-    <text class="brand">TENNIS DAILY</text>
+    <text class="brand">{{user.nickname || '我的'}}</text>
     <view class="brand-line"></view>
   </view>
 
@@ -27,12 +27,6 @@
     </view>
     <text class="enter-tip">查看球拍</text>
   </view>
-  <view class="account-card" wx:if="{{user}}">
-    <text class="account-title">账号</text>
-    <view class="account-row">
-      <text>手机号</text>
-      <text>{{user.maskedPhone || user.phone}}</text>
-    </view>
-    <button class="logout-button" bindtap="logout">退出登录</button>
-  </view>
+  <button class="logout-button" bindtap="logout">退出登录</button>
 </scroll-view>
+

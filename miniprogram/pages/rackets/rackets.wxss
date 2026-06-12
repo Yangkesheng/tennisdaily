@@ -157,6 +157,22 @@
   white-space: nowrap;
 }
 
+.racket-spec-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10rpx;
+  margin-top: 12rpx;
+}
+
+.racket-spec {
+  padding: 6rpx 12rpx;
+  border-radius: 999rpx;
+  background: rgba(55, 120, 219, 0.1);
+  color: #2b61b3;
+  font-size: 20rpx;
+  font-weight: 900;
+}
+
 .usage-grid {
   display: grid;
   grid-template-columns: repeat(2, minmax(0, 1fr));

@@ -70,14 +70,11 @@
 }
 
 .months {
-  display: flex;
-  flex-direction: row;
-  flex-wrap: wrap;
-  justify-content: space-between;
+  display: block;
 }
 
 .month-card {
-  width: 47%;
+  width: 100%;
   margin-bottom: 70rpx;
 }
 
@@ -97,12 +94,12 @@
 
 .day-cell {
   width: 14.28%;
-  height: 42rpx;
-  margin-bottom: 8rpx;
-  border-radius: 13rpx;
+  height: 76rpx;
+  margin-bottom: 12rpx;
+  border-radius: 22rpx;
   color: #05070c;
-  font-size: 24rpx;
-  line-height: 42rpx;
+  font-size: 28rpx;
+  line-height: 76rpx;
   text-align: center;
   box-sizing: border-box;
 }

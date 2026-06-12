@@ -95,41 +95,10 @@
   font-weight: 900;
 }
 
-.account-card {
-  margin-top: 24rpx;
-  padding: 34rpx;
-  border-radius: 34rpx;
-  background: rgba(255, 255, 255, 0.55);
-  backdrop-filter: blur(20px);
-  box-shadow: inset 0 0 0 1rpx rgba(255, 255, 255, 0.8);
-}
-
-.account-title {
-  display: block;
-  color: rgba(13, 23, 40, 0.52);
-  font-size: 24rpx;
-  font-weight: 800;
-}
-
-.account-row {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 20rpx;
-  margin-top: 22rpx;
-  color: rgba(13, 23, 40, 0.72);
-  font-size: 28rpx;
-  font-weight: 800;
-}
-
-.account-row text:last-child {
-  color: #05070c;
-}
-
 .logout-button {
   width: 100%;
   height: 78rpx;
-  margin-top: 30rpx;
+  margin-top: 24rpx;
   border-radius: 28rpx;
   background: rgba(13, 23, 40, 0.08);
   color: rgba(13, 23, 40, 0.68);

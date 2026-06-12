@@ -27,12 +27,9 @@
 ---
 
 # 二、当前阶段
-
-项目已经从“纯本地 MVP”进入“Go 后端接入阶段”。
-
 当前目标：
 
-1. 保持前端 30 秒快速记录体验
+1. 保持前端 10 秒快速记录体验
 2. 通过 `miniprogram/services` 接入已部署的 Go 后端 API
 3. 记录数据读写以 Go 后端为准
 4. 不允许页面层直接调用 `wx.request`
@@ -57,7 +54,7 @@
 
 - Go
 - Gin
-- PostgreSQL
+- MySQL
 - GORM
 - JWT / 微信小程序登录
 - REST API
@@ -79,7 +76,7 @@ docs/AGENTS.go-backend.md
 
 必须保证：
 
-> 30 秒内完成一次记录
+> 10 秒内完成一次记录
 
 因此：
 
@@ -100,9 +97,6 @@ docs/AGENTS.go-backend.md
 ---
 
 ## 2. 不过度设计
-
-当前仍然以 MVP 稳定和后端平滑接入为主。
-
 禁止：
 
 - 复杂架构
@@ -110,6 +104,7 @@ docs/AGENTS.go-backend.md
 - 重型状态管理
 - 过度抽象
 - 为接入 API 大面积重构页面
+- 前端做复杂计算
 
 优先：
 
