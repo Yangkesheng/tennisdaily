@@ -41,6 +41,18 @@ export interface SessionStats {
   totalCount: number
 }
 
+export interface SessionCalendarDay {
+  date: string
+  count: number
+}
+
+export interface SessionCalendar {
+  year: number
+  month: number
+  activeDayCount: number
+  days: SessionCalendarDay[]
+}
+
 export interface SessionTypeOption {
   label: string
   value: TennisSessionType

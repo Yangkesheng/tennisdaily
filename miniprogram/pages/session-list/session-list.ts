@@ -15,6 +15,8 @@ interface SessionListItem extends TennisSession {
 interface SessionListData {
   sessions: SessionListItem[]
   titleText: string
+  routeDateFilter: string
+  routeRangeFilter: string
   swipeStartX: number
   swipeStartOffset: number
   swipingSessionId: string
@@ -90,31 +92,29 @@ const withTypeLabel = (sessions: TennisSession[]): SessionListItem[] => {
   }))
 }
 
-Component({
+Page({
   data: {
     sessions: [],
     titleText: '记录',
+    routeDateFilter: '',
+    routeRangeFilter: '',
     swipeStartX: 0,
     swipeStartOffset: 0,
     swipingSessionId: '',
     deleteWidthPx: getDeleteWidthPx(),
   } as SessionListData,
-  pageLifetimes: {
-    show() {
-      this.refreshSessions()
-    },
+  onLoad(options: { date?: string; range?: string }) {
+    this.setData({
+      routeDateFilter: options.date || '',
+      routeRangeFilter: options.range || '',
+    })
   },
-  methods: {
-    async refreshSessions() {
-      const pages = getCurrentPages()
-      const currentPage = pages[pages.length - 1] as WechatMiniprogram.Page.Instance<WechatMiniprogram.IAnyObject, WechatMiniprogram.IAnyObject> & {
-        options?: {
-          date?: string
-          range?: string
-        }
-      }
-      const dateFilter = currentPage.options?.date || ''
-      const rangeFilter = currentPage.options?.range || ''
+  onShow() {
+    this.refreshSessions()
+  },
+  async refreshSessions() {
+      const dateFilter = this.data.routeDateFilter
+      const rangeFilter = this.data.routeRangeFilter
       const titleText = dateFilter ? dateFilter : rangeFilter === 'recent' ? '近 30 天' : '记录'
 
       try {
@@ -235,6 +235,5 @@ Component({
       wx.navigateTo({
         url: `/pages/session-edit/session-edit?id=${id}`,
       })
-    },
   },
 })

@@ -8,12 +8,24 @@
     </view>
   </view>
   <view class="calendar-summary">
-    <text>{{activeDayCount}} 天</text>
-    <text>{{currentYear}}年{{currentMonth}}月</text>
+    <text class="active-count">{{activeDayCount}} 天</text>
+    <view class="month-switcher">
+      <view class="month-nav" hover-class="month-nav-active" bindtap="goPreviousMonth">‹</view>
+      <text class="month-current">{{currentYear}}年{{currentMonth}}月</text>
+      <view class="month-nav" hover-class="month-nav-active" bindtap="goNextMonth">›</view>
+    </view>
   </view>
   <view class="months">
     <view wx:for="{{calendarMonths}}" wx:key="key" wx:for-item="month" class="month-card">
-      <text class="month-title">{{month.label}}</text>
+      <view class="weekday-row">
+        <text class="weekday-cell">一</text>
+        <text class="weekday-cell">二</text>
+        <text class="weekday-cell">三</text>
+        <text class="weekday-cell">四</text>
+        <text class="weekday-cell">五</text>
+        <text class="weekday-cell">六</text>
+        <text class="weekday-cell">日</text>
+      </view>
       <view class="month-days">
         <view
           wx:for="{{month.days}}"
@@ -23,7 +35,8 @@
           data-date="{{day.marked ? day.key : ''}}"
           class="day-cell {{day.blank ? 'blank' : ''}} {{day.marked ? 'marked' : ''}} {{day.today ? 'today' : ''}}"
         >
-          {{day.label}}
+          <text class="day-label">{{day.label}}</text>
+          <text wx:if="{{day.marked}}" class="tennis-mark">🎾</text>
         </view>
       </view>
     </view>

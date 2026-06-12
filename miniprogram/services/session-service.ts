@@ -1,7 +1,8 @@
-import type { SessionDraft, SessionStats, TennisSession } from '../models/session'
+import type { SessionCalendar, SessionDraft, SessionStats, TennisSession } from '../models/session'
 import {
   deleteSessionRemote,
   getLatestSessionRemote,
+  getSessionCalendarRemote,
   getSessionByIdRemote,
   getSessionStatsRemote,
   listSessionsRemote,
@@ -40,9 +41,7 @@ export const listSessionsFromApi = async (): Promise<TennisSession[]> => {
 }
 
 export const listSessionsByDateFromApi = async (dateText: string): Promise<TennisSession[]> => {
-  const sessions = await listSessionsFromApi()
-
-  return sessions.filter((session) => session.date === dateText)
+  return listSessionsRemote(dateText)
 }
 
 export const listRecentSessionsFromApi = async (days: number): Promise<TennisSession[]> => {
@@ -60,6 +59,10 @@ export const listRecentSessionsFromApi = async (days: number): Promise<TennisSes
 
 export const getLatestSessionFromApi = async (): Promise<TennisSession | null> => {
   return getLatestSessionRemote()
+}
+
+export const getSessionCalendarFromApi = async (year: number, month: number): Promise<SessionCalendar> => {
+  return getSessionCalendarRemote(year, month)
 }
 
 export const getSessionByIdFromApi = async (id: string): Promise<TennisSession | null> => {

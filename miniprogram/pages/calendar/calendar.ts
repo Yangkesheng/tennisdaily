@@ -1,6 +1,5 @@
-import type { TennisSession } from '../../models/session'
 import { requireLoginPage } from '../../services/auth-service'
-import { getTodayText, listSessionsFromApi } from '../../services/session-service'
+import { getSessionCalendarFromApi, getTodayText } from '../../services/session-service'
 
 interface CalendarDay {
   key: string
@@ -21,14 +20,11 @@ interface CalendarData {
   currentMonth: number
   activeDayCount: number
   calendarMonths: CalendarMonth[]
+  isCalendarLoading: boolean
 }
 
 const createDateText = (year: number, month: number, day: number) => {
   return `${year}-${`${month}`.padStart(2, '0')}-${`${day}`.padStart(2, '0')}`
-}
-
-const getActiveDates = (sessions: TennisSession[]) => {
-  return Array.from(new Set(sessions.map((session) => session.date)))
 }
 
 const createCalendarMonth = (year: number, month: number, activeDates: string[]) => {
@@ -38,7 +34,8 @@ const createCalendarMonth = (year: number, month: number, activeDates: string[])
   const daysInMonth = new Date(year, month, 0).getDate()
   const days: CalendarDay[] = []
 
-  for (let index = 0; index < firstDate.getDay(); index += 1) {
+  const firstWeekday = firstDate.getDay() || 7
+  for (let index = 1; index < firstWeekday; index += 1) {
     days.push({
       key: `${year}-${month}-blank-${index}`,
       label: '',
@@ -67,8 +64,13 @@ const createCalendarMonth = (year: number, month: number, activeDates: string[])
   }
 }
 
-const isDateInMonth = (date: string, year: number, month: number) => {
-  return date.startsWith(`${year}-${`${month}`.padStart(2, '0')}-`)
+const getAdjacentMonth = (year: number, month: number, offset: number) => {
+  const date = new Date(year, month - 1 + offset, 1)
+
+  return {
+    year: date.getFullYear(),
+    month: date.getMonth() + 1,
+  }
 }
 
 Component({
@@ -77,6 +79,7 @@ Component({
     currentMonth: new Date().getMonth() + 1,
     activeDayCount: 0,
     calendarMonths: [],
+    isCalendarLoading: false,
   } as CalendarData,
   pageLifetimes: {
     show() {
@@ -84,32 +87,55 @@ Component({
     },
   },
   methods: {
-    async refreshCalendar() {
+    async refreshCalendar(year?: number, month?: number) {
       if (requireLoginPage()) {
         return
       }
 
       const now = new Date()
-      const currentYear = now.getFullYear()
-      const currentMonth = now.getMonth() + 1
+      const targetYear = year || this.data.currentYear || now.getFullYear()
+      const targetMonth = month || this.data.currentMonth || now.getMonth() + 1
+
+      this.setData({
+        isCalendarLoading: true,
+      })
 
       try {
-        const sessions = await listSessionsFromApi()
-        const activeDates = getActiveDates(sessions)
-        const currentMonthActiveDates = activeDates.filter((date) => isDateInMonth(date, currentYear, currentMonth))
+        const calendar = await getSessionCalendarFromApi(targetYear, targetMonth)
+        const activeDates = Array.isArray(calendar.days) ? calendar.days.map((day) => day.date) : []
 
         this.setData({
-          currentYear,
-          currentMonth,
-          activeDayCount: currentMonthActiveDates.length,
-          calendarMonths: [createCalendarMonth(currentYear, currentMonth, currentMonthActiveDates)],
+          currentYear: calendar.year,
+          currentMonth: calendar.month,
+          activeDayCount: calendar.activeDayCount,
+          calendarMonths: [createCalendarMonth(calendar.year, calendar.month, activeDates)],
         })
       } catch (error) {
         wx.showToast({
           title: error instanceof Error ? error.message : '服务暂时不可用',
           icon: 'none',
         })
+      } finally {
+        this.setData({
+          isCalendarLoading: false,
+        })
       }
+    },
+    goPreviousMonth() {
+      if (this.data.isCalendarLoading) {
+        return
+      }
+
+      const previous = getAdjacentMonth(this.data.currentYear, this.data.currentMonth, -1)
+      this.refreshCalendar(previous.year, previous.month)
+    },
+    goNextMonth() {
+      if (this.data.isCalendarLoading) {
+        return
+      }
+
+      const next = getAdjacentMonth(this.data.currentYear, this.data.currentMonth, 1)
+      this.refreshCalendar(next.year, next.month)
     },
     goDaySessions(event: WechatMiniprogram.TouchEvent) {
       const date = event.currentTarget.dataset.date as string | undefined
