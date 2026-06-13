@@ -1,6 +1,7 @@
+import type { HomeRatingTrendItem } from '../../models/home'
 import type { MatchRank, SessionStats, TennisSession, TennisSessionType } from '../../models/session'
 import { requireLoginPage } from '../../services/auth-service'
-import { getLatestSessionFromApi, getSessionStatsFromApi, listSessionsFromApi } from '../../services/session-service'
+import { getHomeSummaryRemote } from '../../services/home-api-service'
 
 interface RatingTrendItem {
   key: string
@@ -21,6 +22,7 @@ interface IndexData {
   ratingTrendText: string
   stats: SessionStats
   monthHoursText: string
+  monthExpenseText: string
   currentYear: number
 }
 
@@ -110,13 +112,13 @@ const getRatingLevel = (rating: number): RatingTrendItem['level'] => {
   return 'low'
 }
 
-const createRatingTrend = (sessions: TennisSession[]): RatingTrendItem[] => {
-  return sessions.slice(0, 5).reverse().map((session) => {
-    const rating = session.rating || 3
-    const [, month = '', day = ''] = session.date.split('-')
+const createRatingTrend = (items: HomeRatingTrendItem[]): RatingTrendItem[] => {
+  return items.slice(0, 5).reverse().map((item) => {
+    const rating = item.rating || 3
+    const [, month = '', day = ''] = item.date.split('-')
 
     return {
-      key: session.id,
+      key: item.id,
       dateText: `${Number(month)}/${Number(day)}`,
       rating,
       height: rating * 22,
@@ -135,6 +137,14 @@ const createRatingTrendText = (trend: RatingTrendItem[]) => {
   return `平均 ${average.toFixed(1)}`
 }
 
+const formatMoneyText = (value: number) => {
+  if (!value) {
+    return '0'
+  }
+
+  return Number.isInteger(value) ? `${value}` : value.toFixed(1)
+}
+
 Component({
   data: {
     latestSession: null,
@@ -145,9 +155,11 @@ Component({
       monthCount: 0,
       monthMinutes: 0,
       monthCost: 0,
+      yearCount: 0,
       totalCount: 0,
     },
     monthHoursText: '0.0',
+    monthExpenseText: '0',
     currentYear: new Date().getFullYear(),
   } as IndexData,
   pageLifetimes: {
@@ -164,10 +176,10 @@ Component({
       const currentYear = new Date().getFullYear()
 
       try {
-        const sessions = await listSessionsFromApi()
-        const stats = await getSessionStatsFromApi()
-        const latestSession = createLatestSessionView(await getLatestSessionFromApi())
-        const ratingTrend = createRatingTrend(sessions)
+        const summary = await getHomeSummaryRemote()
+        const stats = summary.session
+        const latestSession = createLatestSessionView(summary.latestSession)
+        const ratingTrend = createRatingTrend(summary.ratingTrend)
 
         this.setData({
           latestSession,
@@ -176,7 +188,8 @@ Component({
           ratingTrendText: createRatingTrendText(ratingTrend),
           stats,
           monthHoursText: (stats.monthMinutes / 60).toFixed(1),
-          currentYear,
+          monthExpenseText: formatMoneyText(summary.expense.totalCost),
+          currentYear: summary.year || currentYear,
         })
       } catch (error) {
         wx.showToast({

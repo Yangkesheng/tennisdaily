@@ -38,6 +38,7 @@ export interface SessionStats {
   monthCount: number
   monthMinutes: number
   monthCost: number
+  yearCount: number
   totalCount: number
 }
 

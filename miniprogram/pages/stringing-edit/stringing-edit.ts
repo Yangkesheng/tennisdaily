@@ -67,7 +67,7 @@ Component({
     },
     onStringNameInput(event: InputEvent) {
       this.setData({
-        'draft.stringName': event.detail.value.trim(),
+        'draft.stringName': event.detail.value,
       })
     },
     onTensionInput(event: InputEvent) {
@@ -94,7 +94,12 @@ Component({
         return
       }
 
-      if (!this.data.draft.stringName) {
+      const draft = {
+        ...this.data.draft,
+        stringName: this.data.draft.stringName.trim(),
+      }
+
+      if (!draft.stringName) {
         wx.showToast({
           title: '请填写球线',
           icon: 'none',
@@ -111,7 +116,7 @@ Component({
       })
 
       try {
-        await createStringingRecordFromApi(this.data.racketId, this.data.draft)
+        await createStringingRecordFromApi(this.data.racketId, draft)
         wx.showToast({
           title: '已记录',
           icon: 'success',
