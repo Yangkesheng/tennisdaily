@@ -3,19 +3,24 @@
   <view class="panel-handle"></view>
   <view class="calendar-head">
     <view class="calendar-tabs">
-      <text class="active-tab">日历</text>
-      <text class="muted-tab">统计</text>
+      <text class="{{activeTab === 'calendar' ? 'active-tab' : 'muted-tab'}}" bindtap="showCalendarTab">日历</text>
+      <text class="{{activeTab === 'stats' ? 'active-tab' : 'muted-tab'}}" bindtap="showStatsTab">统计</text>
     </view>
   </view>
-  <view class="calendar-summary">
-    <text class="active-count">{{activeDayCount}} 天</text>
+  <view class="calendar-summary {{activeTab === 'stats' ? 'stats-summary' : ''}}">
+    <text wx:if="{{activeTab === 'calendar'}}" class="active-count">{{activeDayCount}} 个打球日</text>
     <view class="month-switcher">
       <view class="month-nav" hover-class="month-nav-active" bindtap="goPreviousMonth">‹</view>
-      <text class="month-current">{{currentYear}}年{{currentMonth}}月</text>
-      <view class="month-nav" hover-class="month-nav-active" bindtap="goNextMonth">›</view>
+      <text class="month-current {{activeTab === 'stats' && statsPeriod === 'year' ? 'year-only' : ''}}">{{activeTab === 'stats' && statsPeriod === 'year' ? currentYear + '年' : currentYear + '年' + currentMonth + '月'}}</text>
+      <view class="month-nav {{canGoNext ? '' : 'disabled'}}" hover-class="month-nav-active" bindtap="goNextMonth">›</view>
+    </view>
+    <view wx:if="{{canJumpCurrent}}" class="jump-current" bindtap="jumpToCurrentPeriod">{{activeTab === 'stats' && statsPeriod === 'year' ? '跳到本年' : '跳到本月'}}</view>
+    <view wx:if="{{activeTab === 'stats'}}" class="period-switcher">
+      <view class="period-option {{statsPeriod === 'month' ? 'active' : ''}}" bindtap="selectMonthStats">月</view>
+      <view class="period-option {{statsPeriod === 'year' ? 'active' : ''}}" bindtap="selectYearStats">年</view>
     </view>
   </view>
-  <view class="months">
+  <view wx:if="{{activeTab === 'calendar'}}" class="months">
     <view wx:for="{{calendarMonths}}" wx:key="key" wx:for-item="month" class="month-card">
       <view class="weekday-row">
         <text class="weekday-cell">一</text>
@@ -37,6 +42,103 @@
         >
           <text class="day-label">{{day.label}}</text>
           <text wx:if="{{day.marked}}" class="tennis-mark">🎾</text>
+        </view>
+      </view>
+    </view>
+  </view>
+
+  <view wx:else class="stats-panel">
+    <view class="stats-card overview-card">
+      <view class="stats-card-header">
+        <text class="stats-card-title">概览</text>
+        <text class="stats-card-subtitle">{{isStatsLoading ? '加载中' : statsView.rangeText}}</text>
+      </view>
+      <view class="overview-grid">
+        <view class="overview-item">
+          <text class="overview-value">{{statsView.sessionCount}}</text>
+          <text class="overview-label">打球次数</text>
+        </view>
+        <view class="overview-item">
+          <text class="overview-value">{{statsView.totalHoursText}}</text>
+          <text class="overview-label">累计小时</text>
+        </view>
+        <view class="overview-item">
+          <text class="overview-value">{{statsView.activeDayCount}}</text>
+          <text class="overview-label">打球日</text>
+        </view>
+        <view class="overview-item">
+          <text class="overview-value">{{statsView.averageRatingText}}</text>
+          <text class="overview-label">平均手感</text>
+        </view>
+      </view>
+    </view>
+
+    <view class="stats-card">
+      <view class="stats-card-header">
+        <text class="stats-card-title">打球频率</text>
+        <text class="stats-card-subtitle">{{statsPeriod === 'year' ? '按月' : '按周'}}</text>
+      </view>
+      <view wx:if="{{statsView.frequency.length}}" class="bar-chart">
+        <view wx:for="{{statsView.frequency}}" wx:key="key" class="bar-column">
+          <text class="bar-number">{{item.value}}</text>
+          <view class="bar-track-vertical">
+            <view class="bar-fill frequency" style="height: {{item.height}}rpx;"></view>
+          </view>
+          <text class="bar-label">{{item.label}}</text>
+        </view>
+      </view>
+      <view wx:else class="stats-empty">暂无频率数据</view>
+    </view>
+
+    <view class="stats-card">
+      <view class="stats-card-header">
+        <text class="stats-card-title">手感趋势</text>
+        <text class="stats-card-subtitle">平均 {{statsView.averageRatingText}}</text>
+      </view>
+      <view wx:if="{{statsView.ratingTrend.length}}" class="bar-chart">
+        <view wx:for="{{statsView.ratingTrend}}" wx:key="key" class="bar-column">
+          <text class="bar-number">{{item.rating}}</text>
+          <view class="bar-track-vertical">
+            <view class="bar-fill rating" style="height: {{item.height}}rpx;"></view>
+          </view>
+          <text class="bar-label">{{item.label}}</text>
+        </view>
+      </view>
+      <view wx:else class="stats-empty">记录几场后，这里会展示手感变化</view>
+    </view>
+
+    <view class="stats-card">
+      <view class="stats-card-header">
+        <text class="stats-card-title">消费占比</text>
+        <text class="stats-card-subtitle">¥{{statsView.totalCostText}}</text>
+      </view>
+      <view class="breakdown-list">
+        <view wx:for="{{statsView.expenseBreakdown}}" wx:key="key" class="breakdown-row">
+          <view class="breakdown-topline">
+            <text>{{item.label}}</text>
+            <text>¥{{item.valueText}} · {{item.percent}}%</text>
+          </view>
+          <view class="breakdown-track">
+            <view class="breakdown-fill expense" style="width: {{item.width}}%;"></view>
+          </view>
+        </view>
+      </view>
+    </view>
+
+    <view class="stats-card">
+      <view class="stats-card-header">
+        <text class="stats-card-title">训练比赛占比</text>
+        <text class="stats-card-subtitle">{{statsView.sessionCount}} 次</text>
+      </view>
+      <view class="breakdown-list">
+        <view wx:for="{{statsView.sessionTypeBreakdown}}" wx:key="key" class="breakdown-row">
+          <view class="breakdown-topline">
+            <text>{{item.label}}</text>
+            <text>{{item.valueText}} 次 · {{item.percent}}%</text>
+          </view>
+          <view class="breakdown-track">
+            <view class="breakdown-fill type" style="width: {{item.width}}%;"></view>
+          </view>
         </view>
       </view>
     </view>
