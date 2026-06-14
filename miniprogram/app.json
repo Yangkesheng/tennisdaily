@@ -18,6 +18,7 @@
     "navigationStyle": "custom"
   },
   "style": "v2",
+  "lazyCodeLoading": "requiredComponents",
   "sitemapLocation": "sitemap.json",
   "tabBar": {
     "color": "#a8aab0",
