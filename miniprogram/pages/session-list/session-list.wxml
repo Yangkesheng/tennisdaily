@@ -19,7 +19,7 @@
         <view class="session-topline">
           <view class="session-title-row">
             <text class="session-date">{{item.date}}</text>
-            <text class="session-type">{{item.typeLabel}}</text>
+            <text class="session-type type-{{item.typeClass}}">{{item.typeLabel}}</text>
           </view>
           <text class="session-duration">{{item.durationMinutes}} 分钟</text>
         </view>
@@ -35,7 +35,19 @@
     </view>
   </view>
 
-  <view wx:else class="empty-panel">
-    <text>0</text>
+  <view class="pagination-card">
+    <view class="pagination-line">
+      <view class="page-nav">
+        <text class="page-arrow {{page <= 1 ? 'disabled' : ''}}" bindtap="goPrevPage">‹</text>
+        <text class="page-current">第 {{page}}/{{totalPages || 1}} 页</text>
+        <text class="page-arrow {{!hasMore ? 'disabled' : ''}}" bindtap="goNextPage">›</text>
+      </view>
+    </view>
+    <view class="pagination-line">
+      <text class="page-total">共 {{total}} 条</text>
+      <text class="page-size-text">每页</text>
+      <input class="page-size-input" value="{{pageSizeInput}}" type="number" bindinput="onPageSizeInput" bindconfirm="applyPageSize" bindblur="applyPageSize" />
+      <text class="page-size-text">条</text>
+    </view>
   </view>
 </scroll-view>

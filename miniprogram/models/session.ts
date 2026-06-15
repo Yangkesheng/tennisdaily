@@ -34,6 +34,21 @@ export interface SessionDraft {
   note: string
 }
 
+export interface SessionPageResult {
+  list: TennisSession[]
+  total: number
+  page: number
+  pageSize: number
+  totalPages: number
+  hasMore: boolean
+}
+
+export interface SessionPageParams {
+  page: number
+  pageSize: number
+  date?: string
+}
+
 export interface SessionStats {
   monthCount: number
   monthMinutes: number

@@ -10,6 +10,7 @@ export interface ApiSession {
   matchRank: number
   matchRankLabel: string
   courtName: string
+  partner?: string
   cost: number
   racketId?: number
   racketName: string
@@ -26,6 +27,7 @@ export interface ApiSessionPayload {
   type: number
   matchRank: number
   courtName: string
+  partner: string
   cost: number
   racketId: number
   racketName: string
@@ -98,7 +100,7 @@ export const mapApiSessionToLocal = (session: ApiSession): TennisSession => {
     durationMinutes: session.durationMinutes,
     rating: session.rating,
     courtName: session.courtName || '',
-    partner: '',
+    partner: session.partner || '',
     type: apiTypeToLocal(session.type),
     matchRank: apiRankToLocal(session.matchRank),
     cost: session.cost || 0,
@@ -122,6 +124,7 @@ export const mapLocalDraftToApiPayload = (draft: SessionDraft): ApiSessionPayloa
     type,
     matchRank: isMatchType ? localRankToApi[draft.matchRank] : 0,
     courtName: draft.courtName,
+    partner: draft.partner,
     cost: draft.cost,
     racketId: draft.racketId,
     racketName: draft.racketName,

@@ -31,6 +31,79 @@
   line-height: 76rpx;
 }
 
+.pagination-card {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 6rpx;
+  margin-top: 22rpx;
+  margin-bottom: 40rpx;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+.pagination-line {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 14rpx;
+  max-width: 100%;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+.page-nav {
+  display: flex;
+  align-items: center;
+  gap: 24rpx;
+  white-space: nowrap;
+}
+
+.page-current {
+  color: #17251c;
+  font-size: 32rpx;
+  font-weight: 800;
+  line-height: 54rpx;
+  white-space: nowrap;
+}
+
+.page-total,
+.page-size-text {
+  color: #607166;
+  font-size: 30rpx;
+  font-weight: 700;
+  line-height: 54rpx;
+  white-space: nowrap;
+}
+
+.page-size-input {
+  width: 78rpx;
+  height: 54rpx;
+  padding: 0 6rpx;
+  border-radius: 10rpx;
+  background: rgba(255, 255, 255, 0.42);
+  color: #17251c;
+  font-size: 30rpx;
+  font-weight: 800;
+  text-align: center;
+  box-sizing: border-box;
+}
+
+.page-arrow {
+  min-width: 52rpx;
+  padding: 0 10rpx;
+  color: #3778db;
+  font-size: 44rpx;
+  font-weight: 800;
+  line-height: 58rpx;
+  text-align: center;
+  box-sizing: border-box;
+}
+
+.page-arrow.disabled {
+  color: rgba(96, 113, 102, 0.36);
+}
+
 .session-list {
   display: flex;
   flex-direction: column;
@@ -102,10 +175,38 @@
 .session-type {
   padding: 6rpx 14rpx;
   border-radius: 999rpx;
-  background: #e8f4ee;
-  color: #1f7a4d;
   font-size: 22rpx;
-  font-weight: 700;
+  font-weight: 800;
+}
+
+.session-type.type-training {
+  background: rgba(54, 179, 126, 0.14);
+  color: #1f8f61;
+}
+
+.session-type.type-singles {
+  background: rgba(55, 120, 219, 0.14);
+  color: #2f6fcb;
+}
+
+.session-type.type-doubles {
+  background: rgba(147, 92, 246, 0.14);
+  color: #7c4fd6;
+}
+
+.session-type.type-singles-match {
+  background: rgba(245, 158, 11, 0.16);
+  color: #b96f00;
+}
+
+.session-type.type-doubles-match {
+  background: rgba(232, 93, 117, 0.14);
+  color: #cc4964;
+}
+
+.session-type.type-default {
+  background: rgba(96, 113, 102, 0.12);
+  color: #607166;
 }
 
 .session-duration {

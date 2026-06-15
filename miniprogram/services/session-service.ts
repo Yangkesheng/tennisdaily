@@ -1,10 +1,11 @@
-import type { SessionCalendar, SessionDraft, SessionStats, TennisSession } from '../models/session'
+import type { SessionCalendar, SessionDraft, SessionPageParams, SessionPageResult, SessionStats, TennisSession } from '../models/session'
 import {
   deleteSessionRemote,
   getLatestSessionRemote,
   getSessionCalendarRemote,
   getSessionByIdRemote,
   getSessionStatsRemote,
+  listSessionsPageRemote,
   listSessionsRemote,
   saveSessionRemote,
   updateSessionRemote,
@@ -34,6 +35,14 @@ export const createDefaultSessionDraft = (): SessionDraft => {
     shoeName: '',
     note: '',
   }
+}
+
+export const listSessionsPageFromApi = async (params: SessionPageParams): Promise<SessionPageResult> => {
+  return listSessionsPageRemote(params)
+}
+
+export const listSessionsByDatePageFromApi = async (dateText: string, page: number, pageSize: number): Promise<SessionPageResult> => {
+  return listSessionsPageRemote({ date: dateText, page, pageSize })
 }
 
 export const listSessionsFromApi = async (): Promise<TennisSession[]> => {

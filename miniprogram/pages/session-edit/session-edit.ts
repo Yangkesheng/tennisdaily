@@ -21,6 +21,7 @@ interface SessionEditData {
   titleText: string
   selectableRackets: Racket[]
   racketNames: string[]
+  racketPickerIndex: number
 }
 
 interface InputEvent {
@@ -39,6 +40,22 @@ const getRacketDisplayName = (racket: Racket) => {
   return racket.name || racket.model || racket.brand || '未命名球拍'
 }
 
+const getRacketPickerIndex = (rackets: Racket[], racketId: number) => {
+  return rackets.findIndex((racket) => racket.id === racketId)
+}
+
+const getRacketPickerNames = (rackets: Racket[], selectedRacketId: number) => {
+  return rackets.map((racket) => {
+    const name = getRacketDisplayName(racket)
+
+    return racket.id === selectedRacketId ? `${name} ✓` : name
+  })
+}
+
+const getPrimaryRacket = (rackets: Racket[]) => {
+  return rackets.find((racket) => racket.status === 1) || null
+}
+
 Page({
   data: {
     draft: createDefaultSessionDraft(),
@@ -53,6 +70,7 @@ Page({
     titleText: '记录',
     selectableRackets: [],
     racketNames: [],
+    racketPickerIndex: -1,
   } as SessionEditData,
   onLoad(options: { id?: string; date?: string }) {
     this.loadRouteSession(options)
@@ -66,9 +84,18 @@ Page({
   async loadSelectableRackets() {
     try {
       const rackets = await listMyRacketsFromApi()
+      const shouldUsePrimaryRacket = !this.data.sessionId && !this.data.draft.racketId
+      const primaryRacket = shouldUsePrimaryRacket ? getPrimaryRacket(rackets) : null
+      const selectedRacketId = primaryRacket ? primaryRacket.id : this.data.draft.racketId
+      const selectedRacketName = primaryRacket ? getRacketDisplayName(primaryRacket) : this.data.draft.racketName
+      const racketPickerIndex = getRacketPickerIndex(rackets, selectedRacketId)
+
       this.setData({
         selectableRackets: rackets,
-        racketNames: rackets.map(getRacketDisplayName),
+        racketNames: getRacketPickerNames(rackets, selectedRacketId),
+        racketPickerIndex,
+        'draft.racketId': selectedRacketId,
+        'draft.racketName': selectedRacketName,
       })
     } catch (error) {
       wx.showToast({
@@ -257,6 +284,8 @@ Page({
       this.setData({
         'draft.racketId': racket.id,
         'draft.racketName': getRacketDisplayName(racket),
+        racketNames: getRacketPickerNames(this.data.selectableRackets, racket.id),
+        racketPickerIndex: index,
       })
     },
     onShoeInput(event: InputEvent) {

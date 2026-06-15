@@ -81,7 +81,7 @@
       <text>花费</text>
       <input value="{{costInput}}" type="digit" placeholder="0" bindinput="onCostInput" />
     </view>
-    <picker range="{{racketNames}}" bindchange="onRacketChange">
+    <picker range="{{racketNames}}" value="{{racketPickerIndex}}" bindchange="onRacketChange">
       <view class="input-card">
         <text>球拍</text>
         <view class="picker-inline">{{draft.racketName || '选择球拍'}}</view>
@@ -90,6 +90,10 @@
     <view class="input-card">
       <text>球鞋</text>
       <input value="{{draft.shoeName}}" placeholder="球鞋" bindinput="onShoeInput" />
+    </view>
+    <view class="input-card">
+      <text>搭档</text>
+      <input value="{{draft.partner}}" placeholder="搭档姓名，可不填" bindinput="onPartnerInput" />
     </view>
   </view>
 

@@ -1,13 +1,13 @@
-import type { MatchRank, TennisSession, TennisSessionType } from '../../models/session'
+import type { MatchRank, SessionPageResult, TennisSession, TennisSessionType } from '../../models/session'
 import {
   deleteSessionFromApi,
-  listRecentSessionsFromApi,
-  listSessionsByDateFromApi,
-  listSessionsFromApi,
+  listSessionsByDatePageFromApi,
+  listSessionsPageFromApi,
 } from '../../services/session-service'
 
 interface SessionListItem extends TennisSession {
   typeLabel: string
+  typeClass: string
   offsetX: number
   deleteOpacity: number
 }
@@ -17,6 +17,13 @@ interface SessionListData {
   titleText: string
   routeDateFilter: string
   routeRangeFilter: string
+  page: number
+  pageSize: number
+  pageSizeInput: string
+  total: number
+  totalPages: number
+  hasMore: boolean
+  paginationText: string
   swipeStartX: number
   swipeStartOffset: number
   swipingSessionId: string
@@ -83,13 +90,49 @@ const getDeleteWidthPx = () => {
   return Math.round((windowWidth * 150) / 750)
 }
 
+const getSessionTypeClass = (type: TennisSessionType) => {
+  switch (type) {
+    case 'training':
+      return 'training'
+    case 'singles':
+      return 'singles'
+    case 'doubles':
+      return 'doubles'
+    case 'singlesMatch':
+      return 'singles-match'
+    case 'doublesMatch':
+      return 'doubles-match'
+    default:
+      return 'default'
+  }
+}
+
 const withTypeLabel = (sessions: TennisSession[]): SessionListItem[] => {
   return sessions.map((session) => ({
     ...session,
     typeLabel: getSessionTypeDisplay(session),
+    typeClass: getSessionTypeClass(session.type),
     offsetX: 0,
     deleteOpacity: 0,
   }))
+}
+
+const DEFAULT_PAGE_SIZE = 10
+const MIN_PAGE_SIZE = 1
+const MAX_PAGE_SIZE = 100
+
+const normalizePageSize = (value: string | number) => {
+  const pageSize = Number(value) || DEFAULT_PAGE_SIZE
+
+  return Math.min(MAX_PAGE_SIZE, Math.max(MIN_PAGE_SIZE, Math.floor(pageSize)))
+}
+
+const createPaginationText = (result: SessionPageResult) => {
+  if (!result.total) {
+    return '共 0 条'
+  }
+
+  return `共 ${result.total} 条`
 }
 
 Page({
@@ -98,6 +141,13 @@ Page({
     titleText: '记录',
     routeDateFilter: '',
     routeRangeFilter: '',
+    page: 1,
+    pageSize: DEFAULT_PAGE_SIZE,
+    pageSizeInput: `${DEFAULT_PAGE_SIZE}`,
+    total: 0,
+    totalPages: 0,
+    hasMore: false,
+    paginationText: '共 0 条',
     swipeStartX: 0,
     swipeStartOffset: 0,
     swipingSessionId: '',
@@ -107,6 +157,7 @@ Page({
     this.setData({
       routeDateFilter: options.date || '',
       routeRangeFilter: options.range || '',
+      page: 1,
     })
   },
   onShow() {
@@ -115,18 +166,26 @@ Page({
   async refreshSessions() {
       const dateFilter = this.data.routeDateFilter
       const rangeFilter = this.data.routeRangeFilter
-      const titleText = dateFilter ? dateFilter : rangeFilter === 'recent' ? '近 30 天' : '记录'
+      const titleText = dateFilter ? dateFilter : rangeFilter === 'recent' ? '最近记录' : '记录'
 
       try {
-        const sessions = dateFilter
-          ? await listSessionsByDateFromApi(dateFilter)
-          : rangeFilter === 'recent'
-            ? await listRecentSessionsFromApi(30)
-            : await listSessionsFromApi()
+        const result = dateFilter
+          ? await listSessionsByDatePageFromApi(dateFilter, this.data.page, this.data.pageSize)
+          : await listSessionsPageFromApi({
+            page: this.data.page,
+            pageSize: this.data.pageSize,
+          })
 
         this.setData({
-          sessions: withTypeLabel(sessions),
+          sessions: withTypeLabel(result.list),
           titleText,
+          page: result.page,
+          pageSize: result.pageSize,
+          pageSizeInput: `${result.pageSize}`,
+          total: result.total,
+          totalPages: result.totalPages,
+          hasMore: result.hasMore,
+          paginationText: createPaginationText(result),
         })
       } catch (error) {
         wx.showToast({
@@ -134,6 +193,41 @@ Page({
           icon: 'none',
         })
       }
+    },
+    onPageSizeInput(event: { detail: { value: string } }) {
+      this.setData({
+        pageSizeInput: event.detail.value,
+      })
+    },
+    applyPageSize() {
+      const pageSize = normalizePageSize(this.data.pageSizeInput)
+
+      this.setData({
+        page: 1,
+        pageSize,
+        pageSizeInput: `${pageSize}`,
+      })
+      this.refreshSessions()
+    },
+    goPrevPage() {
+      if (this.data.page <= 1) {
+        return
+      }
+
+      this.setData({
+        page: this.data.page - 1,
+      })
+      this.refreshSessions()
+    },
+    goNextPage() {
+      if (!this.data.hasMore) {
+        return
+      }
+
+      this.setData({
+        page: this.data.page + 1,
+      })
+      this.refreshSessions()
     },
     onSwipeStart(event: WechatMiniprogram.TouchEvent) {
       const id = event.currentTarget.dataset.id as string | undefined

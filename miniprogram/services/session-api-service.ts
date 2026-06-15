@@ -1,10 +1,19 @@
-import type { SessionCalendar, SessionCalendarDay, SessionDraft, SessionStats, TennisSession } from '../models/session'
+import type { SessionCalendar, SessionCalendarDay, SessionDraft, SessionPageParams, SessionPageResult, SessionStats, TennisSession } from '../models/session'
 import { ensureLogin } from './auth-service'
 import { mapApiSessionToLocal, mapLocalDraftToApiPayload, type ApiSession } from './session-api-mapper'
 import { request } from './request'
 
 interface DeleteSessionResponse {
   deleted: boolean
+}
+
+interface ApiSessionPageResult {
+  list?: ApiSession[] | null
+  total?: number | null
+  page?: number | null
+  pageSize?: number | null
+  totalPages?: number | null
+  hasMore?: boolean | null
 }
 
 interface ApiSessionCalendar {
@@ -25,6 +34,19 @@ const normalizeSessionCalendar = (calendar: ApiSessionCalendar | null, year: num
   }
 }
 
+const normalizeSessionPage = (result: ApiSessionPageResult | null, params: SessionPageParams): SessionPageResult => {
+  const list = Array.isArray(result?.list) ? result.list : []
+
+  return {
+    list: list.map(mapApiSessionToLocal),
+    total: result?.total || 0,
+    page: result?.page || params.page,
+    pageSize: result?.pageSize || params.pageSize,
+    totalPages: result?.totalPages || 0,
+    hasMore: !!result?.hasMore,
+  }
+}
+
 export const listSessionsRemote = async (dateText?: string): Promise<TennisSession[]> => {
   await ensureLogin()
   const query = dateText ? `?date=${encodeURIComponent(dateText)}` : ''
@@ -33,6 +55,24 @@ export const listSessionsRemote = async (dateText?: string): Promise<TennisSessi
   })
 
   return sessions.map(mapApiSessionToLocal)
+}
+
+export const listSessionsPageRemote = async (params: SessionPageParams): Promise<SessionPageResult> => {
+  await ensureLogin()
+  const queryItems = [
+    `page=${params.page}`,
+    `pageSize=${params.pageSize}`,
+  ]
+
+  if (params.date) {
+    queryItems.push(`date=${encodeURIComponent(params.date)}`)
+  }
+
+  const result = await request<ApiSessionPageResult>({
+    url: `/api/sessions?${queryItems.join('&')}`,
+  })
+
+  return normalizeSessionPage(result, params)
 }
 
 export const getSessionByIdRemote = async (id: string): Promise<TennisSession | null> => {
