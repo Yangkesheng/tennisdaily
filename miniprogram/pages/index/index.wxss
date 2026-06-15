@@ -120,6 +120,30 @@
   white-space: nowrap;
 }
 
+.stat-label-row {
+  display: flex;
+  align-items: center;
+  gap: 8rpx;
+  max-width: 100%;
+  margin-top: 6rpx;
+}
+
+.stat-label-row .stat-label {
+  margin-top: 0;
+}
+
+.expense-eye {
+  flex: none;
+  color: rgba(13, 23, 40, 0.48);
+  font-size: 22rpx;
+  font-weight: 800;
+  line-height: 1;
+}
+
+.expense-eye:active {
+  opacity: 0.62;
+}
+
 .trend-card,
 .recent-card {
   margin-top: 24rpx;

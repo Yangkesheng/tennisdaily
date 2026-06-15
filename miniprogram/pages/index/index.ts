@@ -23,6 +23,7 @@ interface IndexData {
   stats: SessionStats
   monthHoursText: string
   monthExpenseText: string
+  isExpenseVisible: boolean
   currentYear: number
 }
 
@@ -160,6 +161,7 @@ Component({
     },
     monthHoursText: '0.0',
     monthExpenseText: '0',
+    isExpenseVisible: true,
     currentYear: new Date().getFullYear(),
   } as IndexData,
   pageLifetimes: {
@@ -197,6 +199,11 @@ Component({
           icon: 'none',
         })
       }
+    },
+    toggleExpenseVisible() {
+      this.setData({
+        isExpenseVisible: !this.data.isExpenseVisible,
+      })
     },
     goCreateSession() {
       wx.navigateTo({

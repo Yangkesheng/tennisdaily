@@ -32,10 +32,13 @@
       <view class="stat-icon green"></view>
       <view class="stat-copy">
         <view class="stat-value-wrap">
-          <text class="stat-value">{{monthExpenseText}}</text>
+          <text class="stat-value">{{isExpenseVisible ? monthExpenseText : '****'}}</text>
           <text class="stat-unit">元</text>
         </view>
-        <text class="stat-label">本月花费</text>
+        <view class="stat-label-row">
+          <text class="stat-label">本月花费</text>
+          <text class="expense-eye" catchtap="toggleExpenseVisible">{{isExpenseVisible ? '◉' : '◎'}}</text>
+        </view>
       </view>
     </view>
     <view class="stat-cell">
