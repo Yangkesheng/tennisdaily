@@ -214,8 +214,10 @@
 }
 
 .day-cell.today {
-  background: #3f82e8;
-  color: #fff;
+  border: 4rpx solid #3f82e8;
+  background: transparent;
+  color: #3f82e8;
+  line-height: 84rpx;
 }
 
 .day-cell:active {
