@@ -8,7 +8,7 @@
     </view>
   </view>
   <view class="calendar-summary {{activeTab === 'stats' ? 'stats-summary' : ''}}">
-    <text wx:if="{{activeTab === 'calendar'}}" class="active-count">{{activeDayCount}} 个打球日</text>
+    <text wx:if="{{activeTab === 'calendar'}}" class="active-count">{{activeDayCount}} 个网球日</text>
     <view class="month-switcher">
       <view class="month-nav" hover-class="month-nav-active" bindtap="goPreviousMonth">‹</view>
       <text class="month-current {{activeTab === 'stats' && statsPeriod === 'year' ? 'year-only' : ''}}">{{activeTab === 'stats' && statsPeriod === 'year' ? currentYear + '年' : currentYear + '年' + currentMonth + '月'}}</text>
