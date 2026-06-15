@@ -10,6 +10,7 @@ import {
 
 interface SessionEditData {
   draft: SessionDraft
+  costInput: string
   customDuration: string
   isCustomDuration: boolean
   isMatchType: boolean
@@ -41,6 +42,7 @@ const getRacketDisplayName = (racket: Racket) => {
 Page({
   data: {
     draft: createDefaultSessionDraft(),
+    costInput: '',
     customDuration: '',
     isCustomDuration: false,
     isMatchType: false,
@@ -98,6 +100,7 @@ Page({
           ...draft,
           date: options.date,
         },
+        costInput: '',
         customDuration: '',
         isCustomDuration: false,
         isMatchType: draft.type === 'singlesMatch' || draft.type === 'doublesMatch',
@@ -115,6 +118,7 @@ Page({
 
       this.setData({
         draft,
+        costInput: '',
         customDuration: '',
         isCustomDuration: false,
         isMatchType: draft.type === 'singlesMatch' || draft.type === 'doublesMatch',
@@ -159,6 +163,7 @@ Page({
           note: session.note || '',
         },
         ratingText: this.data.ratingTexts[(session.rating || 3) - 1],
+        costInput: session.cost ? `${session.cost}` : '',
         customDuration: session.durationMinutes === 60 || session.durationMinutes === 120 ? '' : `${session.durationMinutes}`,
         isCustomDuration: session.durationMinutes !== 60 && session.durationMinutes !== 120,
         isMatchType: session.type === 'singlesMatch' || session.type === 'doublesMatch',
@@ -237,6 +242,7 @@ Page({
     },
     onCostInput(event: InputEvent) {
       this.setData({
+        costInput: event.detail.value,
         'draft.cost': Number(event.detail.value) || 0,
       })
     },

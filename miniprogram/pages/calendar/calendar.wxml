@@ -37,7 +37,8 @@
           wx:key="key"
           wx:for-item="day"
           bindtap="goDaySessions"
-          data-date="{{day.marked ? day.key : ''}}"
+          data-date="{{day.blank ? '' : day.key}}"
+          data-marked="{{day.marked}}"
           class="day-cell {{day.blank ? 'blank' : ''}} {{day.marked ? 'marked' : ''}} {{day.today ? 'today' : ''}}"
         >
           <text class="day-label">{{day.label}}</text>

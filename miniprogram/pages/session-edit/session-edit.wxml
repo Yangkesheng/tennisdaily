@@ -79,7 +79,7 @@
     </view>
     <view class="input-card">
       <text>花费</text>
-      <input value="{{draft.cost}}" type="number" placeholder="0" bindinput="onCostInput" />
+      <input value="{{costInput}}" type="digit" placeholder="0" bindinput="onCostInput" />
     </view>
     <picker range="{{racketNames}}" bindchange="onRacketChange">
       <view class="input-card">

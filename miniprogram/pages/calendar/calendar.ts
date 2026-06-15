@@ -403,13 +403,14 @@ Component({
     },
     goDaySessions(event: WechatMiniprogram.TouchEvent) {
       const date = event.currentTarget.dataset.date as string | undefined
+      const marked = event.currentTarget.dataset.marked === true || event.currentTarget.dataset.marked === 'true'
 
       if (!date) {
         return
       }
 
       wx.navigateTo({
-        url: `/pages/session-list/session-list?date=${date}`,
+        url: marked ? `/pages/session-list/session-list?date=${date}` : `/pages/session-edit/session-edit?date=${date}`,
       })
     },
   },
