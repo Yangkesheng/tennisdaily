@@ -69,6 +69,14 @@
   font-weight: 800;
 }
 
+.calendar-toolbar {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16rpx;
+}
+
 .calendar-summary.stats-summary {
   flex-direction: row;
   align-items: center;
@@ -95,8 +103,11 @@
 }
 
 .month-current {
+  display: flex;
   min-width: 0;
-  color: #7b808a;
+  padding: 0 8rpx;
+  align-items: center;
+  border-radius: 12rpx;
   font-size: 26rpx;
   font-weight: 800;
   line-height: 48rpx;
@@ -104,9 +115,21 @@
   white-space: nowrap;
 }
 
+.month-current:active {
+  background: #eef2f8;
+  opacity: 0.72;
+}
+
+.date-number {
+  color: #3f82e8;
+}
+
+.date-unit {
+  color: #7b808a;
+}
+
 .month-current.year-only {
   min-width: 0;
-  color: #7b808a;
   font-size: 26rpx;
   font-weight: 800;
   line-height: 48rpx;
@@ -141,7 +164,14 @@
 }
 
 .months {
-  display: block;
+  display: flex;
+  flex-direction: row;
+  flex-wrap: wrap;
+  gap: 0;
+}
+
+.months.year-months {
+  justify-content: space-between;
 }
 
 .month-card {
@@ -150,10 +180,28 @@
   margin-bottom: 70rpx;
 }
 
+.year-months .month-card {
+  width: 48%;
+  margin-bottom: 34rpx;
+}
+
+.month-title {
+  display: block;
+  margin-bottom: 12rpx;
+  color: #05070c;
+  font-size: 28rpx;
+  font-weight: 800;
+  line-height: 40rpx;
+}
+
 .weekday-row {
   display: flex;
   flex-direction: row;
   margin-bottom: 22rpx;
+}
+
+.year-months .weekday-row {
+  margin-bottom: 10rpx;
 }
 
 .weekday-cell {
@@ -164,6 +212,11 @@
   line-height: 44rpx;
   text-align: center;
   box-sizing: border-box;
+}
+
+.year-months .weekday-cell {
+  font-size: 20rpx;
+  line-height: 30rpx;
 }
 
 .month-days {
@@ -184,6 +237,14 @@
   line-height: 92rpx;
   text-align: center;
   box-sizing: border-box;
+}
+
+.year-months .day-cell {
+  height: 46rpx;
+  margin-bottom: 8rpx;
+  border-radius: 14rpx;
+  font-size: 22rpx;
+  line-height: 46rpx;
 }
 
 .day-cell.blank {
@@ -209,6 +270,10 @@
   pointer-events: none;
 }
 
+.year-months .tennis-mark {
+  font-size: 30rpx;
+}
+
 .day-cell.marked {
   color: #05070c;
 }
@@ -218,6 +283,11 @@
   background: transparent;
   color: #3f82e8;
   line-height: 84rpx;
+}
+
+.year-months .day-cell.today {
+  border-width: 2rpx;
+  line-height: 42rpx;
 }
 
 .day-cell:active {
@@ -233,12 +303,17 @@
 }
 
 .jump-current {
+  position: absolute;
+  left: 50%;
+  top: 0;
+  z-index: 1;
   flex: none;
   color: #3f82e8;
   font-size: 24rpx;
   font-weight: 800;
   line-height: 48rpx;
   white-space: nowrap;
+  transform: translateX(-50%);
 }
 
 .jump-current:active {
@@ -254,6 +329,10 @@
   border-radius: 999rpx;
   background: #eef2f8;
   box-sizing: border-box;
+}
+
+.calendar-toolbar .period-switcher {
+  margin-left: auto;
 }
 
 .period-option {

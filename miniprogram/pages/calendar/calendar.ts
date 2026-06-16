@@ -1,7 +1,13 @@
 import type { StatsBreakdownItem, StatsChartsResult, StatsPeriod } from '../../models/stats'
 import { requireLoginPage } from '../../services/auth-service'
-import { getSessionCalendarFromApi, getTodayText } from '../../services/session-service'
+import { getSessionCalendarFromApi, getSessionYearCalendarFromApi, getTodayText } from '../../services/session-service'
 import { getStatsChartsFromApi } from '../../services/stats-api-service'
+
+interface PickerChangeEvent {
+  detail: {
+    value: string
+  }
+}
 
 interface CalendarDay {
   key: string
@@ -52,9 +58,14 @@ interface StatsView {
 
 interface CalendarData {
   activeTab: 'calendar' | 'stats'
+  calendarPeriod: StatsPeriod
   statsPeriod: StatsPeriod
   currentYear: number
   currentMonth: number
+  yearOptions: string[]
+  yearPickerIndex: number
+  monthOptions: string[]
+  monthPickerIndex: number
   activeDayCount: number
   calendarMonths: CalendarMonth[]
   statsView: StatsView
@@ -62,6 +73,32 @@ interface CalendarData {
   isStatsLoading: boolean
   canGoNext: boolean
   canJumpCurrent: boolean
+}
+
+const createYearOptions = () => {
+  const currentYear = new Date().getFullYear()
+  const startYear = 2000
+  const years: string[] = []
+
+  for (let year = currentYear; year >= startYear; year -= 1) {
+    years.push(`${year}`)
+  }
+
+  return years
+}
+
+const getYearPickerIndex = (yearOptions: string[], year: number) => {
+  const index = yearOptions.findIndex((item) => Number(item) === year)
+
+  return index >= 0 ? index : 0
+}
+
+const createMonthOptions = () => {
+  return Array.from({ length: 12 }, (_, index) => `${index + 1}`)
+}
+
+const getMonthPickerIndex = (month: number) => {
+  return Math.max(0, Math.min(11, month - 1))
 }
 
 const emptyStatsView: StatsView = {
@@ -126,6 +163,14 @@ const getAdjacentMonth = (year: number, month: number, offset: number) => {
     year: date.getFullYear(),
     month: date.getMonth() + 1,
   }
+}
+
+const createCalendarMonths = (year: number, month: number, period: StatsPeriod, activeDates: string[]) => {
+  if (period === 'year') {
+    return Array.from({ length: 12 }, (_, index) => createCalendarMonth(year, index + 1, activeDates))
+  }
+
+  return [createCalendarMonth(year, month, activeDates)]
 }
 
 const formatMoneyText = (value: number) => {
@@ -198,36 +243,48 @@ const createStatsView = (stats: StatsChartsResult): StatsView => {
   }
 }
 
-const getCanGoNext = (activeTab: CalendarData['activeTab'], statsPeriod: StatsPeriod, year: number, month: number) => {
+const getCanGoNext = (activeTab: CalendarData['activeTab'], calendarPeriod: StatsPeriod, statsPeriod: StatsPeriod, year: number, month: number) => {
   const now = new Date()
   const currentYear = now.getFullYear()
   const currentMonth = now.getMonth() + 1
 
-  if (activeTab === 'stats' && statsPeriod === 'year') {
+  if ((activeTab === 'calendar' && calendarPeriod === 'year') || (activeTab === 'stats' && statsPeriod === 'year')) {
     return year < currentYear
   }
 
   return year < currentYear || (year === currentYear && month < currentMonth)
 }
 
-const getCanJumpCurrent = (activeTab: CalendarData['activeTab'], statsPeriod: StatsPeriod, year: number, month: number) => {
+const getCanJumpCurrent = (activeTab: CalendarData['activeTab'], calendarPeriod: StatsPeriod, statsPeriod: StatsPeriod, year: number, month: number) => {
   const now = new Date()
   const currentYear = now.getFullYear()
   const currentMonth = now.getMonth() + 1
 
-  if (activeTab === 'stats' && statsPeriod === 'year') {
+  if ((activeTab === 'calendar' && calendarPeriod === 'year') || (activeTab === 'stats' && statsPeriod === 'year')) {
     return year !== currentYear
   }
 
   return year !== currentYear || month !== currentMonth
 }
 
+let calendarRequestSeq = 0
+let calendarPeriodState: StatsPeriod = 'month'
+const initialYearOptions = createYearOptions()
+const initialYear = new Date().getFullYear()
+const initialMonth = new Date().getMonth() + 1
+const monthOptions = createMonthOptions()
+
 Component({
   data: {
     activeTab: 'calendar',
+    calendarPeriod: 'month',
     statsPeriod: 'month',
-    currentYear: new Date().getFullYear(),
-    currentMonth: new Date().getMonth() + 1,
+    currentYear: initialYear,
+    currentMonth: initialMonth,
+    yearOptions: initialYearOptions,
+    yearPickerIndex: getYearPickerIndex(initialYearOptions, initialYear),
+    monthOptions,
+    monthPickerIndex: getMonthPickerIndex(initialMonth),
     activeDayCount: 0,
     calendarMonths: [],
     statsView: emptyStatsView,
@@ -238,16 +295,20 @@ Component({
   } as CalendarData,
   pageLifetimes: {
     show() {
-      this.refreshCalendar()
+      this.refreshCalendar(this.data.currentYear, this.data.currentMonth, calendarPeriodState)
     },
   },
   methods: {
-    async refreshCalendar(year?: number, month?: number) {
+    async refreshCalendar(year?: number, month?: number, period?: StatsPeriod) {
       if (requireLoginPage()) {
         return
       }
 
       const now = new Date()
+      const requestSeq = calendarRequestSeq + 1
+      calendarRequestSeq = requestSeq
+      const targetPeriod = period || calendarPeriodState || this.data.calendarPeriod
+      calendarPeriodState = targetPeriod
       const targetYear = year || this.data.currentYear || now.getFullYear()
       const targetMonth = month || this.data.currentMonth || now.getMonth() + 1
 
@@ -256,20 +317,31 @@ Component({
       })
 
       try {
-        const calendar = await getSessionCalendarFromApi(targetYear, targetMonth)
+        const calendar = targetPeriod === 'year'
+          ? await getSessionYearCalendarFromApi(targetYear)
+          : await getSessionCalendarFromApi(targetYear, targetMonth)
+
+        if (requestSeq !== calendarRequestSeq) {
+          return
+        }
+
         const activeDates = Array.isArray(calendar.days) ? calendar.days.map((day) => day.date) : []
+        const nextMonth = targetPeriod === 'year' ? targetMonth : calendar.month
 
         this.setData({
+          calendarPeriod: targetPeriod,
           currentYear: calendar.year,
-          currentMonth: calendar.month,
+          currentMonth: nextMonth,
+          yearPickerIndex: getYearPickerIndex(this.data.yearOptions, calendar.year),
+          monthPickerIndex: getMonthPickerIndex(nextMonth),
           activeDayCount: calendar.activeDayCount,
-          calendarMonths: [createCalendarMonth(calendar.year, calendar.month, activeDates)],
-          canGoNext: getCanGoNext(this.data.activeTab, this.data.statsPeriod, calendar.year, calendar.month),
-          canJumpCurrent: getCanJumpCurrent(this.data.activeTab, this.data.statsPeriod, calendar.year, calendar.month),
+          calendarMonths: createCalendarMonths(calendar.year, nextMonth, targetPeriod, activeDates),
+          canGoNext: getCanGoNext(this.data.activeTab, targetPeriod, this.data.statsPeriod, calendar.year, nextMonth),
+          canJumpCurrent: getCanJumpCurrent(this.data.activeTab, targetPeriod, this.data.statsPeriod, calendar.year, nextMonth),
         })
 
         if (this.data.activeTab === 'stats' && this.data.statsPeriod === 'month') {
-          this.refreshStats('month', calendar.year, calendar.month)
+          this.refreshStats('month', calendar.year, nextMonth)
         }
       } catch (error) {
         wx.showToast({
@@ -277,9 +349,11 @@ Component({
           icon: 'none',
         })
       } finally {
-        this.setData({
-          isCalendarLoading: false,
-        })
+        if (requestSeq === calendarRequestSeq) {
+          this.setData({
+            isCalendarLoading: false,
+          })
+        }
       }
     },
     async refreshStats(period?: StatsPeriod, year?: number, month?: number) {
@@ -301,8 +375,8 @@ Component({
         this.setData({
           statsPeriod: targetPeriod,
           statsView: createStatsView(stats),
-          canGoNext: getCanGoNext(this.data.activeTab, targetPeriod, targetYear, targetMonth),
-          canJumpCurrent: getCanJumpCurrent(this.data.activeTab, targetPeriod, targetYear, targetMonth),
+          canGoNext: getCanGoNext(this.data.activeTab, this.data.calendarPeriod, targetPeriod, targetYear, targetMonth),
+          canJumpCurrent: getCanJumpCurrent(this.data.activeTab, this.data.calendarPeriod, targetPeriod, targetYear, targetMonth),
         })
       } catch (error) {
         wx.showToast({
@@ -318,26 +392,90 @@ Component({
     showCalendarTab() {
       this.setData({
         activeTab: 'calendar',
-        canGoNext: getCanGoNext('calendar', this.data.statsPeriod, this.data.currentYear, this.data.currentMonth),
-        canJumpCurrent: getCanJumpCurrent('calendar', this.data.statsPeriod, this.data.currentYear, this.data.currentMonth),
+        canGoNext: getCanGoNext('calendar', this.data.calendarPeriod, this.data.statsPeriod, this.data.currentYear, this.data.currentMonth),
+        canJumpCurrent: getCanJumpCurrent('calendar', this.data.calendarPeriod, this.data.statsPeriod, this.data.currentYear, this.data.currentMonth),
       })
-      this.refreshCalendar(this.data.currentYear, this.data.currentMonth)
+      this.refreshCalendar(this.data.currentYear, this.data.currentMonth, this.data.calendarPeriod)
     },
     showStatsTab() {
       this.setData({
         activeTab: 'stats',
-        canGoNext: getCanGoNext('stats', this.data.statsPeriod, this.data.currentYear, this.data.currentMonth),
-        canJumpCurrent: getCanJumpCurrent('stats', this.data.statsPeriod, this.data.currentYear, this.data.currentMonth),
+        canGoNext: getCanGoNext('stats', this.data.calendarPeriod, this.data.statsPeriod, this.data.currentYear, this.data.currentMonth),
+        canJumpCurrent: getCanJumpCurrent('stats', this.data.calendarPeriod, this.data.statsPeriod, this.data.currentYear, this.data.currentMonth),
       })
       this.refreshStats(this.data.statsPeriod, this.data.currentYear, this.data.currentMonth)
+    },
+    selectMonthCalendar() {
+      calendarPeriodState = 'month'
+      this.refreshCalendar(this.data.currentYear, this.data.currentMonth, 'month')
+    },
+    selectYearCalendar() {
+      calendarPeriodState = 'year'
+      this.refreshCalendar(this.data.currentYear, this.data.currentMonth, 'year')
+    },
+    onYearChange(event: PickerChangeEvent) {
+      const selectedIndex = Number(event.detail.value)
+      const selectedYear = Number(this.data.yearOptions[selectedIndex])
+
+      if (!selectedYear || this.data.isCalendarLoading || this.data.isStatsLoading) {
+        return
+      }
+
+      if (this.data.activeTab === 'calendar') {
+        this.refreshCalendar(selectedYear, this.data.currentMonth, this.data.calendarPeriod)
+        return
+      }
+
+      this.setData({
+        currentYear: selectedYear,
+        yearPickerIndex: getYearPickerIndex(this.data.yearOptions, selectedYear),
+        canGoNext: getCanGoNext('stats', this.data.calendarPeriod, this.data.statsPeriod, selectedYear, this.data.currentMonth),
+        canJumpCurrent: getCanJumpCurrent('stats', this.data.calendarPeriod, this.data.statsPeriod, selectedYear, this.data.currentMonth),
+      })
+      this.refreshStats(this.data.statsPeriod, selectedYear, this.data.currentMonth)
+    },
+    onMonthChange(event: PickerChangeEvent) {
+      const selectedMonth = Number(this.data.monthOptions[Number(event.detail.value)])
+
+      if (!selectedMonth || this.data.isCalendarLoading || this.data.isStatsLoading) {
+        return
+      }
+
+      const now = new Date()
+      const currentYear = now.getFullYear()
+      const currentMonth = now.getMonth() + 1
+
+      if (this.data.currentYear === currentYear && selectedMonth > currentMonth) {
+        wx.showToast({
+          title: '不能选择未来月份',
+          icon: 'none',
+        })
+        this.setData({
+          monthPickerIndex: getMonthPickerIndex(this.data.currentMonth),
+        })
+        return
+      }
+
+      if (this.data.activeTab === 'calendar') {
+        this.refreshCalendar(this.data.currentYear, selectedMonth, this.data.calendarPeriod)
+        return
+      }
+
+      this.setData({
+        currentMonth: selectedMonth,
+        monthPickerIndex: getMonthPickerIndex(selectedMonth),
+        canGoNext: getCanGoNext('stats', this.data.calendarPeriod, this.data.statsPeriod, this.data.currentYear, selectedMonth),
+        canJumpCurrent: getCanJumpCurrent('stats', this.data.calendarPeriod, this.data.statsPeriod, this.data.currentYear, selectedMonth),
+      })
+      this.refreshStats(this.data.statsPeriod, this.data.currentYear, selectedMonth)
     },
     selectMonthStats() {
       this.refreshStats('month', this.data.currentYear, this.data.currentMonth)
     },
     selectYearStats() {
       this.setData({
-        canGoNext: getCanGoNext('stats', 'year', this.data.currentYear, this.data.currentMonth),
-        canJumpCurrent: getCanJumpCurrent('stats', 'year', this.data.currentYear, this.data.currentMonth),
+        canGoNext: getCanGoNext('stats', this.data.calendarPeriod, 'year', this.data.currentYear, this.data.currentMonth),
+        canJumpCurrent: getCanJumpCurrent('stats', this.data.calendarPeriod, 'year', this.data.currentYear, this.data.currentMonth),
       })
       this.refreshStats('year', this.data.currentYear, this.data.currentMonth)
     },
@@ -350,10 +488,17 @@ Component({
       const currentYear = now.getFullYear()
       const currentMonth = now.getMonth() + 1
 
+      if (this.data.activeTab === 'calendar') {
+        this.refreshCalendar(currentYear, currentMonth, this.data.calendarPeriod)
+        return
+      }
+
       if (this.data.activeTab === 'stats' && this.data.statsPeriod === 'year') {
         this.setData({
           currentYear,
           currentMonth,
+          yearPickerIndex: getYearPickerIndex(this.data.yearOptions, currentYear),
+          monthPickerIndex: getMonthPickerIndex(currentMonth),
           canGoNext: false,
           canJumpCurrent: false,
         })
@@ -361,10 +506,15 @@ Component({
         return
       }
 
-      this.refreshCalendar(currentYear, currentMonth)
+      this.refreshCalendar(currentYear, currentMonth, this.data.calendarPeriod)
     },
     goPreviousMonth() {
       if (this.data.isCalendarLoading || this.data.isStatsLoading) {
+        return
+      }
+
+      if (this.data.activeTab === 'calendar' && this.data.calendarPeriod === 'year') {
+        this.refreshCalendar(this.data.currentYear - 1, this.data.currentMonth, 'year')
         return
       }
 
@@ -372,18 +522,24 @@ Component({
         const previousYear = this.data.currentYear - 1
         this.setData({
           currentYear: previousYear,
-          canGoNext: getCanGoNext('stats', 'year', previousYear, this.data.currentMonth),
-          canJumpCurrent: getCanJumpCurrent('stats', 'year', previousYear, this.data.currentMonth),
+          yearPickerIndex: getYearPickerIndex(this.data.yearOptions, previousYear),
+          canGoNext: getCanGoNext('stats', this.data.calendarPeriod, 'year', previousYear, this.data.currentMonth),
+          canJumpCurrent: getCanJumpCurrent('stats', this.data.calendarPeriod, 'year', previousYear, this.data.currentMonth),
         })
         this.refreshStats('year', previousYear, this.data.currentMonth)
         return
       }
 
       const previous = getAdjacentMonth(this.data.currentYear, this.data.currentMonth, -1)
-      this.refreshCalendar(previous.year, previous.month)
+      this.refreshCalendar(previous.year, previous.month, this.data.calendarPeriod)
     },
     goNextMonth() {
       if (this.data.isCalendarLoading || this.data.isStatsLoading || !this.data.canGoNext) {
+        return
+      }
+
+      if (this.data.activeTab === 'calendar' && this.data.calendarPeriod === 'year') {
+        this.refreshCalendar(this.data.currentYear + 1, this.data.currentMonth, 'year')
         return
       }
 
@@ -391,15 +547,16 @@ Component({
         const nextYear = this.data.currentYear + 1
         this.setData({
           currentYear: nextYear,
-          canGoNext: getCanGoNext('stats', 'year', nextYear, this.data.currentMonth),
-          canJumpCurrent: getCanJumpCurrent('stats', 'year', nextYear, this.data.currentMonth),
+          yearPickerIndex: getYearPickerIndex(this.data.yearOptions, nextYear),
+          canGoNext: getCanGoNext('stats', this.data.calendarPeriod, 'year', nextYear, this.data.currentMonth),
+          canJumpCurrent: getCanJumpCurrent('stats', this.data.calendarPeriod, 'year', nextYear, this.data.currentMonth),
         })
         this.refreshStats('year', nextYear, this.data.currentMonth)
         return
       }
 
       const next = getAdjacentMonth(this.data.currentYear, this.data.currentMonth, 1)
-      this.refreshCalendar(next.year, next.month)
+      this.refreshCalendar(next.year, next.month, this.data.calendarPeriod)
     },
     goDaySessions(event: WechatMiniprogram.TouchEvent) {
       const date = event.currentTarget.dataset.date as string | undefined
@@ -408,6 +565,8 @@ Component({
       if (!date) {
         return
       }
+
+      calendarPeriodState = this.data.calendarPeriod
 
       wx.navigateTo({
         url: marked ? `/pages/session-list/session-list?date=${date}` : `/pages/session-edit/session-edit?date=${date}`,

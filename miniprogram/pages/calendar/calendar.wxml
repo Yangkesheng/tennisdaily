@@ -9,19 +9,33 @@
   </view>
   <view class="calendar-summary {{activeTab === 'stats' ? 'stats-summary' : ''}}">
     <text wx:if="{{activeTab === 'calendar'}}" class="active-count">{{activeDayCount}} 个网球日</text>
-    <view class="month-switcher">
-      <view class="month-nav" hover-class="month-nav-active" bindtap="goPreviousMonth">‹</view>
-      <text class="month-current {{activeTab === 'stats' && statsPeriod === 'year' ? 'year-only' : ''}}">{{activeTab === 'stats' && statsPeriod === 'year' ? currentYear + '年' : currentYear + '年' + currentMonth + '月'}}</text>
-      <view class="month-nav {{canGoNext ? '' : 'disabled'}}" hover-class="month-nav-active" bindtap="goNextMonth">›</view>
-    </view>
-    <view wx:if="{{canJumpCurrent}}" class="jump-current" bindtap="jumpToCurrentPeriod">{{activeTab === 'stats' && statsPeriod === 'year' ? '跳到本年' : '跳到本月'}}</view>
-    <view wx:if="{{activeTab === 'stats'}}" class="period-switcher">
-      <view class="period-option {{statsPeriod === 'month' ? 'active' : ''}}" bindtap="selectMonthStats">月</view>
-      <view class="period-option {{statsPeriod === 'year' ? 'active' : ''}}" bindtap="selectYearStats">年</view>
+    <view class="calendar-toolbar">
+      <view class="month-switcher">
+        <picker range="{{yearOptions}}" value="{{yearPickerIndex}}" bindchange="onYearChange">
+          <view class="month-current year-part">
+            <text class="date-number">{{currentYear}}</text><text class="date-unit">年</text>
+          </view>
+        </picker>
+        <picker wx:if="{{!((activeTab === 'calendar' && calendarPeriod === 'year') || (activeTab === 'stats' && statsPeriod === 'year'))}}" range="{{monthOptions}}" value="{{monthPickerIndex}}" bindchange="onMonthChange">
+          <view class="month-current month-part">
+            <text class="date-number">{{currentMonth}}</text><text class="date-unit">月</text>
+          </view>
+        </picker>
+      </view>
+      <view wx:if="{{canJumpCurrent}}" class="jump-current" bindtap="jumpToCurrentPeriod">{{(activeTab === 'calendar' && calendarPeriod === 'year') || (activeTab === 'stats' && statsPeriod === 'year') ? '跳到本年' : '跳到本月'}}</view>
+      <view wx:if="{{activeTab === 'calendar'}}" class="period-switcher">
+        <view class="period-option {{calendarPeriod === 'month' ? 'active' : ''}}" bindtap="selectMonthCalendar">月</view>
+        <view class="period-option {{calendarPeriod === 'year' ? 'active' : ''}}" bindtap="selectYearCalendar">年</view>
+      </view>
+      <view wx:if="{{activeTab === 'stats'}}" class="period-switcher">
+        <view class="period-option {{statsPeriod === 'month' ? 'active' : ''}}" bindtap="selectMonthStats">月</view>
+        <view class="period-option {{statsPeriod === 'year' ? 'active' : ''}}" bindtap="selectYearStats">年</view>
+      </view>
     </view>
   </view>
-  <view wx:if="{{activeTab === 'calendar'}}" class="months">
+  <view wx:if="{{activeTab === 'calendar'}}" class="months {{calendarPeriod === 'year' ? 'year-months' : ''}}">
     <view wx:for="{{calendarMonths}}" wx:key="key" wx:for-item="month" class="month-card">
+      <text wx:if="{{calendarPeriod === 'year'}}" class="month-title">{{month.label}}</text>
       <view class="weekday-row">
         <text class="weekday-cell">一</text>
         <text class="weekday-cell">二</text>

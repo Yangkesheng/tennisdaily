@@ -23,12 +23,12 @@ interface ApiSessionCalendar {
   days?: SessionCalendarDay[] | null
 }
 
-const normalizeSessionCalendar = (calendar: ApiSessionCalendar | null, year: number, month: number): SessionCalendar => {
+const normalizeSessionCalendar = (calendar: ApiSessionCalendar | null, year: number, month?: number): SessionCalendar => {
   const days = Array.isArray(calendar?.days) ? calendar.days : []
 
   return {
     year: calendar?.year || year,
-    month: calendar?.month || month,
+    month: typeof calendar?.month === 'number' ? calendar.month : month || 0,
     activeDayCount: typeof calendar?.activeDayCount === 'number' ? calendar.activeDayCount : days.length,
     days,
   }
@@ -100,6 +100,15 @@ export const getSessionCalendarRemote = async (year: number, month: number): Pro
   })
 
   return normalizeSessionCalendar(calendar, year, month)
+}
+
+export const getSessionYearCalendarRemote = async (year: number): Promise<SessionCalendar> => {
+  await ensureLogin()
+  const calendar = await request<ApiSessionCalendar | null>({
+    url: `/api/sessions/calendar?year=${year}`,
+  })
+
+  return normalizeSessionCalendar(calendar, year)
 }
 
 export const saveSessionRemote = async (draft: SessionDraft): Promise<TennisSession> => {

@@ -5,6 +5,7 @@ import {
   getSessionCalendarRemote,
   getSessionByIdRemote,
   getSessionStatsRemote,
+  getSessionYearCalendarRemote,
   listSessionsPageRemote,
   listSessionsRemote,
   saveSessionRemote,
@@ -72,6 +73,10 @@ export const getLatestSessionFromApi = async (): Promise<TennisSession | null> =
 
 export const getSessionCalendarFromApi = async (year: number, month: number): Promise<SessionCalendar> => {
   return getSessionCalendarRemote(year, month)
+}
+
+export const getSessionYearCalendarFromApi = async (year: number): Promise<SessionCalendar> => {
+  return getSessionYearCalendarRemote(year)
 }
 
 export const getSessionByIdFromApi = async (id: string): Promise<TennisSession | null> => {
