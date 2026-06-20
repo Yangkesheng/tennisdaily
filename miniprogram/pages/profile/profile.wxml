@@ -1,7 +1,13 @@
 <navigation-bar title="" back="{{false}}" color="#fff" background="transparent"></navigation-bar>
 <scroll-view class="page profile-page" scroll-y type="list">
   <view class="profile-header">
-    <text class="brand">{{user.nickname || '我的'}}</text>
+    <button class="avatar-button" open-type="chooseAvatar" bindtap="handleAvatarTap" bindchooseavatar="onChooseAvatar">
+      <image wx:if="{{user.avatarUrl}}" class="avatar-image" src="{{user.avatarUrl}}" mode="aspectFill"></image>
+      <view wx:else class="avatar-placeholder">头像</view>
+    </button>
+    <view class="profile-title">
+      <text class="brand">{{user.nickname || '我的'}}</text>
+    </view>
     <view class="brand-line"></view>
   </view>
 

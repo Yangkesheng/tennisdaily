@@ -101,6 +101,6 @@
   </scroll-view>
 
   <view class="bottom-action-area">
-    <button class="submit-button" bindtap="submitSession">保存</button>
+    <button class="submit-button" loading="{{saving}}" disabled="{{saving}}" bindtap="submitSession">保存</button>
   </view>
 </view>

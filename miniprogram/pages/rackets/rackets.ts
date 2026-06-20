@@ -13,6 +13,7 @@ interface RacketsData {
   touchStartX: number
   touchStartY: number
   openedRacketId: number
+  isSwipeAction: boolean
 }
 
 const createRacketView = (racket: Racket): RacketView => {
@@ -39,6 +40,7 @@ Component({
     touchStartX: 0,
     touchStartY: 0,
     openedRacketId: 0,
+    isSwipeAction: false,
   } as RacketsData,
   pageLifetimes: {
     show() {
@@ -95,6 +97,7 @@ Component({
 
       this.setData({
         openedRacketId: deltaX < 0 ? id : 0,
+        isSwipeAction: true,
       })
     },
     deleteRacket(event: WechatMiniprogram.TouchEvent) {
@@ -129,6 +132,14 @@ Component({
     },
     goDetail(event: WechatMiniprogram.TouchEvent) {
       const id = event.currentTarget.dataset.id as number | undefined
+
+      if (this.data.isSwipeAction) {
+        this.setData({
+          isSwipeAction: false,
+        })
+        return
+      }
+
       if (!id || this.data.openedRacketId === id) {
         return
       }

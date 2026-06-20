@@ -113,6 +113,10 @@ const mapApiStringingRecord = (record: ApiStringingRecord): StringingRecord => {
 const mapDraftToPayload = (draft: RacketDraft): ApiRacketPayload => {
   const payload: ApiRacketPayload = {
     name: draft.name,
+    status: draft.status,
+    imageUrl: draft.imageUrl || '',
+    purchaseDate: draft.purchaseDate,
+    purchasePrice: draft.purchasePrice || 0,
   }
 
   if (draft.libraryId > 0) {
@@ -124,18 +128,7 @@ const mapDraftToPayload = (draft: RacketDraft): ApiRacketPayload => {
   if (draft.model) {
     payload.model = draft.model
   }
-  if (draft.status) {
-    payload.status = draft.status
-  }
-  if (draft.imageUrl) {
-    payload.imageUrl = draft.imageUrl
-  }
-  if (draft.purchaseDate) {
-    payload.purchaseDate = draft.purchaseDate
-  }
-  if (draft.purchasePrice > 0) {
-    payload.purchasePrice = draft.purchasePrice
-  }
+
   return payload
 }
 

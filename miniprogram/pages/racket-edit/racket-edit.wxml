@@ -1,4 +1,4 @@
-<navigation-bar title="新增球拍" back="{{true}}" color="#05070c" background="transparent"></navigation-bar>
+<navigation-bar title="{{titleText}}" back="{{true}}" color="#05070c" background="transparent"></navigation-bar>
 <view class="page racket-edit-page">
   <scroll-view class="racket-edit-scroll" scroll-y>
     <view class="racket-edit-content">
@@ -52,11 +52,17 @@
           <text>价格</text>
           <input value="{{draft.purchasePrice}}" type="digit" placeholder="0" bindinput="onPurchasePriceInput" />
         </view>
+        <picker range="{{statusOptions}}" value="{{statusPickerIndex}}" bindchange="onStatusChange">
+          <view class="input-card">
+            <text>状态</text>
+            <view class="picker-inline">{{statusOptions[statusPickerIndex]}}</view>
+          </view>
+        </picker>
       </view>
     </view>
   </scroll-view>
 
   <view class="bottom-action-area">
-    <button class="submit-button" loading="{{saving}}" bindtap="submitRacket">保存</button>
+    <button class="submit-button" loading="{{saving}}" disabled="{{saving}}" bindtap="submitRacket">保存</button>
   </view>
 </view>

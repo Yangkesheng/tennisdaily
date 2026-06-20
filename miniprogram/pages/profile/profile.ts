@@ -1,11 +1,19 @@
 import type { RacketDashboard } from '../../models/racket'
-import { getCurrentUserFromApi, logoutFromApi, requireLoginPage, type UserProfile } from '../../services/auth-service'
+import { getCurrentUserFromApi, logoutFromApi, requireLoginPage, updateUserProfile, type UserProfile } from '../../services/auth-service'
 import { getRacketStatsFromApi } from '../../services/racket-api-service'
+
+interface ChooseAvatarEvent {
+  detail: {
+    avatarUrl: string
+  }
+}
 
 interface ProfileData {
   dashboard: RacketDashboard
   user: UserProfile | null
 }
+
+const AVATAR_AUTH_TIP_STORAGE_KEY = 'profile_avatar_auth_tip_shown'
 
 Component({
   data: {
@@ -49,6 +57,59 @@ Component({
       wx.navigateTo({
         url: '/pages/rackets/rackets',
       })
+    },
+    handleAvatarTap() {
+      if (wx.getStorageSync(AVATAR_AUTH_TIP_STORAGE_KEY)) {
+        return
+      }
+
+      wx.setStorageSync(AVATAR_AUTH_TIP_STORAGE_KEY, '1')
+      wx.showToast({
+        title: '请选择微信头像授权',
+        icon: 'none',
+      })
+    },
+    async onChooseAvatar(event: ChooseAvatarEvent) {
+      const avatarUrl = event.detail.avatarUrl
+
+      if (!avatarUrl) {
+        return
+      }
+
+      const currentUser = this.data.user
+      if (!currentUser) {
+        wx.showToast({
+          title: '请先登录',
+          icon: 'none',
+        })
+        return
+      }
+
+      this.setData({
+        user: {
+          ...currentUser,
+          avatarUrl,
+        },
+      })
+
+      try {
+        const user = await updateUserProfile({
+          nickname: currentUser.nickname || '',
+          avatarUrl,
+        })
+
+        this.setData({
+          user,
+        })
+      } catch (error) {
+        this.setData({
+          user: currentUser,
+        })
+        wx.showToast({
+          title: error instanceof Error ? error.message : '头像保存失败',
+          icon: 'none',
+        })
+      }
     },
     logout() {
       wx.showModal({

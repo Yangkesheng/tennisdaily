@@ -17,6 +17,7 @@ interface SessionEditData {
   isPageReady: boolean
   ratingText: string
   ratingTexts: string[]
+  saving: boolean
   sessionId: string
   titleText: string
   selectableRackets: Racket[]
@@ -66,6 +67,7 @@ Page({
     isPageReady: false,
     ratingText: '中规中矩吧',
     ratingTexts: ['网球满天飞', '状态有些迷', '中规中矩吧', '甜区率很高', '今天我是阿卡'],
+    saving: false,
     sessionId: '',
     titleText: '记录',
     selectableRackets: [],
@@ -259,12 +261,12 @@ Page({
     },
     onCourtInput(event: InputEvent) {
       this.setData({
-        'draft.courtName': event.detail.value.trim(),
+        'draft.courtName': event.detail.value,
       })
     },
     onPartnerInput(event: InputEvent) {
       this.setData({
-        'draft.partner': event.detail.value.trim(),
+        'draft.partner': event.detail.value,
       })
     },
     onCostInput(event: InputEvent) {
@@ -290,10 +292,18 @@ Page({
     },
     onShoeInput(event: InputEvent) {
       this.setData({
-        'draft.shoeName': event.detail.value.trim(),
+        'draft.shoeName': event.detail.value,
       })
     },
   async submitSession() {
+    if (this.data.saving) {
+      return
+    }
+
+    this.setData({
+      saving: true,
+    })
+
     try {
       if (this.data.sessionId) {
         await updateSessionToApi(this.data.sessionId, this.data.draft)
@@ -309,6 +319,9 @@ Page({
         },
       })
     } catch (error) {
+      this.setData({
+        saving: false,
+      })
       wx.showToast({
         title: error instanceof Error ? error.message : '保存失败',
         icon: 'none',

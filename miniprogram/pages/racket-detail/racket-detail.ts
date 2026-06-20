@@ -1,5 +1,5 @@
 import type { Racket, StringingRecord } from '../../models/racket'
-import { getRacketDetailFromApi, retireRacketFromApi, setPrimaryRacketFromApi } from '../../services/racket-api-service'
+import { getRacketDetailFromApi } from '../../services/racket-api-service'
 
 interface RacketDetailData {
   racketId: number
@@ -60,47 +60,13 @@ Page({
       url: `/pages/stringing-edit/stringing-edit?id=${this.data.racket.id}&name=${encodeURIComponent(this.data.racket.name)}`,
     })
   },
-  async setPrimary() {
+  goEdit() {
     if (!this.data.racketId) {
       return
     }
 
-    try {
-      await setPrimaryRacketFromApi(this.data.racketId)
-      wx.showToast({ title: '已设为主力', icon: 'success' })
-      this.loadDetail()
-    } catch (error) {
-      wx.showToast({
-        title: error instanceof Error ? error.message : '设置失败',
-        icon: 'none',
-      })
-    }
-  },
-  retireRacket() {
-    if (!this.data.racketId) {
-      return
-    }
-
-    wx.showModal({
-      title: '退役球拍',
-      content: '退役后新增记录时不可再选择，历史记录不受影响',
-      confirmText: '退役',
-      success: async (res) => {
-        if (!res.confirm) {
-          return
-        }
-
-        try {
-          await retireRacketFromApi(this.data.racketId)
-          wx.showToast({ title: '已退役', icon: 'success' })
-          this.loadDetail()
-        } catch (error) {
-          wx.showToast({
-            title: error instanceof Error ? error.message : '退役失败',
-            icon: 'none',
-          })
-        }
-      },
+    wx.navigateTo({
+      url: `/pages/racket-edit/racket-edit?id=${this.data.racketId}`,
     })
   },
 })

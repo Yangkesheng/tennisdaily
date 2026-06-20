@@ -1,6 +1,6 @@
 .racket-detail-page {
   min-height: 100vh;
-  padding: 28rpx 28rpx calc(180rpx + env(safe-area-inset-bottom));
+  padding: 28rpx 28rpx calc(56rpx + env(safe-area-inset-bottom));
   background: linear-gradient(45deg, #f5efe6 0%, #eed6ca 50%, #e2bda9 100%);
   background-attachment: fixed;
   box-sizing: border-box;
@@ -60,6 +60,7 @@
 }
 
 .racket-name {
+  flex: 1;
   min-width: 0;
   color: #05070c;
   font-size: 36rpx;
@@ -71,11 +72,16 @@
 
 .status-badge {
   flex: none;
-  padding: 8rpx 16rpx;
+  width: 72rpx;
+  height: 40rpx;
+  padding: 0;
   border-radius: 999rpx;
   color: #fff;
   font-size: 20rpx;
   font-weight: 900;
+  line-height: 40rpx;
+  text-align: center;
+  box-sizing: border-box;
 }
 
 .status-badge.primary,
@@ -94,6 +100,34 @@
   color: rgba(13, 23, 40, 0.56);
   font-size: 26rpx;
   font-weight: 700;
+}
+
+.edit-button,
+.small-button {
+  display: flex;
+  width: 72rpx;
+  height: 40rpx;
+  margin: 0;
+  padding: 0;
+  align-items: center;
+  justify-content: center;
+  border-radius: 999rpx;
+  background: #3778db;
+  color: #fff;
+  font-size: 22rpx;
+  font-weight: 900;
+  line-height: 40rpx;
+  text-align: center;
+  box-sizing: border-box;
+}
+
+.edit-button {
+  margin: 16rpx 0 0 auto;
+}
+
+
+.edit-button:active {
+  opacity: 0.72;
 }
 
 .stats-grid {
@@ -138,16 +172,6 @@
   font-weight: 900;
 }
 
-.small-button {
-  height: 58rpx;
-  padding: 0 26rpx;
-  border-radius: 999rpx;
-  background: #3778db;
-  color: #fff;
-  font-size: 24rpx;
-  font-weight: 900;
-  line-height: 58rpx;
-}
 
 .stringing-list {
   display: flex;
@@ -186,23 +210,3 @@
   font-weight: 900;
 }
 
-.bottom-actions {
-  position: fixed;
-  left: 28rpx;
-  right: 28rpx;
-  bottom: calc(40rpx + env(safe-area-inset-bottom));
-  display: flex;
-  gap: 16rpx;
-}
-
-.secondary-button {
-  flex: 1;
-  height: 88rpx;
-  border-radius: 44rpx;
-  background: #3778db;
-  color: #fff;
-  font-size: 30rpx;
-  font-weight: 900;
-  line-height: 88rpx;
-  box-shadow: 0 8rpx 24rpx rgba(55, 120, 219, 0.3);
-}

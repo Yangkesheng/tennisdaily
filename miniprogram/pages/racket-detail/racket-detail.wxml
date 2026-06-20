@@ -12,6 +12,7 @@
         </view>
         <text class="racket-model">{{racket.brand}} {{racket.model}}</text>
         <text class="purchase-line">{{racket.purchaseDate || '-'}} · ¥{{purchasePriceText}}</text>
+        <view class="edit-button" bindtap="goEdit">编辑</view>
       </view>
     </view>
 
@@ -37,7 +38,7 @@
     <view class="section-card">
       <view class="section-header">
         <text class="section-title">穿线记录</text>
-        <button class="small-button" bindtap="goStringing">新增</button>
+        <view class="small-button" bindtap="goStringing">新增</view>
       </view>
       <view wx:if="{{stringingRecords.length}}" class="stringing-list">
         <view wx:for="{{stringingRecords}}" wx:key="id" class="stringing-row">
@@ -52,8 +53,4 @@
     </view>
   </view>
 
-  <view class="bottom-actions" wx:if="{{racket}}">
-    <button wx:if="{{racket.status !== 1 && racket.status !== 3}}" class="secondary-button" bindtap="setPrimary">设主力</button>
-    <button wx:if="{{racket.status !== 3}}" class="secondary-button" bindtap="retireRacket">退役</button>
-  </view>
 </scroll-view>
