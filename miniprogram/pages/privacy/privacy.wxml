@@ -1,0 +1,29 @@
+<navigation-bar title="隐私保护指引" back="{{true}}" color="#05070c" background="transparent"></navigation-bar>
+<scroll-view class="page privacy-page" scroll-y>
+  <view class="privacy-card">
+    <text class="title">网球日记隐私保护指引</text>
+    <text class="meta">更新日期：2026-06-21</text>
+    <text class="meta">生效日期：2026-06-21</text>
+
+    <text class="section-title">一、我们收集的信息</text>
+    <text class="paragraph">为提供登录、记录、同步和展示功能，我们可能收集微信登录标识、昵称、头像、打球记录、球拍信息和穿线记录。</text>
+
+    <text class="section-title">二、我们如何使用信息</text>
+    <text class="paragraph">这些信息用于保存和展示你的打球记录、统计打球情况、管理球拍和穿线记录，以及在多设备登录后同步你的个人数据。</text>
+
+    <text class="section-title">三、信息存储</text>
+    <text class="paragraph">你的记录数据会保存到我们的后端服务中，用于跨设备同步和长期查看。当前阶段记录数据以 Go 后端 API 为准。</text>
+
+    <text class="section-title">四、信息共享</text>
+    <text class="paragraph">除获得你的明确同意、法律法规要求或维护服务安全所必需外，我们不会向第三方共享你的个人信息。</text>
+
+    <text class="section-title">五、你如何管理信息</text>
+    <text class="paragraph">你可以在小程序内新增、编辑、删除打球记录和球拍信息，修改头像和昵称，或退出登录。</text>
+
+    <text class="section-title">六、未成年人保护</text>
+    <text class="paragraph">如果你是未成年人，请在监护人同意和指导下使用本小程序。</text>
+
+    <text class="section-title">七、联系我们</text>
+    <text class="paragraph">如果你对隐私保护有疑问，可以通过小程序内反馈渠道或开发者联系方式与我们联系。</text>
+  </view>
+</scroll-view>

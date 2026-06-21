@@ -1,0 +1,17 @@
+<view wx:if="{{visible}}" class="privacy-mask" catchtouchmove="noop">
+  <view class="privacy-dialog">
+    <view class="privacy-header">
+      <text class="privacy-title">隐私保护提示</text>
+    </view>
+    <scroll-view class="privacy-content" scroll-y>
+      <text class="privacy-paragraph">欢迎使用网球日记。为了提供微信登录、记录同步、球拍管理和统计展示功能，我们会根据功能需要处理你的微信登录标识、昵称、头像、打球记录和装备信息。</text>
+      <text class="privacy-paragraph">你的记录仅用于个人查看和数据同步，不会公开展示给其他用户。</text>
+      <text class="privacy-paragraph">点击“同意并继续”表示你已阅读并同意《隐私保护指引》。</text>
+      <text class="privacy-link" bindtap="openPrivacyPolicy">查看《隐私保护指引》</text>
+    </scroll-view>
+    <view class="privacy-actions">
+      <button class="privacy-button secondary" bindtap="reject">暂不使用</button>
+      <button class="privacy-button primary" bindtap="accept">同意并继续</button>
+    </view>
+  </view>
+</view>

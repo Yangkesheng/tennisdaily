@@ -56,4 +56,11 @@
       进入
     </button>
   </view>
+
+  <privacy-dialog
+    visible="{{showPrivacyDialog}}"
+    bindaccept="onAcceptPrivacy"
+    bindreject="onRejectPrivacy"
+    bindopenpolicy="openPrivacyPolicy"
+  ></privacy-dialog>
 </view>

@@ -1,0 +1,47 @@
+.privacy-page {
+  min-height: 100vh;
+  padding: 28rpx 28rpx calc(56rpx + env(safe-area-inset-bottom));
+  background: linear-gradient(45deg, #f5efe6 0%, #eed6ca 50%, #e2bda9 100%);
+  box-sizing: border-box;
+  color: #05070c;
+}
+
+.privacy-card {
+  padding: 34rpx;
+  border-radius: 34rpx;
+  background: rgba(255, 255, 255, 0.58);
+  box-shadow: inset 0 0 0 1rpx rgba(255, 255, 255, 0.8);
+  backdrop-filter: blur(20px);
+}
+
+.title {
+  display: block;
+  font-size: 40rpx;
+  font-weight: 900;
+  line-height: 1.35;
+}
+
+.meta {
+  display: block;
+  margin-top: 10rpx;
+  color: rgba(13, 23, 40, 0.48);
+  font-size: 24rpx;
+  font-weight: 700;
+}
+
+.section-title {
+  display: block;
+  margin-top: 34rpx;
+  color: #05070c;
+  font-size: 30rpx;
+  font-weight: 900;
+}
+
+.paragraph {
+  display: block;
+  margin-top: 14rpx;
+  color: rgba(13, 23, 40, 0.68);
+  font-size: 27rpx;
+  font-weight: 700;
+  line-height: 1.7;
+}

@@ -11,6 +11,7 @@
     "pages/stringing-edit/stringing-edit",
     "pages/session-edit/session-edit",
     "pages/session-list/session-list",
+    "pages/privacy/privacy",
     "pages/logs/logs"
   ],
   "window": {

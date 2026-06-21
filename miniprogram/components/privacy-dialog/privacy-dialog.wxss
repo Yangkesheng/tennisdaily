@@ -1,0 +1,87 @@
+.privacy-mask {
+  position: fixed;
+  left: 0;
+  right: 0;
+  top: 0;
+  bottom: 0;
+  z-index: 999;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 48rpx;
+  background: rgba(5, 7, 12, 0.46);
+  box-sizing: border-box;
+}
+
+.privacy-dialog {
+  width: 100%;
+  max-height: 78vh;
+  border-radius: 34rpx;
+  background: #fffaf4;
+  overflow: hidden;
+  box-shadow: 0 24rpx 80rpx rgba(13, 23, 40, 0.22);
+}
+
+.privacy-header {
+  padding: 34rpx 34rpx 18rpx;
+}
+
+.privacy-title {
+  color: #05070c;
+  font-size: 36rpx;
+  font-weight: 900;
+}
+
+.privacy-content {
+  max-height: 520rpx;
+  padding: 0 34rpx;
+  box-sizing: border-box;
+}
+
+.privacy-paragraph {
+  display: block;
+  margin-bottom: 20rpx;
+  color: rgba(13, 23, 40, 0.68);
+  font-size: 27rpx;
+  font-weight: 700;
+  line-height: 1.65;
+}
+
+.privacy-link {
+  display: block;
+  margin: 4rpx 0 22rpx;
+  color: #3778db;
+  font-size: 27rpx;
+  font-weight: 900;
+}
+
+.privacy-actions {
+  display: flex;
+  gap: 18rpx;
+  padding: 24rpx 34rpx 34rpx;
+}
+
+.privacy-button {
+  flex: 1;
+  height: 82rpx;
+  margin: 0;
+  padding: 0;
+  border-radius: 28rpx;
+  font-size: 28rpx;
+  font-weight: 900;
+  line-height: 82rpx;
+}
+
+.privacy-button::after {
+  border: 0;
+}
+
+.privacy-button.secondary {
+  background: rgba(13, 23, 40, 0.08);
+  color: rgba(13, 23, 40, 0.62);
+}
+
+.privacy-button.primary {
+  background: #3778db;
+  color: #fff;
+}

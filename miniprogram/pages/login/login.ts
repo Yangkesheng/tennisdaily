@@ -1,5 +1,7 @@
 import { getCurrentUserFromApi, getToken, loginWithWechat, updateUserProfile } from '../../services/auth-service'
 
+const PRIVACY_ACCEPTED_STORAGE_KEY = 'privacy_policy_accepted'
+
 interface LoginData {
   isLoggingIn: boolean
   isSavingNickname: boolean
@@ -7,6 +9,7 @@ interface LoginData {
   nickname: string
   showNicknameTip: boolean
   nicknameInputFocus: boolean
+  showPrivacyDialog: boolean
 }
 
 interface NicknameInputEvent {
@@ -23,6 +26,7 @@ Component({
     nickname: '',
     showNicknameTip: false,
     nicknameInputFocus: false,
+    showPrivacyDialog: false,
   } as LoginData,
   pageLifetimes: {
     show() {
@@ -56,6 +60,13 @@ Component({
     },
     async onLogin() {
       if (this.data.isLoggingIn) {
+        return
+      }
+
+      if (wx.getStorageSync(PRIVACY_ACCEPTED_STORAGE_KEY) !== '1') {
+        this.setData({
+          showPrivacyDialog: true,
+        })
         return
       }
 
@@ -100,6 +111,26 @@ Component({
         nickname: event.detail.value,
         showNicknameTip: false,
         nicknameInputFocus: false,
+      })
+    },
+    onAcceptPrivacy() {
+      this.setData({
+        showPrivacyDialog: false,
+      })
+      this.onLogin()
+    },
+    onRejectPrivacy() {
+      this.setData({
+        showPrivacyDialog: false,
+      })
+      wx.showToast({
+        title: '同意隐私保护指引后才能登录',
+        icon: 'none',
+      })
+    },
+    openPrivacyPolicy() {
+      wx.navigateTo({
+        url: '/pages/privacy/privacy',
       })
     },
     async enterWithNickname() {
