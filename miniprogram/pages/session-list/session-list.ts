@@ -1,7 +1,7 @@
 import type { MatchRank, SessionPageResult, TennisSession, TennisSessionType } from '../../models/session'
 import {
   deleteSessionFromApi,
-  listSessionsByDatePageFromApi,
+  listSessionsByDateFromApi,
   listSessionsPageFromApi,
 } from '../../services/session-service'
 
@@ -169,12 +169,27 @@ Page({
       const titleText = dateFilter ? dateFilter : rangeFilter === 'recent' ? '最近记录' : '记录'
 
       try {
-        const result = dateFilter
-          ? await listSessionsByDatePageFromApi(dateFilter, this.data.page, this.data.pageSize)
-          : await listSessionsPageFromApi({
-            page: this.data.page,
-            pageSize: this.data.pageSize,
+        if (dateFilter) {
+          const sessions = await listSessionsByDateFromApi(dateFilter)
+
+          this.setData({
+            sessions: withTypeLabel(sessions),
+            titleText,
+            page: 1,
+            pageSize: sessions.length || this.data.pageSize,
+            pageSizeInput: `${sessions.length || this.data.pageSize}`,
+            total: sessions.length,
+            totalPages: sessions.length ? 1 : 0,
+            hasMore: false,
+            paginationText: `共 ${sessions.length} 条`,
           })
+          return
+        }
+
+        const result = await listSessionsPageFromApi({
+          page: this.data.page,
+          pageSize: this.data.pageSize,
+        })
 
         this.setData({
           sessions: withTypeLabel(result.list),

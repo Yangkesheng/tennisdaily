@@ -50,11 +50,17 @@ const normalizeSessionPage = (result: ApiSessionPageResult | null, params: Sessi
 export const listSessionsRemote = async (dateText?: string): Promise<TennisSession[]> => {
   await ensureLogin()
   const query = dateText ? `?date=${encodeURIComponent(dateText)}` : ''
-  const sessions = await request<ApiSession[]>({
+  const result = await request<ApiSession[] | ApiSessionPageResult>({
     url: `/api/sessions${query}`,
   })
 
-  return sessions.map(mapApiSessionToLocal)
+  if (Array.isArray(result)) {
+    return result.map(mapApiSessionToLocal)
+  }
+
+  const list = Array.isArray(result?.list) ? result.list : []
+
+  return list.map(mapApiSessionToLocal)
 }
 
 export const listSessionsPageRemote = async (params: SessionPageParams): Promise<SessionPageResult> => {

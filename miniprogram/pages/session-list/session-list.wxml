@@ -35,7 +35,7 @@
     </view>
   </view>
 
-  <view class="pagination-card">
+  <view wx:if="{{!routeDateFilter}}" class="pagination-card">
     <view class="pagination-line">
       <view class="page-nav">
         <text class="page-arrow {{page <= 1 ? 'disabled' : ''}}" bindtap="goPrevPage">‹</text>
