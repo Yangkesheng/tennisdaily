@@ -1,7 +1,7 @@
-import type { StatsBreakdownItem, StatsChartsResult, StatsPeriod } from '../../models/stats'
+import type { SessionCalendar } from '../../models/session'
+import type { StatsPeriod } from '../../models/stats'
 import { requireLoginPage } from '../../services/auth-service'
 import { getSessionCalendarFromApi, getSessionYearCalendarFromApi, getTodayText } from '../../services/session-service'
-import { getStatsChartsFromApi } from '../../services/stats-api-service'
 
 interface PickerChangeEvent {
   detail: {
@@ -37,23 +37,32 @@ interface RatingChartItem {
   height: number
 }
 
-interface BreakdownChartItem extends StatsBreakdownItem {
-  valueText: string
-  width: number
-}
-
 interface StatsView {
   rangeText: string
   sessionCount: number
   activeDayCount: number
   totalHoursText: string
+  averageMinutesText: string
   averageHoursText: string
   averageRatingText: string
+  sessionCostText: string
   totalCostText: string
   frequency: BarChartItem[]
   ratingTrend: RatingChartItem[]
   expenseBreakdown: BreakdownChartItem[]
   sessionTypeBreakdown: BreakdownChartItem[]
+}
+
+interface StatsBreakdownViewItem {
+  key: string
+  label: string
+  value: number
+  percent: number
+}
+
+interface BreakdownChartItem extends StatsBreakdownViewItem {
+  valueText: string
+  width: number
 }
 
 interface CalendarData {
@@ -71,6 +80,7 @@ interface CalendarData {
   statsView: StatsView
   isCalendarLoading: boolean
   isStatsLoading: boolean
+  isExpenseVisible: boolean
   canGoNext: boolean
   canJumpCurrent: boolean
 }
@@ -106,8 +116,10 @@ const emptyStatsView: StatsView = {
   sessionCount: 0,
   activeDayCount: 0,
   totalHoursText: '0.0',
+  averageMinutesText: '0',
   averageHoursText: '0.0',
   averageRatingText: '暂无',
+  sessionCostText: '0',
   totalCostText: '0',
   frequency: [],
   ratingTrend: [],
@@ -195,13 +207,13 @@ const createBarChart = (items: { label: string; value: number }[]): BarChartItem
 const createRatingChart = (items: { label: string; date: string; rating: number }[]): RatingChartItem[] => {
   return items.map((item, index) => ({
     key: `${item.date || item.label}-${index}`,
-    label: item.label,
+    label: item.label || item.date,
     rating: item.rating,
     height: item.rating > 0 ? Math.max(14, Math.round(item.rating * 28)) : 0,
   }))
 }
 
-const sortBreakdownByPercentDesc = (items: StatsBreakdownItem[]) => {
+const sortBreakdownByPercentDesc = (items: StatsBreakdownViewItem[]) => {
   return [...items].sort((left, right) => {
     if (right.percent !== left.percent) {
       return right.percent - left.percent
@@ -211,7 +223,7 @@ const sortBreakdownByPercentDesc = (items: StatsBreakdownItem[]) => {
   })
 }
 
-const createBreakdownChart = (items: StatsBreakdownItem[]): BreakdownChartItem[] => {
+const createBreakdownChart = (items: StatsBreakdownViewItem[]): BreakdownChartItem[] => {
   return sortBreakdownByPercentDesc(items).map((item) => ({
     ...item,
     valueText: formatMoneyText(item.value),
@@ -219,7 +231,7 @@ const createBreakdownChart = (items: StatsBreakdownItem[]): BreakdownChartItem[]
   }))
 }
 
-const createCountBreakdownChart = (items: StatsBreakdownItem[]): BreakdownChartItem[] => {
+const createCountBreakdownChart = (items: StatsBreakdownViewItem[]): BreakdownChartItem[] => {
   return sortBreakdownByPercentDesc(items).map((item) => ({
     ...item,
     valueText: `${item.value}`,
@@ -227,19 +239,51 @@ const createCountBreakdownChart = (items: StatsBreakdownItem[]): BreakdownChartI
   }))
 }
 
-const createStatsView = (stats: StatsChartsResult): StatsView => {
+const createPercentBreakdown = (items: { key?: string; label: string; value: number; percent?: number }[], total: number): StatsBreakdownViewItem[] => {
+  return items.map((item, index) => ({
+    key: item.key || item.label || `${index}`,
+    label: item.label,
+    value: item.value,
+    percent: typeof item.percent === 'number' && item.percent > 0 ? item.percent : total > 0 ? Math.round((item.value / total) * 100) : 0,
+  }))
+}
+
+const createSessionTypeBreakdown = (calendar: SessionCalendar): StatsBreakdownViewItem[] => {
+  if (calendar.charts.sessionTypeBreakdown.length) {
+    const total = calendar.charts.sessionTypeBreakdown.reduce((sum, item) => sum + item.value, 0)
+
+    return createPercentBreakdown(calendar.charts.sessionTypeBreakdown, total)
+  }
+
+  const summary = calendar.summary
+
+  return createPercentBreakdown([
+    { key: 'training', label: '训练', value: summary.trainingCount },
+    { key: 'singles', label: '单打', value: summary.singlesCount },
+    { key: 'doubles', label: '双打', value: summary.doublesCount },
+    { key: 'match', label: '比赛', value: summary.matchCount },
+  ], summary.sessionCount)
+}
+
+const createStatsViewFromCalendar = (calendar: SessionCalendar, period: StatsPeriod): StatsView => {
+  const summary = calendar.summary
+  const expenseBreakdown = createPercentBreakdown(calendar.charts.expenseBreakdown, summary.totalCost)
+  const sessionTypeBreakdown = createSessionTypeBreakdown(calendar)
+
   return {
-    rangeText: stats.rangeText,
-    sessionCount: stats.summary.sessionCount,
-    activeDayCount: stats.summary.activeDayCount,
-    totalHoursText: (stats.summary.totalMinutes / 60).toFixed(1),
-    averageHoursText: (stats.summary.averageMinutes / 60).toFixed(1),
-    averageRatingText: stats.summary.averageRating > 0 ? stats.summary.averageRating.toFixed(1) : '暂无',
-    totalCostText: formatMoneyText(stats.summary.totalCost),
-    frequency: createBarChart(stats.charts.frequency),
-    ratingTrend: createRatingChart(stats.charts.ratingTrend),
-    expenseBreakdown: createBreakdownChart(stats.charts.expenseBreakdown),
-    sessionTypeBreakdown: createCountBreakdownChart(stats.charts.sessionTypeBreakdown),
+    rangeText: period === 'year' ? `${calendar.year}年` : `${calendar.year}年${calendar.month}月`,
+    sessionCount: summary.sessionCount,
+    activeDayCount: summary.activeDayCount,
+    totalHoursText: (summary.totalMinutes / 60).toFixed(1),
+    averageMinutesText: `${Math.round(summary.averageMinutes)}`,
+    averageHoursText: (summary.averageMinutes / 60).toFixed(1),
+    averageRatingText: summary.averageRating > 0 ? summary.averageRating.toFixed(1) : '暂无',
+    sessionCostText: formatMoneyText(summary.sessionCost),
+    totalCostText: formatMoneyText(summary.totalCost),
+    frequency: createBarChart(calendar.charts.frequency),
+    ratingTrend: createRatingChart(calendar.charts.ratingTrend),
+    expenseBreakdown: createBreakdownChart(expenseBreakdown),
+    sessionTypeBreakdown: createCountBreakdownChart(sessionTypeBreakdown),
   }
 }
 
@@ -290,6 +334,7 @@ Component({
     statsView: emptyStatsView,
     isCalendarLoading: false,
     isStatsLoading: false,
+    isExpenseVisible: true,
     canGoNext: false,
     canJumpCurrent: false,
   } as CalendarData,
@@ -370,13 +415,21 @@ Component({
       })
 
       try {
-        const stats = await getStatsChartsFromApi(targetPeriod, targetYear, targetMonth)
+        const calendar = targetPeriod === 'year'
+          ? await getSessionYearCalendarFromApi(targetYear)
+          : await getSessionCalendarFromApi(targetYear, targetMonth)
+
+        const nextMonth = targetPeriod === 'year' ? targetMonth : calendar.month
 
         this.setData({
           statsPeriod: targetPeriod,
-          statsView: createStatsView(stats),
-          canGoNext: getCanGoNext(this.data.activeTab, this.data.calendarPeriod, targetPeriod, targetYear, targetMonth),
-          canJumpCurrent: getCanJumpCurrent(this.data.activeTab, this.data.calendarPeriod, targetPeriod, targetYear, targetMonth),
+          statsView: createStatsViewFromCalendar(calendar, targetPeriod),
+          currentYear: calendar.year,
+          currentMonth: nextMonth,
+          yearPickerIndex: getYearPickerIndex(this.data.yearOptions, calendar.year),
+          monthPickerIndex: getMonthPickerIndex(nextMonth),
+          canGoNext: getCanGoNext(this.data.activeTab, this.data.calendarPeriod, targetPeriod, calendar.year, nextMonth),
+          canJumpCurrent: getCanJumpCurrent(this.data.activeTab, this.data.calendarPeriod, targetPeriod, calendar.year, nextMonth),
         })
       } catch (error) {
         wx.showToast({
@@ -557,6 +610,11 @@ Component({
 
       const next = getAdjacentMonth(this.data.currentYear, this.data.currentMonth, 1)
       this.refreshCalendar(next.year, next.month, this.data.calendarPeriod)
+    },
+    toggleExpenseVisible() {
+      this.setData({
+        isExpenseVisible: !this.data.isExpenseVisible,
+      })
     },
     goDaySessions(event: WechatMiniprogram.TouchEvent) {
       const date = event.currentTarget.dataset.date as string | undefined

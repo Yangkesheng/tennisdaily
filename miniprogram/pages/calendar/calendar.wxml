@@ -82,8 +82,22 @@
           <text class="overview-label">打球日</text>
         </view>
         <view class="overview-item">
-          <text class="overview-value">{{statsView.averageRatingText}}</text>
-          <text class="overview-label">平均手感</text>
+          <text class="overview-value">{{statsView.averageMinutesText}}</text>
+          <text class="overview-label">平均分钟</text>
+        </view>
+        <view class="overview-item">
+          <text class="overview-value">{{isExpenseVisible ? '¥' + statsView.totalCostText : '****'}}</text>
+          <view class="overview-label-row">
+            <text class="overview-label">总花费</text>
+            <text class="expense-eye" catchtap="toggleExpenseVisible">{{isExpenseVisible ? '◉' : '◎'}}</text>
+          </view>
+        </view>
+        <view class="overview-item">
+          <text class="overview-value">{{isExpenseVisible ? '¥' + statsView.sessionCostText : '****'}}</text>
+          <view class="overview-label-row">
+            <text class="overview-label">打球花费</text>
+            <text class="expense-eye" catchtap="toggleExpenseVisible">{{isExpenseVisible ? '◉' : '◎'}}</text>
+          </view>
         </view>
       </view>
     </view>
@@ -125,13 +139,13 @@
     <view class="stats-card">
       <view class="stats-card-header">
         <text class="stats-card-title">消费占比</text>
-        <text class="stats-card-subtitle">¥{{statsView.totalCostText}}</text>
+        <text class="stats-card-subtitle">{{isExpenseVisible ? '¥' + statsView.totalCostText : '****'}}</text>
       </view>
       <view class="breakdown-list">
         <view wx:for="{{statsView.expenseBreakdown}}" wx:key="key" class="breakdown-row">
           <view class="breakdown-topline">
             <text>{{item.label}}</text>
-            <text>¥{{item.valueText}} · {{item.percent}}%</text>
+            <text>{{isExpenseVisible ? '¥' + item.valueText + ' · ' + item.percent + '%' : '**** · ' + item.percent + '%'}}</text>
           </view>
           <view class="breakdown-track">
             <view class="breakdown-fill expense" style="width: {{item.width}}%;"></view>

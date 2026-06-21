@@ -62,11 +62,49 @@ export interface SessionCalendarDay {
   count: number
 }
 
+export interface SessionCalendarSummary {
+  sessionCount: number
+  activeDayCount: number
+  totalMinutes: number
+  averageMinutes: number
+  averageRating: number
+  sessionCost: number
+  racketCost: number
+  stringingCost: number
+  totalCost: number
+  trainingCount: number
+  singlesCount: number
+  doublesCount: number
+  matchCount: number
+}
+
+export interface SessionCalendarChartItem {
+  key?: string
+  label: string
+  value: number
+  percent?: number
+}
+
+export interface SessionCalendarRatingTrendItem {
+  label: string
+  date: string
+  rating: number
+}
+
+export interface SessionCalendarCharts {
+  frequency: SessionCalendarChartItem[]
+  ratingTrend: SessionCalendarRatingTrendItem[]
+  expenseBreakdown: SessionCalendarChartItem[]
+  sessionTypeBreakdown: SessionCalendarChartItem[]
+}
+
 export interface SessionCalendar {
   year: number
   month: number
   activeDayCount: number
   days: SessionCalendarDay[]
+  summary: SessionCalendarSummary
+  charts: SessionCalendarCharts
 }
 
 export interface SessionTypeOption {

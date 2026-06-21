@@ -413,6 +413,30 @@
   font-weight: 700;
 }
 
+.overview-label-row {
+  display: flex;
+  align-items: center;
+  gap: 8rpx;
+  max-width: 100%;
+  margin-top: 10rpx;
+}
+
+.overview-label-row .overview-label {
+  margin-top: 0;
+}
+
+.expense-eye {
+  flex: none;
+  color: rgba(13, 23, 40, 0.48);
+  font-size: 22rpx;
+  font-weight: 800;
+  line-height: 1;
+}
+
+.expense-eye:active {
+  opacity: 0.62;
+}
+
 .bar-chart {
   display: flex;
   align-items: flex-end;

@@ -1,4 +1,16 @@
-import type { SessionCalendar, SessionCalendarDay, SessionDraft, SessionPageParams, SessionPageResult, SessionStats, TennisSession } from '../models/session'
+import type {
+  SessionCalendar,
+  SessionCalendarChartItem,
+  SessionCalendarCharts,
+  SessionCalendarDay,
+  SessionCalendarRatingTrendItem,
+  SessionCalendarSummary,
+  SessionDraft,
+  SessionPageParams,
+  SessionPageResult,
+  SessionStats,
+  TennisSession,
+} from '../models/session'
 import { ensureLogin } from './auth-service'
 import { mapApiSessionToLocal, mapLocalDraftToApiPayload, type ApiSession } from './session-api-mapper'
 import { request } from './request'
@@ -21,16 +33,77 @@ interface ApiSessionCalendar {
   month?: number | null
   activeDayCount?: number | null
   days?: SessionCalendarDay[] | null
+  summary?: Partial<SessionCalendarSummary> | null
+  charts?: Partial<SessionCalendarCharts> | null
+}
+
+const normalizeNumber = (value: number | null | undefined) => {
+  return typeof value === 'number' && !Number.isNaN(value) ? value : 0
+}
+
+const normalizeCalendarSummary = (summary: Partial<SessionCalendarSummary> | null | undefined, activeDayCount: number): SessionCalendarSummary => {
+  return {
+    sessionCount: normalizeNumber(summary?.sessionCount),
+    activeDayCount: normalizeNumber(summary?.activeDayCount) || activeDayCount,
+    totalMinutes: normalizeNumber(summary?.totalMinutes),
+    averageMinutes: normalizeNumber(summary?.averageMinutes),
+    averageRating: normalizeNumber(summary?.averageRating),
+    sessionCost: normalizeNumber(summary?.sessionCost),
+    racketCost: normalizeNumber(summary?.racketCost),
+    stringingCost: normalizeNumber(summary?.stringingCost),
+    totalCost: normalizeNumber(summary?.totalCost),
+    trainingCount: normalizeNumber(summary?.trainingCount),
+    singlesCount: normalizeNumber(summary?.singlesCount),
+    doublesCount: normalizeNumber(summary?.doublesCount),
+    matchCount: normalizeNumber(summary?.matchCount),
+  }
+}
+
+const normalizeCalendarChartItems = (items: SessionCalendarChartItem[] | null | undefined): SessionCalendarChartItem[] => {
+  if (!Array.isArray(items)) {
+    return []
+  }
+
+  return items.map((item, index) => ({
+    key: item.key || item.label || `${index}`,
+    label: item.label || '',
+    value: normalizeNumber(item.value),
+    percent: normalizeNumber(item.percent),
+  }))
+}
+
+const normalizeCalendarRatingTrend = (items: SessionCalendarRatingTrendItem[] | null | undefined): SessionCalendarRatingTrendItem[] => {
+  if (!Array.isArray(items)) {
+    return []
+  }
+
+  return items.map((item) => ({
+    label: item.label || item.date || '',
+    date: item.date || '',
+    rating: normalizeNumber(item.rating),
+  }))
+}
+
+const normalizeCalendarCharts = (charts: Partial<SessionCalendarCharts> | null | undefined): SessionCalendarCharts => {
+  return {
+    frequency: normalizeCalendarChartItems(charts?.frequency),
+    ratingTrend: normalizeCalendarRatingTrend(charts?.ratingTrend),
+    expenseBreakdown: normalizeCalendarChartItems(charts?.expenseBreakdown),
+    sessionTypeBreakdown: normalizeCalendarChartItems(charts?.sessionTypeBreakdown),
+  }
 }
 
 const normalizeSessionCalendar = (calendar: ApiSessionCalendar | null, year: number, month?: number): SessionCalendar => {
   const days = Array.isArray(calendar?.days) ? calendar.days : []
+  const activeDayCount = typeof calendar?.activeDayCount === 'number' ? calendar.activeDayCount : days.length
 
   return {
     year: calendar?.year || year,
     month: typeof calendar?.month === 'number' ? calendar.month : month || 0,
-    activeDayCount: typeof calendar?.activeDayCount === 'number' ? calendar.activeDayCount : days.length,
+    activeDayCount,
     days,
+    summary: normalizeCalendarSummary(calendar?.summary, activeDayCount),
+    charts: normalizeCalendarCharts(calendar?.charts),
   }
 }
 
