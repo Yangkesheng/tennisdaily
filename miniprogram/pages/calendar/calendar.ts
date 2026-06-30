@@ -50,9 +50,13 @@ interface StatsView {
   frequency: BarChartItem[]
   ratingTrend: RatingChartItem[]
   expenseBreakdown: BreakdownChartItem[]
+  expensePieStyle: string
   sessionTypeBreakdown: BreakdownChartItem[]
+  sessionTypePieStyle: string
   sessionCategoryCostBreakdown: BreakdownChartItem[]
+  sessionCategoryCostPieStyle: string
   sessionSubCategoryCostBreakdown: BreakdownChartItem[]
+  sessionSubCategoryCostPieStyle: string
 }
 
 interface StatsBreakdownViewItem {
@@ -65,6 +69,9 @@ interface StatsBreakdownViewItem {
 interface BreakdownChartItem extends StatsBreakdownViewItem {
   valueText: string
   width: number
+  color: string
+  percentText: string
+  pieLabelStyle: string
 }
 
 interface CalendarData {
@@ -126,9 +133,13 @@ const emptyStatsView: StatsView = {
   frequency: [],
   ratingTrend: [],
   expenseBreakdown: [],
+  expensePieStyle: 'background: #eef2f8;',
   sessionTypeBreakdown: [],
+  sessionTypePieStyle: 'background: #eef2f8;',
   sessionCategoryCostBreakdown: [],
+  sessionCategoryCostPieStyle: 'background: #eef2f8;',
   sessionSubCategoryCostBreakdown: [],
+  sessionSubCategoryCostPieStyle: 'background: #eef2f8;',
 }
 
 const createDateText = (year: number, month: number, day: number) => {
@@ -227,20 +238,80 @@ const sortBreakdownByPercentDesc = (items: StatsBreakdownViewItem[]) => {
   })
 }
 
-const createBreakdownChart = (items: StatsBreakdownViewItem[]): BreakdownChartItem[] => {
-  return sortBreakdownByPercentDesc(items).map((item) => ({
-    ...item,
-    valueText: formatMoneyText(item.value),
-    width: Math.max(0, Math.min(100, item.percent)),
-  }))
+const piePalettes = {
+  expense: ['#50cb70', '#3f82e8', '#ffc928'],
+  type: ['#2bc5d8', '#3f82e8', '#ffc928', '#8b7cf6'],
+  categoryCost: ['#3f82e8', '#50cb70', '#ff9f43'],
+  subCategoryCost: ['#3f82e8', '#6aa9ff', '#50cb70', '#9be7ad', '#ff9f43', '#ffc928'],
 }
 
-const createCountBreakdownChart = (items: StatsBreakdownViewItem[]): BreakdownChartItem[] => {
-  return sortBreakdownByPercentDesc(items).map((item) => ({
-    ...item,
-    valueText: `${item.value}`,
-    width: Math.max(0, Math.min(100, item.percent)),
-  }))
+const createPieStyle = (items: BreakdownChartItem[]) => {
+  const visibleItems = items.filter((item) => item.percent > 0)
+
+  if (!visibleItems.length) {
+    return 'background: #eef2f8;'
+  }
+
+  let start = 0
+  const segments = visibleItems.map((item, index) => {
+    const end = index === visibleItems.length - 1 ? 100 : Math.min(100, start + item.percent)
+    const segment = `${item.color} ${start}% ${end}%`
+    start = end
+    return segment
+  })
+
+  return `background: conic-gradient(${segments.join(', ')});`
+}
+
+const createPieLabelStyle = (start: number, percent: number) => {
+  if (percent <= 0) {
+    return 'display: none;'
+  }
+
+  const angle = ((start + percent / 2) / 100) * Math.PI * 2
+  const radius = 34
+  const left = 50 + Math.sin(angle) * radius
+  const top = 50 - Math.cos(angle) * radius
+
+  return `left: ${left.toFixed(1)}%; top: ${top.toFixed(1)}%;`
+}
+
+const createBreakdownChart = (items: StatsBreakdownViewItem[], colors: string[]): BreakdownChartItem[] => {
+  let start = 0
+
+  return sortBreakdownByPercentDesc(items).map((item, index) => {
+    const percent = Math.max(0, Math.min(100, item.percent))
+    const chartItem = {
+      ...item,
+      valueText: formatMoneyText(item.value),
+      width: percent,
+      color: colors[index % colors.length],
+      percentText: `${percent}%`,
+      pieLabelStyle: createPieLabelStyle(start, percent),
+    }
+    start += percent
+
+    return chartItem
+  })
+}
+
+const createCountBreakdownChart = (items: StatsBreakdownViewItem[], colors: string[]): BreakdownChartItem[] => {
+  let start = 0
+
+  return sortBreakdownByPercentDesc(items).map((item, index) => {
+    const percent = Math.max(0, Math.min(100, item.percent))
+    const chartItem = {
+      ...item,
+      valueText: `${item.value}`,
+      width: percent,
+      color: colors[index % colors.length],
+      percentText: `${percent}%`,
+      pieLabelStyle: createPieLabelStyle(start, percent),
+    }
+    start += percent
+
+    return chartItem
+  })
 }
 
 const createPercentBreakdown = (items: { key?: string; label: string; value: number; percent?: number }[], total: number): StatsBreakdownViewItem[] => {
@@ -269,14 +340,16 @@ const createSessionTypeBreakdown = (stats: StatsChartsResult): StatsBreakdownVie
   ], summary.sessionCount)
 }
 
-const createStatsCostBreakdown = (items: StatsBreakdownItem[], total: number): BreakdownChartItem[] => {
-  return createBreakdownChart(createPercentBreakdown(items, total))
+const createStatsCostBreakdown = (items: StatsBreakdownItem[], total: number, colors: string[]): BreakdownChartItem[] => {
+  return createBreakdownChart(createPercentBreakdown(items, total), colors)
 }
 
 const createStatsViewFromStats = (stats: StatsChartsResult): StatsView => {
   const summary = stats.summary
-  const expenseBreakdown = createPercentBreakdown(stats.charts.expenseBreakdown, summary.totalCost)
-  const sessionTypeBreakdown = createSessionTypeBreakdown(stats)
+  const expenseBreakdown = createBreakdownChart(createPercentBreakdown(stats.charts.expenseBreakdown, summary.totalCost), piePalettes.expense)
+  const sessionTypeBreakdown = createCountBreakdownChart(createSessionTypeBreakdown(stats), piePalettes.type)
+  const sessionCategoryCostBreakdown = createStatsCostBreakdown(stats.charts.sessionCategoryCostBreakdown, summary.sessionCost, piePalettes.categoryCost)
+  const sessionSubCategoryCostBreakdown = createStatsCostBreakdown(stats.charts.sessionSubCategoryCostBreakdown, summary.sessionCost, piePalettes.subCategoryCost)
 
   return {
     rangeText: stats.rangeText,
@@ -290,10 +363,14 @@ const createStatsViewFromStats = (stats: StatsChartsResult): StatsView => {
     totalCostText: formatMoneyText(summary.totalCost),
     frequency: createBarChart(stats.charts.frequency),
     ratingTrend: createRatingChart(stats.charts.ratingTrend),
-    expenseBreakdown: createBreakdownChart(expenseBreakdown),
-    sessionTypeBreakdown: createCountBreakdownChart(sessionTypeBreakdown),
-    sessionCategoryCostBreakdown: createStatsCostBreakdown(stats.charts.sessionCategoryCostBreakdown, summary.sessionCost),
-    sessionSubCategoryCostBreakdown: createStatsCostBreakdown(stats.charts.sessionSubCategoryCostBreakdown, summary.sessionCost),
+    expenseBreakdown,
+    expensePieStyle: createPieStyle(expenseBreakdown),
+    sessionTypeBreakdown,
+    sessionTypePieStyle: createPieStyle(sessionTypeBreakdown),
+    sessionCategoryCostBreakdown,
+    sessionCategoryCostPieStyle: createPieStyle(sessionCategoryCostBreakdown),
+    sessionSubCategoryCostBreakdown,
+    sessionSubCategoryCostPieStyle: createPieStyle(sessionSubCategoryCostBreakdown),
   }
 }
 

@@ -141,14 +141,18 @@
         <text class="stats-card-title">消费占比</text>
         <text class="stats-card-subtitle">{{isExpenseVisible ? '¥' + statsView.totalCostText : '****'}}</text>
       </view>
-      <view class="breakdown-list">
-        <view wx:for="{{statsView.expenseBreakdown}}" wx:key="key" class="breakdown-row">
-          <view class="breakdown-topline">
-            <text>{{item.label}}</text>
-            <text>{{isExpenseVisible ? '¥' + item.valueText + ' · ' + item.percent + '%' : '**** · ' + item.percent + '%'}}</text>
-          </view>
-          <view class="breakdown-track">
-            <view class="breakdown-fill expense" style="width: {{item.width}}%;"></view>
+      <view class="pie-chart-block">
+        <view class="pie-chart" style="{{statsView.expensePieStyle}}">
+          <view wx:for="{{statsView.expenseBreakdown}}" wx:key="key" class="pie-percent-label" style="{{item.pieLabelStyle}}">{{item.percentText}}</view>
+          <view class="pie-hole"></view>
+        </view>
+        <view class="pie-legend">
+          <view wx:for="{{statsView.expenseBreakdown}}" wx:key="key" class="pie-legend-row">
+            <view class="pie-legend-main">
+              <view class="pie-dot" style="background: {{item.color}};"></view>
+              <text class="pie-label">{{item.label}}</text>
+            </view>
+            <text class="pie-value">{{isExpenseVisible ? '¥' + item.valueText + ' · ' + item.percent + '%' : '**** · ' + item.percent + '%'}}</text>
           </view>
         </view>
       </view>
@@ -159,14 +163,18 @@
         <text class="stats-card-title">打球费用占比</text>
         <text class="stats-card-subtitle">一级类型</text>
       </view>
-      <view class="breakdown-list">
-        <view wx:for="{{statsView.sessionCategoryCostBreakdown}}" wx:key="key" class="breakdown-row">
-          <view class="breakdown-topline">
-            <text>{{item.label}}</text>
-            <text>{{isExpenseVisible ? '¥' + item.valueText + ' · ' + item.percent + '%' : '**** · ' + item.percent + '%'}}</text>
-          </view>
-          <view class="breakdown-track">
-            <view class="breakdown-fill session-cost" style="width: {{item.width}}%;"></view>
+      <view class="pie-chart-block">
+        <view class="pie-chart" style="{{statsView.sessionCategoryCostPieStyle}}">
+          <view wx:for="{{statsView.sessionCategoryCostBreakdown}}" wx:key="key" class="pie-percent-label" style="{{item.pieLabelStyle}}">{{item.percentText}}</view>
+          <view class="pie-hole"></view>
+        </view>
+        <view class="pie-legend">
+          <view wx:for="{{statsView.sessionCategoryCostBreakdown}}" wx:key="key" class="pie-legend-row">
+            <view class="pie-legend-main">
+              <view class="pie-dot" style="background: {{item.color}};"></view>
+              <text class="pie-label">{{item.label}}</text>
+            </view>
+            <text class="pie-value">{{isExpenseVisible ? '¥' + item.valueText + ' · ' + item.percent + '%' : '**** · ' + item.percent + '%'}}</text>
           </view>
         </view>
       </view>
@@ -177,14 +185,18 @@
         <text class="stats-card-title">打球费用细分</text>
         <text class="stats-card-subtitle">二级类型</text>
       </view>
-      <view class="breakdown-list compact">
-        <view wx:for="{{statsView.sessionSubCategoryCostBreakdown}}" wx:key="key" class="breakdown-row">
-          <view class="breakdown-topline">
-            <text>{{item.label}}</text>
-            <text>{{isExpenseVisible ? '¥' + item.valueText + ' · ' + item.percent + '%' : '**** · ' + item.percent + '%'}}</text>
-          </view>
-          <view class="breakdown-track">
-            <view class="breakdown-fill session-sub-cost" style="width: {{item.width}}%;"></view>
+      <view class="pie-chart-block large-legend">
+        <view class="pie-chart" style="{{statsView.sessionSubCategoryCostPieStyle}}">
+          <view wx:for="{{statsView.sessionSubCategoryCostBreakdown}}" wx:key="key" class="pie-percent-label" style="{{item.pieLabelStyle}}">{{item.percentText}}</view>
+          <view class="pie-hole"></view>
+        </view>
+        <view class="pie-legend">
+          <view wx:for="{{statsView.sessionSubCategoryCostBreakdown}}" wx:key="key" class="pie-legend-row">
+            <view class="pie-legend-main">
+              <view class="pie-dot" style="background: {{item.color}};"></view>
+              <text class="pie-label">{{item.label}}</text>
+            </view>
+            <text class="pie-value">{{isExpenseVisible ? '¥' + item.valueText + ' · ' + item.percent + '%' : '**** · ' + item.percent + '%'}}</text>
           </view>
         </view>
       </view>
@@ -195,14 +207,18 @@
         <text class="stats-card-title">训练比赛占比</text>
         <text class="stats-card-subtitle">{{statsView.sessionCount}} 次</text>
       </view>
-      <view class="breakdown-list">
-        <view wx:for="{{statsView.sessionTypeBreakdown}}" wx:key="key" class="breakdown-row">
-          <view class="breakdown-topline">
-            <text>{{item.label}}</text>
-            <text>{{item.valueText}} 次 · {{item.percent}}%</text>
-          </view>
-          <view class="breakdown-track">
-            <view class="breakdown-fill type" style="width: {{item.width}}%;"></view>
+      <view class="pie-chart-block">
+        <view class="pie-chart" style="{{statsView.sessionTypePieStyle}}">
+          <view wx:for="{{statsView.sessionTypeBreakdown}}" wx:key="key" class="pie-percent-label" style="{{item.pieLabelStyle}}">{{item.percentText}}</view>
+          <view class="pie-hole"></view>
+        </view>
+        <view class="pie-legend">
+          <view wx:for="{{statsView.sessionTypeBreakdown}}" wx:key="key" class="pie-legend-row">
+            <view class="pie-legend-main">
+              <view class="pie-dot" style="background: {{item.color}};"></view>
+              <text class="pie-label">{{item.label}}</text>
+            </view>
+            <text class="pie-value">{{item.valueText}} 次 · {{item.percent}}%</text>
           </view>
         </view>
       </view>
