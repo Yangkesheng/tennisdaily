@@ -156,6 +156,42 @@
 
     <view class="stats-card">
       <view class="stats-card-header">
+        <text class="stats-card-title">打球费用占比</text>
+        <text class="stats-card-subtitle">一级类型</text>
+      </view>
+      <view class="breakdown-list">
+        <view wx:for="{{statsView.sessionCategoryCostBreakdown}}" wx:key="key" class="breakdown-row">
+          <view class="breakdown-topline">
+            <text>{{item.label}}</text>
+            <text>{{isExpenseVisible ? '¥' + item.valueText + ' · ' + item.percent + '%' : '**** · ' + item.percent + '%'}}</text>
+          </view>
+          <view class="breakdown-track">
+            <view class="breakdown-fill session-cost" style="width: {{item.width}}%;"></view>
+          </view>
+        </view>
+      </view>
+    </view>
+
+    <view class="stats-card">
+      <view class="stats-card-header">
+        <text class="stats-card-title">打球费用细分</text>
+        <text class="stats-card-subtitle">二级类型</text>
+      </view>
+      <view class="breakdown-list compact">
+        <view wx:for="{{statsView.sessionSubCategoryCostBreakdown}}" wx:key="key" class="breakdown-row">
+          <view class="breakdown-topline">
+            <text>{{item.label}}</text>
+            <text>{{isExpenseVisible ? '¥' + item.valueText + ' · ' + item.percent + '%' : '**** · ' + item.percent + '%'}}</text>
+          </view>
+          <view class="breakdown-track">
+            <view class="breakdown-fill session-sub-cost" style="width: {{item.width}}%;"></view>
+          </view>
+        </view>
+      </view>
+    </view>
+
+    <view class="stats-card">
+      <view class="stats-card-header">
         <text class="stats-card-title">训练比赛占比</text>
         <text class="stats-card-subtitle">{{statsView.sessionCount}} 次</text>
       </view>

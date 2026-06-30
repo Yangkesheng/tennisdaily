@@ -39,6 +39,8 @@ export interface StatsCharts {
   ratingTrend: StatsRatingTrendItem[]
   expenseBreakdown: StatsBreakdownItem[]
   sessionTypeBreakdown: StatsBreakdownItem[]
+  sessionCategoryCostBreakdown: StatsBreakdownItem[]
+  sessionSubCategoryCostBreakdown: StatsBreakdownItem[]
 }
 
 export interface StatsChartsResult {

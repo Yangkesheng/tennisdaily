@@ -500,6 +500,10 @@
   gap: 22rpx;
 }
 
+.breakdown-list.compact {
+  gap: 18rpx;
+}
+
 .breakdown-topline {
   display: flex;
   align-items: center;
@@ -531,6 +535,14 @@
 
 .breakdown-fill.type {
   background: linear-gradient(90deg, #2bc5d8 0%, #9ae8f0 100%);
+}
+
+.breakdown-fill.session-cost {
+  background: linear-gradient(90deg, #3f82e8 0%, #9cc5ff 100%);
+}
+
+.breakdown-fill.session-sub-cost {
+  background: linear-gradient(90deg, #ffc928 0%, #ffe59a 100%);
 }
 
 .stats-empty {

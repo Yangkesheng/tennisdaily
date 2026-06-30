@@ -32,6 +32,21 @@ const defaultSessionTypeBreakdown: StatsBreakdownItem[] = [
   { key: 'match', label: '比赛', value: 0, percent: 0 },
 ]
 
+const defaultSessionCategoryCostBreakdown: StatsBreakdownItem[] = [
+  { key: 'daily', label: '日常球局', value: 0, percent: 0 },
+  { key: 'training', label: '训练', value: 0, percent: 0 },
+  { key: 'match', label: '比赛', value: 0, percent: 0 },
+]
+
+const defaultSessionSubCategoryCostBreakdown: StatsBreakdownItem[] = [
+  { key: 'daily_singles', label: '日常球局 · 打单', value: 0, percent: 0 },
+  { key: 'daily_doubles', label: '日常球局 · 双打', value: 0, percent: 0 },
+  { key: 'training_serve', label: '训练 · 发球', value: 0, percent: 0 },
+  { key: 'training_other', label: '训练 · 其他', value: 0, percent: 0 },
+  { key: 'match_singles', label: '比赛 · 单打', value: 0, percent: 0 },
+  { key: 'match_doubles', label: '比赛 · 双打', value: 0, percent: 0 },
+]
+
 const normalizeNumber = (value: number | null | undefined) => {
   return typeof value === 'number' && !Number.isNaN(value) ? value : 0
 }
@@ -101,6 +116,8 @@ const normalizeStatsCharts = (raw: ApiStatsChartsResult | null, period: StatsPer
       ratingTrend: normalizeRatingTrend(charts.ratingTrend),
       expenseBreakdown: normalizeBreakdown(charts.expenseBreakdown, defaultExpenseBreakdown),
       sessionTypeBreakdown: normalizeBreakdown(charts.sessionTypeBreakdown, defaultSessionTypeBreakdown),
+      sessionCategoryCostBreakdown: normalizeBreakdown(charts.sessionCategoryCostBreakdown, defaultSessionCategoryCostBreakdown),
+      sessionSubCategoryCostBreakdown: normalizeBreakdown(charts.sessionSubCategoryCostBreakdown, defaultSessionSubCategoryCostBreakdown),
     },
   }
 }

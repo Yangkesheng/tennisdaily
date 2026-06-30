@@ -1,7 +1,7 @@
-import type { SessionCalendar } from '../../models/session'
-import type { StatsPeriod } from '../../models/stats'
+import type { StatsBreakdownItem, StatsChartsResult, StatsPeriod } from '../../models/stats'
 import { requireLoginPage } from '../../services/auth-service'
 import { getSessionCalendarFromApi, getSessionYearCalendarFromApi, getTodayText } from '../../services/session-service'
+import { getStatsChartsFromApi } from '../../services/stats-api-service'
 
 interface PickerChangeEvent {
   detail: {
@@ -51,6 +51,8 @@ interface StatsView {
   ratingTrend: RatingChartItem[]
   expenseBreakdown: BreakdownChartItem[]
   sessionTypeBreakdown: BreakdownChartItem[]
+  sessionCategoryCostBreakdown: BreakdownChartItem[]
+  sessionSubCategoryCostBreakdown: BreakdownChartItem[]
 }
 
 interface StatsBreakdownViewItem {
@@ -125,6 +127,8 @@ const emptyStatsView: StatsView = {
   ratingTrend: [],
   expenseBreakdown: [],
   sessionTypeBreakdown: [],
+  sessionCategoryCostBreakdown: [],
+  sessionSubCategoryCostBreakdown: [],
 }
 
 const createDateText = (year: number, month: number, day: number) => {
@@ -248,14 +252,14 @@ const createPercentBreakdown = (items: { key?: string; label: string; value: num
   }))
 }
 
-const createSessionTypeBreakdown = (calendar: SessionCalendar): StatsBreakdownViewItem[] => {
-  if (calendar.charts.sessionTypeBreakdown.length) {
-    const total = calendar.charts.sessionTypeBreakdown.reduce((sum, item) => sum + item.value, 0)
+const createSessionTypeBreakdown = (stats: StatsChartsResult): StatsBreakdownViewItem[] => {
+  if (stats.charts.sessionTypeBreakdown.length) {
+    const total = stats.charts.sessionTypeBreakdown.reduce((sum, item) => sum + item.value, 0)
 
-    return createPercentBreakdown(calendar.charts.sessionTypeBreakdown, total)
+    return createPercentBreakdown(stats.charts.sessionTypeBreakdown, total)
   }
 
-  const summary = calendar.summary
+  const summary = stats.summary
 
   return createPercentBreakdown([
     { key: 'training', label: '训练', value: summary.trainingCount },
@@ -265,13 +269,17 @@ const createSessionTypeBreakdown = (calendar: SessionCalendar): StatsBreakdownVi
   ], summary.sessionCount)
 }
 
-const createStatsViewFromCalendar = (calendar: SessionCalendar, period: StatsPeriod): StatsView => {
-  const summary = calendar.summary
-  const expenseBreakdown = createPercentBreakdown(calendar.charts.expenseBreakdown, summary.totalCost)
-  const sessionTypeBreakdown = createSessionTypeBreakdown(calendar)
+const createStatsCostBreakdown = (items: StatsBreakdownItem[], total: number): BreakdownChartItem[] => {
+  return createBreakdownChart(createPercentBreakdown(items, total))
+}
+
+const createStatsViewFromStats = (stats: StatsChartsResult): StatsView => {
+  const summary = stats.summary
+  const expenseBreakdown = createPercentBreakdown(stats.charts.expenseBreakdown, summary.totalCost)
+  const sessionTypeBreakdown = createSessionTypeBreakdown(stats)
 
   return {
-    rangeText: period === 'year' ? `${calendar.year}年` : `${calendar.year}年${calendar.month}月`,
+    rangeText: stats.rangeText,
     sessionCount: summary.sessionCount,
     activeDayCount: summary.activeDayCount,
     totalHoursText: (summary.totalMinutes / 60).toFixed(1),
@@ -280,10 +288,12 @@ const createStatsViewFromCalendar = (calendar: SessionCalendar, period: StatsPer
     averageRatingText: summary.averageRating > 0 ? summary.averageRating.toFixed(1) : '暂无',
     sessionCostText: formatMoneyText(summary.sessionCost),
     totalCostText: formatMoneyText(summary.totalCost),
-    frequency: createBarChart(calendar.charts.frequency),
-    ratingTrend: createRatingChart(calendar.charts.ratingTrend),
+    frequency: createBarChart(stats.charts.frequency),
+    ratingTrend: createRatingChart(stats.charts.ratingTrend),
     expenseBreakdown: createBreakdownChart(expenseBreakdown),
     sessionTypeBreakdown: createCountBreakdownChart(sessionTypeBreakdown),
+    sessionCategoryCostBreakdown: createStatsCostBreakdown(stats.charts.sessionCategoryCostBreakdown, summary.sessionCost),
+    sessionSubCategoryCostBreakdown: createStatsCostBreakdown(stats.charts.sessionSubCategoryCostBreakdown, summary.sessionCost),
   }
 }
 
@@ -415,21 +425,18 @@ Component({
       })
 
       try {
-        const calendar = targetPeriod === 'year'
-          ? await getSessionYearCalendarFromApi(targetYear)
-          : await getSessionCalendarFromApi(targetYear, targetMonth)
-
-        const nextMonth = targetPeriod === 'year' ? targetMonth : calendar.month
+        const stats = await getStatsChartsFromApi(targetPeriod, targetYear, targetMonth)
+        const nextMonth = targetPeriod === 'year' ? targetMonth : stats.month
 
         this.setData({
           statsPeriod: targetPeriod,
-          statsView: createStatsViewFromCalendar(calendar, targetPeriod),
-          currentYear: calendar.year,
+          statsView: createStatsViewFromStats(stats),
+          currentYear: stats.year,
           currentMonth: nextMonth,
-          yearPickerIndex: getYearPickerIndex(this.data.yearOptions, calendar.year),
+          yearPickerIndex: getYearPickerIndex(this.data.yearOptions, stats.year),
           monthPickerIndex: getMonthPickerIndex(nextMonth),
-          canGoNext: getCanGoNext(this.data.activeTab, this.data.calendarPeriod, targetPeriod, calendar.year, nextMonth),
-          canJumpCurrent: getCanJumpCurrent(this.data.activeTab, this.data.calendarPeriod, targetPeriod, calendar.year, nextMonth),
+          canGoNext: getCanGoNext(this.data.activeTab, this.data.calendarPeriod, targetPeriod, stats.year, nextMonth),
+          canJumpCurrent: getCanJumpCurrent(this.data.activeTab, this.data.calendarPeriod, targetPeriod, stats.year, nextMonth),
         })
       } catch (error) {
         wx.showToast({
