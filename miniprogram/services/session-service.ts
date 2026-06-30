@@ -1,4 +1,5 @@
 import type { SessionCalendar, SessionDraft, SessionPageParams, SessionPageResult, SessionStats, TennisSession } from '../models/session'
+import { SESSION_CATEGORY, SESSION_SUB_CATEGORY } from '../models/session'
 import {
   deleteSessionRemote,
   getLatestSessionRemote,
@@ -29,6 +30,8 @@ export const createDefaultSessionDraft = (): SessionDraft => {
     courtName: '',
     partner: '',
     type: 'doubles',
+    category: SESSION_CATEGORY.daily,
+    subCategory: SESSION_SUB_CATEGORY.doubles,
     matchRank: '',
     cost: 0,
     racketId: 0,

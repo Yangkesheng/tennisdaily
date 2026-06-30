@@ -62,7 +62,7 @@ const getMatchRankLabel = (rank: MatchRank) => {
 }
 
 const getSessionTypeDisplay = (session: TennisSession) => {
-  const typeLabel = getSessionTypeLabel(session.type)
+  const typeLabel = session.typeText || getSessionTypeLabel(session.type)
   const rankLabel = getMatchRankLabel(session.matchRank)
 
   if ((session.type === 'singlesMatch' || session.type === 'doublesMatch') && rankLabel) {

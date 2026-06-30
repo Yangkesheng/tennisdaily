@@ -1,4 +1,11 @@
-import type { MatchRank, SessionDraft, TennisSessionType } from '../../models/session'
+import type { MatchRank, SessionCategory, SessionDraft, SessionSubCategory } from '../../models/session'
+import {
+  SESSION_CATEGORY_OPTIONS,
+  SESSION_SUB_CATEGORY_OPTIONS,
+  getDefaultSubCategory,
+  getSessionTypeFromCategory,
+  isMatchCategory,
+} from '../../models/session'
 import type { Racket } from '../../models/racket'
 import { listMyRacketsFromApi } from '../../services/racket-api-service'
 import {
@@ -19,6 +26,8 @@ interface SessionEditData {
   ratingTexts: string[]
   saving: boolean
   sessionId: string
+  categoryOptions: typeof SESSION_CATEGORY_OPTIONS
+  subCategoryOptions: typeof SESSION_SUB_CATEGORY_OPTIONS[SessionCategory]
   titleText: string
   selectableRackets: Racket[]
   racketNames: string[]
@@ -57,9 +66,18 @@ const getPrimaryRacket = (rackets: Racket[]) => {
   return rackets.find((racket) => racket.status === 1) || null
 }
 
+const defaultDraft = createDefaultSessionDraft()
+
+const createTypeState = (draft: SessionDraft) => {
+  return {
+    subCategoryOptions: SESSION_SUB_CATEGORY_OPTIONS[draft.category],
+    isMatchType: isMatchCategory(draft.category),
+  }
+}
+
 Page({
   data: {
-    draft: createDefaultSessionDraft(),
+    draft: defaultDraft,
     costInput: '',
     customDuration: '',
     isCustomDuration: false,
@@ -69,6 +87,8 @@ Page({
     ratingTexts: ['网球满天飞', '状态有些迷', '中规中矩吧', '甜区率很高', '今天我是阿卡'],
     saving: false,
     sessionId: '',
+    categoryOptions: SESSION_CATEGORY_OPTIONS,
+    subCategoryOptions: SESSION_SUB_CATEGORY_OPTIONS[defaultDraft.category],
     titleText: '记录',
     selectableRackets: [],
     racketNames: [],
@@ -132,7 +152,7 @@ Page({
         costInput: '',
         customDuration: '',
         isCustomDuration: false,
-        isMatchType: draft.type === 'singlesMatch' || draft.type === 'doublesMatch',
+        ...createTypeState(draft),
         isPageReady: true,
         ratingText: this.data.ratingTexts[draft.rating - 1],
         sessionId: '',
@@ -150,7 +170,7 @@ Page({
         costInput: '',
         customDuration: '',
         isCustomDuration: false,
-        isMatchType: draft.type === 'singlesMatch' || draft.type === 'doublesMatch',
+        ...createTypeState(draft),
         isPageReady: true,
         ratingText: this.data.ratingTexts[draft.rating - 1],
         sessionId: '',
@@ -184,6 +204,8 @@ Page({
           courtName: session.courtName || '',
           partner: session.partner || '',
           type: session.type || '',
+          category: session.category,
+          subCategory: session.subCategory,
           matchRank: session.matchRank || '',
           cost: session.cost || 0,
           racketId: session.racketId || 0,
@@ -195,20 +217,34 @@ Page({
         costInput: session.cost ? `${session.cost}` : '',
         customDuration: session.durationMinutes === 60 || session.durationMinutes === 120 ? '' : `${session.durationMinutes}`,
         isCustomDuration: session.durationMinutes !== 60 && session.durationMinutes !== 120,
-        isMatchType: session.type === 'singlesMatch' || session.type === 'doublesMatch',
+        subCategoryOptions: SESSION_SUB_CATEGORY_OPTIONS[session.category],
+        isMatchType: isMatchCategory(session.category),
         isPageReady: true,
         sessionId: options.id,
         titleText: '编辑',
     })
   },
-  selectType(event: WechatMiniprogram.TouchEvent) {
-      const type = event.currentTarget.dataset.type as TennisSessionType
-      const isMatchType = type === 'singlesMatch' || type === 'doublesMatch'
+  selectCategory(event: WechatMiniprogram.TouchEvent) {
+      const category = Number(event.currentTarget.dataset.category) as SessionCategory
+      const subCategory = getDefaultSubCategory(category)
+      const isMatchType = isMatchCategory(category)
 
       this.setData({
-        'draft.type': type,
+        'draft.category': category,
+        'draft.subCategory': subCategory,
+        'draft.type': getSessionTypeFromCategory(category, subCategory),
         'draft.matchRank': isMatchType ? this.data.draft.matchRank : '',
+        subCategoryOptions: SESSION_SUB_CATEGORY_OPTIONS[category],
         isMatchType,
+      })
+    },
+    selectSubCategory(event: WechatMiniprogram.TouchEvent) {
+      const subCategory = Number(event.currentTarget.dataset.subCategory) as SessionSubCategory
+      const category = this.data.draft.category
+
+      this.setData({
+        'draft.subCategory': subCategory,
+        'draft.type': getSessionTypeFromCategory(category, subCategory),
       })
     },
     selectMatchRank(event: WechatMiniprogram.TouchEvent) {

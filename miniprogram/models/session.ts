@@ -1,5 +1,87 @@
 export type TennisSessionType = '' | 'training' | 'singles' | 'doubles' | 'singlesMatch' | 'doublesMatch'
+export type SessionCategory = 1 | 2 | 3
+export type SessionSubCategory = 1 | 2 | 3 | 4
 export type MatchRank = '' | 'champion' | 'runnerUp' | 'semiFinal' | 'quarterFinal' | 'groupStage'
+
+export interface SessionCategoryOption {
+  label: string
+  value: SessionCategory
+}
+
+export interface SessionSubCategoryOption {
+  label: string
+  value: SessionSubCategory
+}
+
+export const SESSION_CATEGORY = {
+  daily: 1,
+  training: 2,
+  match: 3,
+} as const
+
+export const SESSION_SUB_CATEGORY = {
+  singles: 1,
+  doubles: 2,
+  serve: 3,
+  other: 4,
+} as const
+
+export const SESSION_CATEGORY_OPTIONS: SessionCategoryOption[] = [
+  { label: '日常球局', value: SESSION_CATEGORY.daily },
+  { label: '训练', value: SESSION_CATEGORY.training },
+  { label: '比赛', value: SESSION_CATEGORY.match },
+]
+
+export const SESSION_SUB_CATEGORY_OPTIONS: Record<SessionCategory, SessionSubCategoryOption[]> = {
+  [SESSION_CATEGORY.daily]: [
+    { label: '单打', value: SESSION_SUB_CATEGORY.singles },
+    { label: '双打', value: SESSION_SUB_CATEGORY.doubles },
+  ],
+  [SESSION_CATEGORY.training]: [
+    { label: '发球', value: SESSION_SUB_CATEGORY.serve },
+    { label: '其他', value: SESSION_SUB_CATEGORY.other },
+  ],
+  [SESSION_CATEGORY.match]: [
+    { label: '单打', value: SESSION_SUB_CATEGORY.singles },
+    { label: '双打', value: SESSION_SUB_CATEGORY.doubles },
+  ],
+}
+
+export const getDefaultSubCategory = (category: SessionCategory): SessionSubCategory => {
+  return SESSION_SUB_CATEGORY_OPTIONS[category][0].value
+}
+
+export const isMatchCategory = (category: SessionCategory) => {
+  return category === SESSION_CATEGORY.match
+}
+
+export const getSessionTypeFromCategory = (category: SessionCategory, subCategory: SessionSubCategory): TennisSessionType => {
+  if (category === SESSION_CATEGORY.daily) {
+    return subCategory === SESSION_SUB_CATEGORY.doubles ? 'doubles' : 'singles'
+  }
+
+  if (category === SESSION_CATEGORY.training) {
+    return 'training'
+  }
+
+  return subCategory === SESSION_SUB_CATEGORY.doubles ? 'doublesMatch' : 'singlesMatch'
+}
+
+export const getCategoryFromSessionType = (type: TennisSessionType): { category: SessionCategory; subCategory: SessionSubCategory } => {
+  switch (type) {
+    case 'singles':
+      return { category: SESSION_CATEGORY.daily, subCategory: SESSION_SUB_CATEGORY.singles }
+    case 'training':
+      return { category: SESSION_CATEGORY.training, subCategory: SESSION_SUB_CATEGORY.other }
+    case 'singlesMatch':
+      return { category: SESSION_CATEGORY.match, subCategory: SESSION_SUB_CATEGORY.singles }
+    case 'doublesMatch':
+      return { category: SESSION_CATEGORY.match, subCategory: SESSION_SUB_CATEGORY.doubles }
+    case 'doubles':
+    default:
+      return { category: SESSION_CATEGORY.daily, subCategory: SESSION_SUB_CATEGORY.doubles }
+  }
+}
 
 export interface TennisSession {
   id: string
@@ -9,6 +91,11 @@ export interface TennisSession {
   courtName: string
   partner: string
   type: TennisSessionType
+  typeText: string
+  category: SessionCategory
+  categoryText: string
+  subCategory: SessionSubCategory
+  subCategoryText: string
   matchRank: MatchRank
   cost: number
   racketId: number
@@ -26,6 +113,8 @@ export interface SessionDraft {
   courtName: string
   partner: string
   type: TennisSessionType
+  category: SessionCategory
+  subCategory: SessionSubCategory
   matchRank: MatchRank
   cost: number
   racketId: number

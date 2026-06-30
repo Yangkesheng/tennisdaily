@@ -40,11 +40,14 @@
   <view class="field-group">
     <text class="field-label">类型</text>
     <view class="choice-options type-options">
-      <button class="choice-option {{draft.type === 'doubles' ? 'active' : ''}}" data-type="doubles" bindtap="selectType">双打</button>
-      <button class="choice-option {{draft.type === 'singles' ? 'active' : ''}}" data-type="singles" bindtap="selectType">单打</button>
-      <button class="choice-option {{draft.type === 'training' ? 'active' : ''}}" data-type="training" bindtap="selectType">训练</button>
-      <button class="choice-option {{draft.type === 'singlesMatch' ? 'active' : ''}}" data-type="singlesMatch" bindtap="selectType">单打比赛</button>
-      <button class="choice-option {{draft.type === 'doublesMatch' ? 'active' : ''}}" data-type="doublesMatch" bindtap="selectType">双打比赛</button>
+      <button wx:for="{{categoryOptions}}" wx:key="value" class="choice-option {{draft.category === item.value ? 'active' : ''}}" data-category="{{item.value}}" bindtap="selectCategory">{{item.label}}</button>
+    </view>
+  </view>
+
+  <view class="field-group">
+    <text class="field-label">具体类型</text>
+    <view class="choice-options type-options">
+      <button wx:for="{{subCategoryOptions}}" wx:key="value" class="choice-option {{draft.subCategory === item.value ? 'active' : ''}}" data-sub-category="{{item.value}}" bindtap="selectSubCategory">{{item.label}}</button>
     </view>
   </view>
 

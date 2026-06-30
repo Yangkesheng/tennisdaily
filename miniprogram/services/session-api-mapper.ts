@@ -1,4 +1,5 @@
-import type { MatchRank, SessionDraft, TennisSession, TennisSessionType } from '../models/session'
+import type { MatchRank, SessionCategory, SessionDraft, SessionSubCategory, TennisSession, TennisSessionType } from '../models/session'
+import { SESSION_CATEGORY, getCategoryFromSessionType, getSessionTypeFromCategory } from '../models/session'
 
 export interface ApiSession {
   id: number
@@ -7,6 +8,11 @@ export interface ApiSession {
   rating: number
   type: number
   typeLabel: string
+  category?: number | null
+  categoryText?: string | null
+  subCategory?: number | null
+  subCategoryText?: string | null
+  typeText?: string | null
   matchRank: number
   matchRankLabel: string
   courtName: string
@@ -24,7 +30,8 @@ export interface ApiSessionPayload {
   date: string
   durationMinutes: number
   rating: number
-  type: number
+  category: number
+  subCategory: number
   matchRank: number
   courtName: string
   partner: string
@@ -33,15 +40,6 @@ export interface ApiSessionPayload {
   racketName: string
   shoeName: string
   note: string
-}
-
-const localTypeToApi: Record<TennisSessionType, number> = {
-  '': 1,
-  doubles: 1,
-  singles: 2,
-  training: 3,
-  singlesMatch: 4,
-  doublesMatch: 5,
 }
 
 const localRankToApi: Record<MatchRank, number> = {
@@ -93,7 +91,34 @@ const parseApiTime = (timeText: string) => {
   return Number.isNaN(time) ? Date.now() : time
 }
 
+const normalizeCategoryPair = (session: ApiSession): { category: SessionCategory; subCategory: SessionSubCategory } => {
+  if (session.category && session.subCategory) {
+    const category = session.category as SessionCategory
+    const subCategory = session.subCategory as SessionSubCategory
+
+    return { category, subCategory }
+  }
+
+  return getCategoryFromSessionType(apiTypeToLocal(session.type))
+}
+
+const createTypeText = (session: ApiSession, categoryText: string, subCategoryText: string) => {
+  if (session.typeText) {
+    return session.typeText
+  }
+
+  if (categoryText && subCategoryText) {
+    return `${categoryText} · ${subCategoryText}`
+  }
+
+  return session.typeLabel || ''
+}
+
 export const mapApiSessionToLocal = (session: ApiSession): TennisSession => {
+  const { category, subCategory } = normalizeCategoryPair(session)
+  const categoryText = session.categoryText || ''
+  const subCategoryText = session.subCategoryText || ''
+
   return {
     id: `${session.id}`,
     date: session.date,
@@ -101,7 +126,12 @@ export const mapApiSessionToLocal = (session: ApiSession): TennisSession => {
     rating: session.rating,
     courtName: session.courtName || '',
     partner: session.partner || '',
-    type: apiTypeToLocal(session.type),
+    type: getSessionTypeFromCategory(category, subCategory),
+    typeText: createTypeText(session, categoryText, subCategoryText),
+    category,
+    categoryText,
+    subCategory,
+    subCategoryText,
     matchRank: apiRankToLocal(session.matchRank),
     cost: session.cost || 0,
     racketId: session.racketId || 0,
@@ -114,14 +144,16 @@ export const mapApiSessionToLocal = (session: ApiSession): TennisSession => {
 }
 
 export const mapLocalDraftToApiPayload = (draft: SessionDraft): ApiSessionPayload => {
-  const type = localTypeToApi[draft.type]
-  const isMatchType = draft.type === 'singlesMatch' || draft.type === 'doublesMatch'
+  const category = draft.category || getCategoryFromSessionType(draft.type).category
+  const subCategory = draft.subCategory || getCategoryFromSessionType(draft.type).subCategory
+  const isMatchType = category === SESSION_CATEGORY.match
 
   return {
     date: draft.date,
     durationMinutes: draft.durationMinutes,
     rating: draft.rating,
-    type,
+    category,
+    subCategory,
     matchRank: isMatchType ? localRankToApi[draft.matchRank] : 0,
     courtName: draft.courtName,
     partner: draft.partner,
