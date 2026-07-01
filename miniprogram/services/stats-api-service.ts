@@ -32,13 +32,13 @@ const defaultSessionTypeBreakdown: StatsBreakdownItem[] = [
   { key: 'match', label: '比赛', value: 0, percent: 0 },
 ]
 
-const defaultSessionCategoryCostBreakdown: StatsBreakdownItem[] = [
+const defaultSessionCategoryBreakdown: StatsBreakdownItem[] = [
   { key: 'daily', label: '日常球局', value: 0, percent: 0 },
   { key: 'training', label: '训练', value: 0, percent: 0 },
   { key: 'match', label: '比赛', value: 0, percent: 0 },
 ]
 
-const defaultSessionSubCategoryCostBreakdown: StatsBreakdownItem[] = [
+const defaultSessionSubCategoryBreakdown: StatsBreakdownItem[] = [
   { key: 'daily_singles', label: '日常球局 · 打单', value: 0, percent: 0 },
   { key: 'daily_doubles', label: '日常球局 · 双打', value: 0, percent: 0 },
   { key: 'training_serve', label: '训练 · 发球', value: 0, percent: 0 },
@@ -116,8 +116,12 @@ const normalizeStatsCharts = (raw: ApiStatsChartsResult | null, period: StatsPer
       ratingTrend: normalizeRatingTrend(charts.ratingTrend),
       expenseBreakdown: normalizeBreakdown(charts.expenseBreakdown, defaultExpenseBreakdown),
       sessionTypeBreakdown: normalizeBreakdown(charts.sessionTypeBreakdown, defaultSessionTypeBreakdown),
-      sessionCategoryCostBreakdown: normalizeBreakdown(charts.sessionCategoryCostBreakdown, defaultSessionCategoryCostBreakdown),
-      sessionSubCategoryCostBreakdown: normalizeBreakdown(charts.sessionSubCategoryCostBreakdown, defaultSessionSubCategoryCostBreakdown),
+      sessionCategoryCountBreakdown: normalizeBreakdown(charts.sessionCategoryCountBreakdown, defaultSessionCategoryBreakdown),
+      sessionSubCategoryCountBreakdown: normalizeBreakdown(charts.sessionSubCategoryCountBreakdown, defaultSessionSubCategoryBreakdown),
+      sessionCategoryDurationBreakdown: normalizeBreakdown(charts.sessionCategoryDurationBreakdown, defaultSessionCategoryBreakdown),
+      sessionSubCategoryDurationBreakdown: normalizeBreakdown(charts.sessionSubCategoryDurationBreakdown, defaultSessionSubCategoryBreakdown),
+      sessionCategoryCostBreakdown: normalizeBreakdown(charts.sessionCategoryCostBreakdown, defaultSessionCategoryBreakdown),
+      sessionSubCategoryCostBreakdown: normalizeBreakdown(charts.sessionSubCategoryCostBreakdown, defaultSessionSubCategoryBreakdown),
     },
   }
 }

@@ -39,6 +39,10 @@ export interface StatsCharts {
   ratingTrend: StatsRatingTrendItem[]
   expenseBreakdown: StatsBreakdownItem[]
   sessionTypeBreakdown: StatsBreakdownItem[]
+  sessionCategoryCountBreakdown: StatsBreakdownItem[]
+  sessionSubCategoryCountBreakdown: StatsBreakdownItem[]
+  sessionCategoryDurationBreakdown: StatsBreakdownItem[]
+  sessionSubCategoryDurationBreakdown: StatsBreakdownItem[]
   sessionCategoryCostBreakdown: StatsBreakdownItem[]
   sessionSubCategoryCostBreakdown: StatsBreakdownItem[]
 }

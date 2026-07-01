@@ -51,8 +51,14 @@ interface StatsView {
   ratingTrend: RatingChartItem[]
   expenseBreakdown: BreakdownChartItem[]
   expensePieStyle: string
-  sessionTypeBreakdown: BreakdownChartItem[]
-  sessionTypePieStyle: string
+  sessionCategoryCountBreakdown: BreakdownChartItem[]
+  sessionCategoryCountPieStyle: string
+  sessionSubCategoryCountBreakdown: BreakdownChartItem[]
+  sessionSubCategoryCountPieStyle: string
+  sessionCategoryDurationBreakdown: BreakdownChartItem[]
+  sessionCategoryDurationPieStyle: string
+  sessionSubCategoryDurationBreakdown: BreakdownChartItem[]
+  sessionSubCategoryDurationPieStyle: string
   sessionCategoryCostBreakdown: BreakdownChartItem[]
   sessionCategoryCostPieStyle: string
   sessionSubCategoryCostBreakdown: BreakdownChartItem[]
@@ -90,6 +96,9 @@ interface CalendarData {
   isCalendarLoading: boolean
   isStatsLoading: boolean
   isExpenseVisible: boolean
+  isCountDetailExpanded: boolean
+  isDurationDetailExpanded: boolean
+  isCostDetailExpanded: boolean
   canGoNext: boolean
   canJumpCurrent: boolean
 }
@@ -134,8 +143,14 @@ const emptyStatsView: StatsView = {
   ratingTrend: [],
   expenseBreakdown: [],
   expensePieStyle: 'background: #eef2f8;',
-  sessionTypeBreakdown: [],
-  sessionTypePieStyle: 'background: #eef2f8;',
+  sessionCategoryCountBreakdown: [],
+  sessionCategoryCountPieStyle: 'background: #eef2f8;',
+  sessionSubCategoryCountBreakdown: [],
+  sessionSubCategoryCountPieStyle: 'background: #eef2f8;',
+  sessionCategoryDurationBreakdown: [],
+  sessionCategoryDurationPieStyle: 'background: #eef2f8;',
+  sessionSubCategoryDurationBreakdown: [],
+  sessionSubCategoryDurationPieStyle: 'background: #eef2f8;',
   sessionCategoryCostBreakdown: [],
   sessionCategoryCostPieStyle: 'background: #eef2f8;',
   sessionSubCategoryCostBreakdown: [],
@@ -240,7 +255,10 @@ const sortBreakdownByPercentDesc = (items: StatsBreakdownViewItem[]) => {
 
 const piePalettes = {
   expense: ['#50cb70', '#3f82e8', '#ffc928'],
-  type: ['#2bc5d8', '#3f82e8', '#ffc928', '#8b7cf6'],
+  categoryCount: ['#2bc5d8', '#3f82e8', '#8b7cf6'],
+  subCategoryCount: ['#2bc5d8', '#6fdde9', '#3f82e8', '#8dbbff', '#8b7cf6', '#b8adff'],
+  categoryDuration: ['#50cb70', '#3f82e8', '#ffc928'],
+  subCategoryDuration: ['#50cb70', '#9be7ad', '#3f82e8', '#8dbbff', '#ffc928', '#ffe08a'],
   categoryCost: ['#3f82e8', '#50cb70', '#ff9f43'],
   subCategoryCost: ['#3f82e8', '#6aa9ff', '#50cb70', '#9be7ad', '#ff9f43', '#ffc928'],
 }
@@ -276,14 +294,14 @@ const createPieLabelStyle = (start: number, percent: number) => {
   return `left: ${left.toFixed(1)}%; top: ${top.toFixed(1)}%;`
 }
 
-const createBreakdownChart = (items: StatsBreakdownViewItem[], colors: string[]): BreakdownChartItem[] => {
+const createBreakdownChart = (items: StatsBreakdownViewItem[], colors: string[], formatter = formatMoneyText): BreakdownChartItem[] => {
   let start = 0
 
   return sortBreakdownByPercentDesc(items).map((item, index) => {
     const percent = Math.max(0, Math.min(100, item.percent))
     const chartItem = {
       ...item,
-      valueText: formatMoneyText(item.value),
+      valueText: formatter(item.value),
       width: percent,
       color: colors[index % colors.length],
       percentText: `${percent}%`,
@@ -323,33 +341,23 @@ const createPercentBreakdown = (items: { key?: string; label: string; value: num
   }))
 }
 
-const createSessionTypeBreakdown = (stats: StatsChartsResult): StatsBreakdownViewItem[] => {
-  if (stats.charts.sessionTypeBreakdown.length) {
-    const total = stats.charts.sessionTypeBreakdown.reduce((sum, item) => sum + item.value, 0)
-
-    return createPercentBreakdown(stats.charts.sessionTypeBreakdown, total)
-  }
-
-  const summary = stats.summary
-
-  return createPercentBreakdown([
-    { key: 'training', label: '训练', value: summary.trainingCount },
-    { key: 'singles', label: '单打', value: summary.singlesCount },
-    { key: 'doubles', label: '双打', value: summary.doublesCount },
-    { key: 'match', label: '比赛', value: summary.matchCount },
-  ], summary.sessionCount)
+const formatHoursText = (value: number) => {
+  return `${(value / 60).toFixed(1)}小时`
 }
 
-const createStatsCostBreakdown = (items: StatsBreakdownItem[], total: number, colors: string[]): BreakdownChartItem[] => {
-  return createBreakdownChart(createPercentBreakdown(items, total), colors)
+const createStatsBreakdown = (items: StatsBreakdownItem[], total: number, colors: string[], formatter: (value: number) => string): BreakdownChartItem[] => {
+  return createBreakdownChart(createPercentBreakdown(items, total), colors, formatter)
 }
 
 const createStatsViewFromStats = (stats: StatsChartsResult): StatsView => {
   const summary = stats.summary
   const expenseBreakdown = createBreakdownChart(createPercentBreakdown(stats.charts.expenseBreakdown, summary.totalCost), piePalettes.expense)
-  const sessionTypeBreakdown = createCountBreakdownChart(createSessionTypeBreakdown(stats), piePalettes.type)
-  const sessionCategoryCostBreakdown = createStatsCostBreakdown(stats.charts.sessionCategoryCostBreakdown, summary.sessionCost, piePalettes.categoryCost)
-  const sessionSubCategoryCostBreakdown = createStatsCostBreakdown(stats.charts.sessionSubCategoryCostBreakdown, summary.sessionCost, piePalettes.subCategoryCost)
+  const sessionCategoryCountBreakdown = createCountBreakdownChart(createPercentBreakdown(stats.charts.sessionCategoryCountBreakdown, summary.sessionCount), piePalettes.categoryCount)
+  const sessionSubCategoryCountBreakdown = createCountBreakdownChart(createPercentBreakdown(stats.charts.sessionSubCategoryCountBreakdown, summary.sessionCount), piePalettes.subCategoryCount)
+  const sessionCategoryDurationBreakdown = createStatsBreakdown(stats.charts.sessionCategoryDurationBreakdown, summary.totalMinutes, piePalettes.categoryDuration, formatHoursText)
+  const sessionSubCategoryDurationBreakdown = createStatsBreakdown(stats.charts.sessionSubCategoryDurationBreakdown, summary.totalMinutes, piePalettes.subCategoryDuration, formatHoursText)
+  const sessionCategoryCostBreakdown = createStatsBreakdown(stats.charts.sessionCategoryCostBreakdown, summary.sessionCost, piePalettes.categoryCost, formatMoneyText)
+  const sessionSubCategoryCostBreakdown = createStatsBreakdown(stats.charts.sessionSubCategoryCostBreakdown, summary.sessionCost, piePalettes.subCategoryCost, formatMoneyText)
 
   return {
     rangeText: stats.rangeText,
@@ -365,8 +373,14 @@ const createStatsViewFromStats = (stats: StatsChartsResult): StatsView => {
     ratingTrend: createRatingChart(stats.charts.ratingTrend),
     expenseBreakdown,
     expensePieStyle: createPieStyle(expenseBreakdown),
-    sessionTypeBreakdown,
-    sessionTypePieStyle: createPieStyle(sessionTypeBreakdown),
+    sessionCategoryCountBreakdown,
+    sessionCategoryCountPieStyle: createPieStyle(sessionCategoryCountBreakdown),
+    sessionSubCategoryCountBreakdown,
+    sessionSubCategoryCountPieStyle: createPieStyle(sessionSubCategoryCountBreakdown),
+    sessionCategoryDurationBreakdown,
+    sessionCategoryDurationPieStyle: createPieStyle(sessionCategoryDurationBreakdown),
+    sessionSubCategoryDurationBreakdown,
+    sessionSubCategoryDurationPieStyle: createPieStyle(sessionSubCategoryDurationBreakdown),
     sessionCategoryCostBreakdown,
     sessionCategoryCostPieStyle: createPieStyle(sessionCategoryCostBreakdown),
     sessionSubCategoryCostBreakdown,
@@ -422,6 +436,9 @@ Component({
     isCalendarLoading: false,
     isStatsLoading: false,
     isExpenseVisible: true,
+    isCountDetailExpanded: false,
+    isDurationDetailExpanded: false,
+    isCostDetailExpanded: false,
     canGoNext: false,
     canJumpCurrent: false,
   } as CalendarData,
@@ -698,6 +715,36 @@ Component({
     toggleExpenseVisible() {
       this.setData({
         isExpenseVisible: !this.data.isExpenseVisible,
+      })
+    },
+    selectCountCurrent() {
+      this.setData({
+        isCountDetailExpanded: false,
+      })
+    },
+    selectCountDetail() {
+      this.setData({
+        isCountDetailExpanded: true,
+      })
+    },
+    selectDurationCurrent() {
+      this.setData({
+        isDurationDetailExpanded: false,
+      })
+    },
+    selectDurationDetail() {
+      this.setData({
+        isDurationDetailExpanded: true,
+      })
+    },
+    selectCostCurrent() {
+      this.setData({
+        isCostDetailExpanded: false,
+      })
+    },
+    selectCostDetail() {
+      this.setData({
+        isCostDetailExpanded: true,
       })
     },
     goDaySessions(event: WechatMiniprogram.TouchEvent) {

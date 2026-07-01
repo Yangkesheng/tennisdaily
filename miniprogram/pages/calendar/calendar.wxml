@@ -160,10 +160,102 @@
 
     <view class="stats-card">
       <view class="stats-card-header">
-        <text class="stats-card-title">打球费用占比</text>
-        <text class="stats-card-subtitle">一级类型</text>
+        <view>
+          <text class="stats-card-title">打球次数占比</text>
+          <text class="stats-card-subtitle inline-subtitle">{{statsView.sessionCount}} 次</text>
+        </view>
+        <view class="chart-switcher">
+          <view class="chart-switch-option {{!isCountDetailExpanded ? 'active' : ''}}" bindtap="selectCountCurrent">概览</view>
+          <view class="chart-switch-option {{isCountDetailExpanded ? 'active' : ''}}" bindtap="selectCountDetail">细分</view>
+        </view>
       </view>
-      <view class="pie-chart-block">
+      <view wx:if="{{!isCountDetailExpanded}}" class="pie-chart-block">
+        <view class="pie-chart" style="{{statsView.sessionCategoryCountPieStyle}}">
+          <view wx:for="{{statsView.sessionCategoryCountBreakdown}}" wx:key="key" class="pie-percent-label" style="{{item.pieLabelStyle}}">{{item.percentText}}</view>
+          <view class="pie-hole"></view>
+        </view>
+        <view class="pie-legend">
+          <view wx:for="{{statsView.sessionCategoryCountBreakdown}}" wx:key="key" class="pie-legend-row">
+            <view class="pie-legend-main">
+              <view class="pie-dot" style="background: {{item.color}};"></view>
+              <text class="pie-label">{{item.label}}</text>
+            </view>
+            <text class="pie-value">{{item.valueText}} 次 · {{item.percent}}%</text>
+          </view>
+        </view>
+      </view>
+      <view wx:else class="pie-chart-block large-legend">
+        <view class="pie-chart" style="{{statsView.sessionSubCategoryCountPieStyle}}">
+          <view wx:for="{{statsView.sessionSubCategoryCountBreakdown}}" wx:key="key" class="pie-percent-label" style="{{item.pieLabelStyle}}">{{item.percentText}}</view>
+          <view class="pie-hole"></view>
+        </view>
+        <view class="pie-legend">
+          <view wx:for="{{statsView.sessionSubCategoryCountBreakdown}}" wx:key="key" class="pie-legend-row">
+            <view class="pie-legend-main">
+              <view class="pie-dot" style="background: {{item.color}};"></view>
+              <text class="pie-label">{{item.label}}</text>
+            </view>
+            <text class="pie-value">{{item.valueText}} 次 · {{item.percent}}%</text>
+          </view>
+        </view>
+      </view>
+    </view>
+
+    <view class="stats-card">
+      <view class="stats-card-header">
+        <view>
+          <text class="stats-card-title">打球时间占比</text>
+          <text class="stats-card-subtitle inline-subtitle">{{statsView.totalHoursText}} 小时</text>
+        </view>
+        <view class="chart-switcher">
+          <view class="chart-switch-option {{!isDurationDetailExpanded ? 'active' : ''}}" bindtap="selectDurationCurrent">概览</view>
+          <view class="chart-switch-option {{isDurationDetailExpanded ? 'active' : ''}}" bindtap="selectDurationDetail">细分</view>
+        </view>
+      </view>
+      <view wx:if="{{!isDurationDetailExpanded}}" class="pie-chart-block">
+        <view class="pie-chart" style="{{statsView.sessionCategoryDurationPieStyle}}">
+          <view wx:for="{{statsView.sessionCategoryDurationBreakdown}}" wx:key="key" class="pie-percent-label" style="{{item.pieLabelStyle}}">{{item.percentText}}</view>
+          <view class="pie-hole"></view>
+        </view>
+        <view class="pie-legend">
+          <view wx:for="{{statsView.sessionCategoryDurationBreakdown}}" wx:key="key" class="pie-legend-row">
+            <view class="pie-legend-main">
+              <view class="pie-dot" style="background: {{item.color}};"></view>
+              <text class="pie-label">{{item.label}}</text>
+            </view>
+            <text class="pie-value">{{item.valueText}} · {{item.percent}}%</text>
+          </view>
+        </view>
+      </view>
+      <view wx:else class="pie-chart-block large-legend">
+        <view class="pie-chart" style="{{statsView.sessionSubCategoryDurationPieStyle}}">
+          <view wx:for="{{statsView.sessionSubCategoryDurationBreakdown}}" wx:key="key" class="pie-percent-label" style="{{item.pieLabelStyle}}">{{item.percentText}}</view>
+          <view class="pie-hole"></view>
+        </view>
+        <view class="pie-legend">
+          <view wx:for="{{statsView.sessionSubCategoryDurationBreakdown}}" wx:key="key" class="pie-legend-row">
+            <view class="pie-legend-main">
+              <view class="pie-dot" style="background: {{item.color}};"></view>
+              <text class="pie-label">{{item.label}}</text>
+            </view>
+            <text class="pie-value">{{item.valueText}} · {{item.percent}}%</text>
+          </view>
+        </view>
+      </view>
+    </view>
+
+    <view class="stats-card">
+      <view class="stats-card-header">
+        <view>
+          <text class="stats-card-title">打球费用占比</text>
+          <text class="stats-card-subtitle inline-subtitle">{{isExpenseVisible ? '¥' + statsView.sessionCostText : '****'}}</text>
+        </view>
+        <view class="chart-switcher">
+          <view class="chart-switch-option {{!isCostDetailExpanded ? 'active' : ''}}" bindtap="selectCostCurrent">概览</view>
+          <view class="chart-switch-option {{isCostDetailExpanded ? 'active' : ''}}" bindtap="selectCostDetail">细分</view>
+        </view>
+      </view>
+      <view wx:if="{{!isCostDetailExpanded}}" class="pie-chart-block">
         <view class="pie-chart" style="{{statsView.sessionCategoryCostPieStyle}}">
           <view wx:for="{{statsView.sessionCategoryCostBreakdown}}" wx:key="key" class="pie-percent-label" style="{{item.pieLabelStyle}}">{{item.percentText}}</view>
           <view class="pie-hole"></view>
@@ -178,14 +270,7 @@
           </view>
         </view>
       </view>
-    </view>
-
-    <view class="stats-card">
-      <view class="stats-card-header">
-        <text class="stats-card-title">打球费用细分</text>
-        <text class="stats-card-subtitle">二级类型</text>
-      </view>
-      <view class="pie-chart-block large-legend">
+      <view wx:else class="pie-chart-block large-legend">
         <view class="pie-chart" style="{{statsView.sessionSubCategoryCostPieStyle}}">
           <view wx:for="{{statsView.sessionSubCategoryCostBreakdown}}" wx:key="key" class="pie-percent-label" style="{{item.pieLabelStyle}}">{{item.percentText}}</view>
           <view class="pie-hole"></view>
@@ -202,26 +287,5 @@
       </view>
     </view>
 
-    <view class="stats-card">
-      <view class="stats-card-header">
-        <text class="stats-card-title">训练比赛占比</text>
-        <text class="stats-card-subtitle">{{statsView.sessionCount}} 次</text>
-      </view>
-      <view class="pie-chart-block">
-        <view class="pie-chart" style="{{statsView.sessionTypePieStyle}}">
-          <view wx:for="{{statsView.sessionTypeBreakdown}}" wx:key="key" class="pie-percent-label" style="{{item.pieLabelStyle}}">{{item.percentText}}</view>
-          <view class="pie-hole"></view>
-        </view>
-        <view class="pie-legend">
-          <view wx:for="{{statsView.sessionTypeBreakdown}}" wx:key="key" class="pie-legend-row">
-            <view class="pie-legend-main">
-              <view class="pie-dot" style="background: {{item.color}};"></view>
-              <text class="pie-label">{{item.label}}</text>
-            </view>
-            <text class="pie-value">{{item.valueText}} 次 · {{item.percent}}%</text>
-          </view>
-        </view>
-      </view>
-    </view>
   </view>
 </scroll-view>

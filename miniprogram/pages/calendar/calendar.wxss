@@ -78,10 +78,31 @@
 }
 
 .calendar-summary.stats-summary {
-  flex-direction: row;
+  flex-direction: column;
+  align-items: stretch;
+  justify-content: space-between;
+  gap: 10rpx;
+}
+
+.stats-summary .calendar-toolbar {
+  position: relative;
+  display: flex;
+  width: 100%;
   align-items: center;
   justify-content: space-between;
-  gap: 12rpx;
+  gap: 16rpx;
+}
+
+.stats-summary .jump-current {
+  position: absolute;
+  left: 50%;
+  top: 0;
+  justify-self: auto;
+  transform: translateX(-50%);
+}
+
+.stats-summary .period-switcher {
+  justify-self: auto;
 }
 
 .active-count {
@@ -642,6 +663,37 @@
 
 .large-legend .pie-chart {
   margin-top: 10rpx;
+}
+
+.inline-subtitle {
+  display: block;
+  margin-top: 8rpx;
+}
+
+.chart-switcher {
+  flex: none;
+  display: flex;
+  width: 132rpx;
+  padding: 4rpx;
+  border-radius: 999rpx;
+  background: #eef2f8;
+  box-sizing: border-box;
+}
+
+.chart-switch-option {
+  flex: 1;
+  border-radius: 999rpx;
+  color: #7b808a;
+  font-size: 24rpx;
+  font-weight: 800;
+  line-height: 44rpx;
+  text-align: center;
+}
+
+.chart-switch-option.active {
+  background: #fff;
+  color: #3f82e8;
+  box-shadow: 0 8rpx 20rpx rgba(63, 130, 232, 0.14);
 }
 
 .stats-empty {
