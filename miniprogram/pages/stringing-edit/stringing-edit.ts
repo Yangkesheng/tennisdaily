@@ -1,18 +1,30 @@
 import { createStringingRecordFromApi } from '../../services/racket-api-service'
 import { getTodayText } from '../../services/session-service'
 
+const hourOptions = Array.from({ length: 24 }, (_, index) => `${index}`)
+
+const getCurrentHourText = () => {
+  const now = new Date()
+  return `${now.getHours()}`
+}
+
 interface StringingDraft {
   stringName: string
-  tension: number
+  verticalTension: number
+  horizontalTension: number
   cost: number
   stringDate: string
+  stringTime: string
 }
 
 interface StringingEditData {
   racketId: number
   racketName: string
+  hourOptions: string[]
+  hourIndex: number
   draft: StringingDraft
   saving: boolean
+  horizontalTensionEdited: boolean
 }
 
 interface InputEvent {
@@ -33,11 +45,16 @@ Component({
     racketName: '',
     draft: {
       stringName: '',
-      tension: 0,
+      verticalTension: 0,
+      horizontalTension: 0,
       cost: 0,
       stringDate: getTodayText(),
+      stringTime: getCurrentHourText(),
     },
+    hourOptions,
+    hourIndex: Number(getCurrentHourText()),
     saving: false,
+    horizontalTensionEdited: false,
   } as StringingEditData,
   pageLifetimes: {
     show() {
@@ -70,9 +87,22 @@ Component({
         'draft.stringName': event.detail.value,
       })
     },
-    onTensionInput(event: InputEvent) {
+    onVerticalTensionInput(event: InputEvent) {
+      const verticalTension = Number(event.detail.value) || 0
+      const updateData: WechatMiniprogram.IAnyObject = {
+        'draft.verticalTension': verticalTension,
+      }
+
+      if (!this.data.horizontalTensionEdited) {
+        updateData['draft.horizontalTension'] = verticalTension
+      }
+
+      this.setData(updateData)
+    },
+    onHorizontalTensionInput(event: InputEvent) {
       this.setData({
-        'draft.tension': Number(event.detail.value) || 0,
+        'draft.horizontalTension': Number(event.detail.value) || 0,
+        horizontalTensionEdited: true,
       })
     },
     onCostInput(event: InputEvent) {
@@ -85,6 +115,13 @@ Component({
         'draft.stringDate': event.detail.value,
       })
     },
+    onTimeChange(event: PickerChangeEvent) {
+      const hourIndex = Number(event.detail.value) || 0
+      this.setData({
+        hourIndex,
+        'draft.stringTime': this.data.hourOptions[hourIndex] || '0',
+      })
+    },
     async submitStringing() {
       if (!this.data.racketId) {
         wx.showToast({
@@ -94,9 +131,11 @@ Component({
         return
       }
 
+      const stringHour = this.data.draft.stringTime.padStart(2, '0')
       const draft = {
         ...this.data.draft,
         stringName: this.data.draft.stringName.trim(),
+        stringDate: `${this.data.draft.stringDate} ${stringHour}:00`,
       }
 
       if (!draft.stringName) {

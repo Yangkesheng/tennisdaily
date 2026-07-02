@@ -15,7 +15,8 @@ interface ApiRacket {
   purchaseDate?: string
   purchasePrice?: number
   stringName?: string
-  tension?: number
+  verticalTension?: number
+  horizontalTension?: number
   lastStringDate?: string
   lastStringCost?: number
   totalMinutes?: number
@@ -49,7 +50,8 @@ interface ApiStringingRecord {
   id: number
   racketId: number
   stringName: string
-  tension?: number
+  verticalTension?: number
+  horizontalTension?: number
   cost: number
   stringDate: string
   createdAt?: string
@@ -81,7 +83,8 @@ const mapApiRacket = (racket: ApiRacket): Racket => {
     purchaseDate: racket.purchaseDate || '',
     purchasePrice: racket.purchasePrice || 0,
     stringName: racket.stringName || '',
-    tension: racket.tension || 0,
+    verticalTension: racket.verticalTension || 0,
+    horizontalTension: racket.horizontalTension || 0,
     lastStringDate: racket.lastStringDate || '',
     lastStringCost: racket.lastStringCost || 0,
     totalMinutes: racket.totalMinutes || racket.usageMinutes || 0,
@@ -102,7 +105,8 @@ const mapApiStringingRecord = (record: ApiStringingRecord): StringingRecord => {
     id: record.id,
     racketId: record.racketId,
     stringName: record.stringName,
-    tension: record.tension || 0,
+    verticalTension: record.verticalTension || 0,
+    horizontalTension: record.horizontalTension || 0,
     cost: record.cost || 0,
     stringDate: record.stringDate || '',
     createdAt: record.createdAt,
@@ -243,7 +247,8 @@ export const createStringingRecordFromApi = async (
   id: number,
   record: {
     stringName: string
-    tension: number
+    verticalTension: number
+    horizontalTension: number
     cost: number
     stringDate: string
   },

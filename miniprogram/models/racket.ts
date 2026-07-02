@@ -14,7 +14,8 @@ export interface Racket {
   purchaseDate: string
   purchasePrice: number
   stringName: string
-  tension: number
+  verticalTension: number
+  horizontalTension: number
   lastStringDate: string
   lastStringCost: number
   totalMinutes: number
@@ -41,7 +42,8 @@ export interface RacketDraft {
   purchaseDate: string
   purchasePrice: number
   stringName: string
-  tension: number
+  verticalTension: number
+  horizontalTension: number
   lastStringDate: string
   lastStringCost: number
 }
@@ -65,7 +67,8 @@ export interface StringingRecord {
   id: number
   racketId: number
   stringName: string
-  tension: number
+  verticalTension: number
+  horizontalTension: number
   cost: number
   stringDate: string
   createdAt?: string

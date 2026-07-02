@@ -44,7 +44,7 @@
         <view wx:for="{{stringingRecords}}" wx:key="id" class="stringing-row">
           <view>
             <text class="stringing-name">{{item.stringName}}</text>
-            <text class="stringing-meta">{{item.stringDate}} · {{item.tension || '-'}}磅</text>
+            <text class="stringing-meta">{{item.stringDate}} · 竖{{item.verticalTension || '-'}} / 横{{item.horizontalTension || '-'}}磅</text>
           </view>
           <text class="stringing-cost">¥{{item.cost}}</text>
         </view>

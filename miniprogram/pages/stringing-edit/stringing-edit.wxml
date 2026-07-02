@@ -12,16 +12,30 @@
           <text>球线</text>
           <input value="{{draft.stringName}}" placeholder="Poly Tour Pro" bindinput="onStringNameInput" />
         </view>
-        <view class="input-card">
+        <view class="input-card tension-card">
           <text>磅数</text>
-          <input value="{{draft.tension}}" type="digit" placeholder="48" bindinput="onTensionInput" />
-        </view>
-        <picker mode="date" value="{{draft.stringDate}}" bindchange="onDateChange">
-          <view class="input-card">
-            <text>日期</text>
-            <view class="picker-inline">{{draft.stringDate}}</view>
+          <view class="tension-inline">
+            <view class="tension-input-wrap">
+              <text class="tension-label">竖</text>
+              <input value="{{draft.verticalTension}}" type="digit" placeholder="48" bindinput="onVerticalTensionInput" />
+            </view>
+            <view class="tension-input-wrap">
+              <text class="tension-label">横</text>
+              <input value="{{draft.horizontalTension}}" type="digit" placeholder="46" bindinput="onHorizontalTensionInput" />
+            </view>
           </view>
-        </picker>
+        </view>
+        <view class="input-card stringing-time-card">
+          <text>穿线时间</text>
+          <view class="datetime-inline">
+            <picker class="datetime-picker" mode="date" value="{{draft.stringDate}}" bindchange="onDateChange">
+              <view class="datetime-pill date-pill">{{draft.stringDate}}</view>
+            </picker>
+            <picker class="datetime-picker time-picker" mode="selector" range="{{hourOptions}}" value="{{hourIndex}}" bindchange="onTimeChange">
+              <view class="datetime-pill hour-pill">{{draft.stringTime}}点</view>
+            </picker>
+          </view>
+        </view>
         <view class="input-card">
           <text>花费</text>
           <input value="{{draft.cost}}" type="digit" placeholder="0" bindinput="onCostInput" />
