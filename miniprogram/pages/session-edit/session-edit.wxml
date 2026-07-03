@@ -9,36 +9,32 @@
   <view class="field-group">
     <text class="field-label">开始时间</text>
     <view class="datetime-inline">
-      <picker class="datetime-picker" mode="date" value="{{startDate}}" bindchange="onDateChange">
+      <picker class="datetime-picker date-picker" mode="date" value="{{startDate}}" bindchange="onDateChange">
         <view class="picker-value datetime-pill date-pill">{{startDate}}</view>
       </picker>
-      <picker class="datetime-picker" mode="time" value="{{startTime}}" bindchange="onTimeChange">
-        <view class="picker-value datetime-pill time-pill">{{startTime}}</view>
+      <picker class="datetime-picker hour-picker" mode="selector" range="{{hourOptions}}" value="{{hourIndex}}" bindchange="onHourChange">
+        <view class="picker-value datetime-pill hour-pill">{{hourOptions[hourIndex]}}点</view>
       </picker>
+      <view class="minute-input-inline">
+        <input value="{{minuteInput}}" type="number" maxlength="2" placeholder="00" bindinput="onMinuteInput" />
+        <text>分</text>
+        <picker class="minute-quick-trigger" mode="selector" range="{{minuteOptions}}" value="{{minuteIndex}}" bindchange="onMinuteChange">
+          <view class="minute-arrow">▾</view>
+        </picker>
+      </view>
     </view>
   </view>
 
-  <view class="field-group rating-group">
-    <text class="field-label">今日手感</text>
-    <view class="rating-card">
-      <view class="stars-container">
-        <view class="star-box" data-rating="1" bindtap="selectRating">
-          <text class="star-char {{draft.rating >= 1 ? 'active' : ''}}">★</text>
-        </view>
-        <view class="star-box" data-rating="2" bindtap="selectRating">
-          <text class="star-char {{draft.rating >= 2 ? 'active' : ''}}">★</text>
-        </view>
-        <view class="star-box" data-rating="3" bindtap="selectRating">
-          <text class="star-char {{draft.rating >= 3 ? 'active' : ''}}">★</text>
-        </view>
-        <view class="star-box" data-rating="4" bindtap="selectRating">
-          <text class="star-char {{draft.rating >= 4 ? 'active' : ''}}">★</text>
-        </view>
-        <view class="star-box" data-rating="5" bindtap="selectRating">
-          <text class="star-char {{draft.rating >= 5 ? 'active' : ''}}">★</text>
-        </view>
-      </view>
-      <text class="rating-tips">{{ratingText}}</text>
+  <view class="field-group">
+    <text class="field-label">时长（分钟）</text>
+    <view class="choice-options">
+      <button class="choice-option {{!isCustomDuration && draft.durationMinutes === 60 ? 'active' : ''}}" bindtap="selectSixtyMinutes">60</button>
+      <button class="choice-option {{!isCustomDuration && draft.durationMinutes === 120 ? 'active' : ''}}" bindtap="selectOneTwentyMinutes">120</button>
+      <button class="choice-option {{isCustomDuration ? 'active' : ''}}" bindtap="showCustomDuration">自定义</button>
+    </view>
+    <view wx:if="{{isCustomDuration}}" class="input-card custom-duration-card">
+      <text>分钟</text>
+      <input value="{{customDuration}}" type="number" placeholder="90" bindinput="onDurationInput" />
     </view>
   </view>
 
@@ -67,19 +63,6 @@
     </view>
   </view>
 
-  <view class="field-group">
-    <text class="field-label">时长（分钟）</text>
-    <view class="choice-options">
-      <button class="choice-option {{!isCustomDuration && draft.durationMinutes === 60 ? 'active' : ''}}" bindtap="selectSixtyMinutes">60</button>
-      <button class="choice-option {{!isCustomDuration && draft.durationMinutes === 120 ? 'active' : ''}}" bindtap="selectOneTwentyMinutes">120</button>
-      <button class="choice-option {{isCustomDuration ? 'active' : ''}}" bindtap="showCustomDuration">自定义</button>
-    </view>
-    <view wx:if="{{isCustomDuration}}" class="input-card custom-duration-card">
-      <text>分钟</text>
-      <input value="{{customDuration}}" type="number" placeholder="90" bindinput="onDurationInput" />
-    </view>
-  </view>
-
   <view class="field-grid">
     <view class="input-card">
       <text>场地</text>
@@ -96,12 +79,32 @@
       </view>
     </picker>
     <view class="input-card">
-      <text>球鞋</text>
-      <input value="{{draft.shoeName}}" placeholder="球鞋" bindinput="onShoeInput" />
-    </view>
-    <view class="input-card">
       <text>搭档</text>
       <input value="{{draft.partner}}" placeholder="搭档姓名，可不填" bindinput="onPartnerInput" />
+    </view>
+  </view>
+
+  <view class="field-group rating-group">
+    <text class="field-label">今日手感</text>
+    <view class="rating-card">
+      <view class="stars-container">
+        <view class="star-box" data-rating="1" bindtap="selectRating">
+          <text class="star-char {{draft.rating >= 1 ? 'active' : ''}}">★</text>
+        </view>
+        <view class="star-box" data-rating="2" bindtap="selectRating">
+          <text class="star-char {{draft.rating >= 2 ? 'active' : ''}}">★</text>
+        </view>
+        <view class="star-box" data-rating="3" bindtap="selectRating">
+          <text class="star-char {{draft.rating >= 3 ? 'active' : ''}}">★</text>
+        </view>
+        <view class="star-box" data-rating="4" bindtap="selectRating">
+          <text class="star-char {{draft.rating >= 4 ? 'active' : ''}}">★</text>
+        </view>
+        <view class="star-box" data-rating="5" bindtap="selectRating">
+          <text class="star-char {{draft.rating >= 5 ? 'active' : ''}}">★</text>
+        </view>
+      </view>
+      <text class="rating-tips">{{ratingText}}</text>
     </view>
   </view>
 

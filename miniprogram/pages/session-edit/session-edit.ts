@@ -23,6 +23,11 @@ interface SessionEditData {
   draft: SessionDraft
   startDate: string
   startTime: string
+  hourOptions: string[]
+  hourIndex: number
+  minuteOptions: string[]
+  minuteIndex: number
+  minuteInput: string
   costInput: string
   customDuration: string
   isCustomDuration: boolean
@@ -73,6 +78,41 @@ const getPrimaryRacket = (rackets: Racket[]) => {
 }
 
 const defaultDraft = createDefaultSessionDraft()
+const hourOptions = Array.from({ length: 24 }, (_, index) => `${index}`.padStart(2, '0'))
+const minuteOptions = ['00', '15', '30', '45']
+
+const getHourText = (timeText: string) => {
+  return (timeText || getCurrentTimeText()).slice(0, 2)
+}
+
+const getMinuteText = (timeText: string) => {
+  return (timeText || getCurrentTimeText()).slice(3, 5)
+}
+
+const getHourIndex = (timeText: string) => {
+  return Math.max(0, hourOptions.indexOf(getHourText(timeText)))
+}
+
+const getMinuteIndex = (timeText: string) => {
+  return Math.max(0, minuteOptions.indexOf(getMinuteText(timeText)))
+}
+
+const createTimeText = (hourText: string, minuteText: string) => {
+  const hour = `${Number(hourText) || 0}`.padStart(2, '0')
+  const minuteNumber = Math.min(59, Math.max(0, Number(minuteText) || 0))
+  const minute = `${minuteNumber}`.padStart(2, '0')
+
+  return `${hour}:${minute}`
+}
+
+const createTimeState = (timeText: string) => {
+  return {
+    startTime: timeText,
+    hourIndex: getHourIndex(timeText),
+    minuteIndex: getMinuteIndex(timeText),
+    minuteInput: getMinuteText(timeText),
+  }
+}
 
 const createTypeState = (draft: SessionDraft) => {
   return {
@@ -85,7 +125,9 @@ Page({
   data: {
     draft: defaultDraft,
     startDate: getSessionDateText(defaultDraft.date),
-    startTime: getSessionTimeText(defaultDraft.date),
+    ...createTimeState(getSessionTimeText(defaultDraft.date)),
+    hourOptions,
+    minuteOptions,
     costInput: '',
     customDuration: '',
     isCustomDuration: false,
@@ -160,7 +202,7 @@ Page({
           date: createSessionStartText(options.date, startTime),
         },
         startDate: options.date,
-        startTime,
+        ...createTimeState(startTime),
         costInput: '',
         customDuration: '',
         isCustomDuration: false,
@@ -180,7 +222,7 @@ Page({
       this.setData({
         draft,
         startDate: getSessionDateText(draft.date),
-        startTime: getSessionTimeText(draft.date),
+        ...createTimeState(getSessionTimeText(draft.date)),
         costInput: '',
         customDuration: '',
         isCustomDuration: false,
@@ -228,7 +270,7 @@ Page({
           note: session.note || '',
         },
         startDate: getSessionDateText(session.date),
-        startTime: getSessionTimeText(session.date),
+        ...createTimeState(getSessionTimeText(session.date)),
         ratingText: this.data.ratingTexts[(session.rating || 3) - 1],
         costInput: session.cost ? `${session.cost}` : '',
         customDuration: session.durationMinutes === 60 || session.durationMinutes === 120 ? '' : `${session.durationMinutes}`,
@@ -314,11 +356,33 @@ Page({
         'draft.date': createSessionStartText(startDate, this.data.startTime),
       })
     },
-    onTimeChange(event: PickerChangeEvent) {
-      const startTime = event.detail.value
+    onHourChange(event: PickerChangeEvent) {
+      const hourIndex = Number(event.detail.value) || 0
+      const startTime = createTimeText(this.data.hourOptions[hourIndex] || '00', this.data.minuteInput)
+
+      this.setData({
+        ...createTimeState(startTime),
+        'draft.date': createSessionStartText(this.data.startDate, startTime),
+      })
+    },
+    onMinuteChange(event: PickerChangeEvent) {
+      const minuteIndex = Number(event.detail.value) || 0
+      const minuteInput = this.data.minuteOptions[minuteIndex] || '00'
+      const startTime = createTimeText(getHourText(this.data.startTime), minuteInput)
+
+      this.setData({
+        ...createTimeState(startTime),
+        'draft.date': createSessionStartText(this.data.startDate, startTime),
+      })
+    },
+    onMinuteInput(event: InputEvent) {
+      const minuteInput = event.detail.value.slice(0, 2)
+      const startTime = createTimeText(getHourText(this.data.startTime), minuteInput)
 
       this.setData({
         startTime,
+        minuteInput,
+        minuteIndex: getMinuteIndex(startTime),
         'draft.date': createSessionStartText(this.data.startDate, startTime),
       })
     },

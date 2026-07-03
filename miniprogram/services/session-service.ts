@@ -25,9 +25,8 @@ export const getTodayText = () => {
 export const getCurrentTimeText = () => {
   const now = new Date()
   const hour = `${now.getHours()}`.padStart(2, '0')
-  const minute = `${now.getMinutes()}`.padStart(2, '0')
 
-  return `${hour}:${minute}`
+  return `${hour}:00`
 }
 
 export const getCurrentSessionStartText = () => {
