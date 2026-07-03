@@ -22,9 +22,35 @@ export const getTodayText = () => {
   return `${year}-${month}-${day}`
 }
 
+export const getCurrentTimeText = () => {
+  const now = new Date()
+  const hour = `${now.getHours()}`.padStart(2, '0')
+  const minute = `${now.getMinutes()}`.padStart(2, '0')
+
+  return `${hour}:${minute}`
+}
+
+export const getCurrentSessionStartText = () => {
+  return `${getTodayText()} ${getCurrentTimeText()}`
+}
+
+export const getSessionDateText = (dateTimeText: string) => {
+  return (dateTimeText || getCurrentSessionStartText()).slice(0, 10)
+}
+
+export const getSessionTimeText = (dateTimeText: string) => {
+  const timeText = (dateTimeText || '').slice(11, 16)
+
+  return timeText || getCurrentTimeText()
+}
+
+export const createSessionStartText = (dateText: string, timeText: string) => {
+  return `${dateText || getTodayText()} ${timeText || getCurrentTimeText()}`
+}
+
 export const createDefaultSessionDraft = (): SessionDraft => {
   return {
-    date: getTodayText(),
+    date: getCurrentSessionStartText(),
     durationMinutes: 120,
     rating: 3,
     courtName: '',
@@ -64,7 +90,7 @@ export const listRecentSessionsFromApi = async (days: number): Promise<TennisSes
   start.setDate(start.getDate() - days + 1)
 
   return sessions.filter((session) => {
-    const sessionDate = new Date(`${session.date}T00:00:00`)
+    const sessionDate = new Date(`${getSessionDateText(session.date)}T00:00:00`)
 
     return sessionDate >= start && sessionDate <= now
   })

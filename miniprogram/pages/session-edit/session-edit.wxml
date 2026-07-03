@@ -7,10 +7,15 @@
       </view>
 
   <view class="field-group">
-    <text class="field-label">日期</text>
-    <picker mode="date" value="{{draft.date}}" bindchange="onDateChange">
-      <view class="picker-value">{{draft.date}}</view>
-    </picker>
+    <text class="field-label">开始时间</text>
+    <view class="datetime-inline">
+      <picker class="datetime-picker" mode="date" value="{{startDate}}" bindchange="onDateChange">
+        <view class="picker-value datetime-pill date-pill">{{startDate}}</view>
+      </picker>
+      <picker class="datetime-picker" mode="time" value="{{startTime}}" bindchange="onTimeChange">
+        <view class="picker-value datetime-pill time-pill">{{startTime}}</view>
+      </picker>
+    </view>
   </view>
 
   <view class="field-group rating-group">

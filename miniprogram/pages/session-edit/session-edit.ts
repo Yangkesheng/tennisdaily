@@ -10,6 +10,10 @@ import type { Racket } from '../../models/racket'
 import { listMyRacketsFromApi } from '../../services/racket-api-service'
 import {
   createDefaultSessionDraft,
+  createSessionStartText,
+  getCurrentTimeText,
+  getSessionDateText,
+  getSessionTimeText,
   getSessionByIdFromApi,
   saveSessionToApi,
   updateSessionToApi,
@@ -17,6 +21,8 @@ import {
 
 interface SessionEditData {
   draft: SessionDraft
+  startDate: string
+  startTime: string
   costInput: string
   customDuration: string
   isCustomDuration: boolean
@@ -78,6 +84,8 @@ const createTypeState = (draft: SessionDraft) => {
 Page({
   data: {
     draft: defaultDraft,
+    startDate: getSessionDateText(defaultDraft.date),
+    startTime: getSessionTimeText(defaultDraft.date),
     costInput: '',
     customDuration: '',
     isCustomDuration: false,
@@ -144,11 +152,15 @@ Page({
     if (!options.id && options.date) {
       const draft = createDefaultSessionDraft()
 
+      const startTime = getCurrentTimeText()
+
       this.setData({
         draft: {
           ...draft,
-          date: options.date,
+          date: createSessionStartText(options.date, startTime),
         },
+        startDate: options.date,
+        startTime,
         costInput: '',
         customDuration: '',
         isCustomDuration: false,
@@ -167,6 +179,8 @@ Page({
 
       this.setData({
         draft,
+        startDate: getSessionDateText(draft.date),
+        startTime: getSessionTimeText(draft.date),
         costInput: '',
         customDuration: '',
         isCustomDuration: false,
@@ -213,6 +227,8 @@ Page({
           shoeName: session.shoeName || '',
           note: session.note || '',
         },
+        startDate: getSessionDateText(session.date),
+        startTime: getSessionTimeText(session.date),
         ratingText: this.data.ratingTexts[(session.rating || 3) - 1],
         costInput: session.cost ? `${session.cost}` : '',
         customDuration: session.durationMinutes === 60 || session.durationMinutes === 120 ? '' : `${session.durationMinutes}`,
@@ -291,8 +307,19 @@ Page({
       })
     },
     onDateChange(event: PickerChangeEvent) {
+      const startDate = event.detail.value
+
       this.setData({
-        'draft.date': event.detail.value,
+        startDate,
+        'draft.date': createSessionStartText(startDate, this.data.startTime),
+      })
+    },
+    onTimeChange(event: PickerChangeEvent) {
+      const startTime = event.detail.value
+
+      this.setData({
+        startTime,
+        'draft.date': createSessionStartText(this.data.startDate, startTime),
       })
     },
     onCourtInput(event: InputEvent) {

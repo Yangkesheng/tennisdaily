@@ -57,6 +57,28 @@
   line-height: 44rpx;
 }
 
+.datetime-inline {
+  display: flex;
+  gap: 14rpx;
+}
+
+.datetime-picker {
+  flex: 1;
+  min-width: 0;
+}
+
+.datetime-pill {
+  text-align: center;
+}
+
+.date-pill {
+  flex: 1.35;
+}
+
+.time-pill {
+  flex: 0.65;
+}
+
 .choice-options {
   display: flex;
   flex-direction: row;
