@@ -22,6 +22,9 @@ interface StringingEditData {
   racketName: string
   hourOptions: string[]
   hourIndex: number
+  verticalTensionText: string
+  horizontalTensionText: string
+  costText: string
   draft: StringingDraft
   saving: boolean
   horizontalTensionEdited: boolean
@@ -43,6 +46,9 @@ Component({
   data: {
     racketId: 0,
     racketName: '',
+    verticalTensionText: '',
+    horizontalTensionText: '',
+    costText: '',
     draft: {
       stringName: '',
       verticalTension: 0,
@@ -88,26 +94,33 @@ Component({
       })
     },
     onVerticalTensionInput(event: InputEvent) {
-      const verticalTension = Number(event.detail.value) || 0
+      const inputValue = event.detail.value
+      const verticalTension = Number(inputValue) || 0
       const updateData: WechatMiniprogram.IAnyObject = {
+        verticalTensionText: inputValue,
         'draft.verticalTension': verticalTension,
       }
 
       if (!this.data.horizontalTensionEdited) {
+        updateData.horizontalTensionText = inputValue
         updateData['draft.horizontalTension'] = verticalTension
       }
 
       this.setData(updateData)
     },
     onHorizontalTensionInput(event: InputEvent) {
+      const inputValue = event.detail.value
       this.setData({
-        'draft.horizontalTension': Number(event.detail.value) || 0,
+        horizontalTensionText: inputValue,
+        'draft.horizontalTension': Number(inputValue) || 0,
         horizontalTensionEdited: true,
       })
     },
     onCostInput(event: InputEvent) {
+      const inputValue = event.detail.value
       this.setData({
-        'draft.cost': Number(event.detail.value) || 0,
+        costText: inputValue,
+        'draft.cost': Number(inputValue) || 0,
       })
     },
     onDateChange(event: PickerChangeEvent) {

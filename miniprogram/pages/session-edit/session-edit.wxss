@@ -78,10 +78,12 @@
   padding-left: 12rpx;
   padding-right: 12rpx;
   text-align: center;
+  font-size: 30rpx;
+  font-weight: 400;
 }
 
 .hour-pill {
-  font-size: 28rpx;
+  font-size: 30rpx;
 }
 
 .minute-input-inline {
@@ -103,28 +105,28 @@
   width: 44rpx;
   height: 92rpx;
   color: #17251c;
-  font-size: 28rpx;
-  font-weight: 700;
+  font-size: 30rpx;
+  font-weight: 400;
   text-align: right;
 }
 
 .minute-input-inline text {
   color: #17251c;
-  font-size: 28rpx;
-  font-weight: 700;
+  font-size: 30rpx;
+  font-weight: 400;
 }
 
 .minute-quick-trigger {
   flex: none;
-  width: 36rpx;
+  width: 46rpx;
   height: 92rpx;
 }
 
 .minute-arrow {
-  width: 36rpx;
+  width: 46rpx;
   height: 92rpx;
   color: rgba(13, 23, 40, 0.52);
-  font-size: 20rpx;
+  font-size: 24rpx;
   line-height: 92rpx;
   text-align: center;
 }
@@ -167,8 +169,45 @@
   color: #fff;
 }
 
-.custom-duration-card {
-  margin-top: 14rpx;
+.duration-options {
+  align-items: stretch;
+}
+
+.duration-custom-card {
+  flex: 1;
+  min-width: 0;
+  height: 84rpx;
+  padding: 8rpx 14rpx 6rpx;
+  border-radius: 28rpx;
+  background: rgba(255, 255, 255, 0.55);
+  box-sizing: border-box;
+  box-shadow: inset 0 0 0 1rpx rgba(255, 255, 255, 0.8);
+  backdrop-filter: blur(20px);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+}
+
+.duration-custom-card.active {
+  box-shadow: inset 0 0 0 2rpx rgba(55, 120, 219, 0.62);
+}
+
+.duration-custom-card input {
+  width: 100%;
+  height: 38rpx;
+  color: #17251c;
+  font-size: 28rpx;
+  font-weight: 700;
+  line-height: 38rpx;
+  text-align: center;
+}
+
+.duration-custom-card text {
+  color: rgba(13, 23, 40, 0.48);
+  font-size: 18rpx;
+  font-weight: 600;
+  line-height: 24rpx;
 }
 
 .rating-group {

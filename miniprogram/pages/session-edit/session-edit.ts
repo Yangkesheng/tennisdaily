@@ -114,6 +114,11 @@ const createTimeState = (timeText: string) => {
   }
 }
 
+const formatDurationHours = (durationMinutes: number) => {
+  const hours = durationMinutes / 60
+  return Number.isInteger(hours) ? `${hours}` : `${Number(hours.toFixed(1))}`
+}
+
 const createTypeState = (draft: SessionDraft) => {
   return {
     subCategoryOptions: SESSION_SUB_CATEGORY_OPTIONS[draft.category],
@@ -273,8 +278,8 @@ Page({
         ...createTimeState(getSessionTimeText(session.date)),
         ratingText: this.data.ratingTexts[(session.rating || 3) - 1],
         costInput: session.cost ? `${session.cost}` : '',
-        customDuration: session.durationMinutes === 60 || session.durationMinutes === 120 ? '' : `${session.durationMinutes}`,
-        isCustomDuration: session.durationMinutes !== 60 && session.durationMinutes !== 120,
+        customDuration: session.durationMinutes === 60 || session.durationMinutes === 120 || session.durationMinutes === 180 ? '' : formatDurationHours(session.durationMinutes),
+        isCustomDuration: session.durationMinutes !== 60 && session.durationMinutes !== 120 && session.durationMinutes !== 180,
         subCategoryOptions: SESSION_SUB_CATEGORY_OPTIONS[session.category],
         isMatchType: isMatchCategory(session.category),
         isPageReady: true,
@@ -313,11 +318,13 @@ Page({
       })
     },
     onDurationInput(event: InputEvent) {
-      const duration = Number(event.detail.value) || 0
+      const durationHours = Number(event.detail.value) || 0
+      const durationMinutes = Math.round(durationHours * 60)
 
       this.setData({
         customDuration: event.detail.value,
-        'draft.durationMinutes': duration,
+        isCustomDuration: !!event.detail.value,
+        'draft.durationMinutes': durationMinutes,
       })
     },
     selectSixtyMinutes() {
@@ -334,10 +341,11 @@ Page({
         isCustomDuration: false,
       })
     },
-    showCustomDuration() {
+    selectThreeHours() {
       this.setData({
-        customDuration: `${this.data.draft.durationMinutes}`,
-        isCustomDuration: true,
+        'draft.durationMinutes': 180,
+        customDuration: '',
+        isCustomDuration: false,
       })
     },
     selectRating(event: WechatMiniprogram.TouchEvent) {

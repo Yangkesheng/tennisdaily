@@ -17,11 +17,11 @@
           <view class="tension-inline">
             <view class="tension-input-wrap">
               <text class="tension-label">竖</text>
-              <input value="{{draft.verticalTension}}" type="digit" placeholder="48" bindinput="onVerticalTensionInput" />
+              <input value="{{verticalTensionText}}" type="digit" placeholder="0" bindinput="onVerticalTensionInput" />
             </view>
             <view class="tension-input-wrap">
               <text class="tension-label">横</text>
-              <input value="{{draft.horizontalTension}}" type="digit" placeholder="46" bindinput="onHorizontalTensionInput" />
+              <input value="{{horizontalTensionText}}" type="digit" placeholder="0" bindinput="onHorizontalTensionInput" />
             </view>
           </view>
         </view>
@@ -38,7 +38,7 @@
         </view>
         <view class="input-card">
           <text>花费</text>
-          <input value="{{draft.cost}}" type="digit" placeholder="0" bindinput="onCostInput" />
+          <input value="{{costText}}" type="digit" placeholder="0" bindinput="onCostInput" />
         </view>
       </view>
     </view>

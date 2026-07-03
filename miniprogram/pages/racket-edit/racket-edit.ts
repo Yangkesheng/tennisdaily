@@ -6,6 +6,7 @@ interface RacketEditData {
   draft: RacketDraft
   hasSelectedLibrary: boolean
   racketId: number
+  purchasePriceText: string
   saving: boolean
   statusOptions: string[]
   statusPickerIndex: number
@@ -57,6 +58,7 @@ Component({
     draft: createDefaultDraft(),
     hasSelectedLibrary: false,
     racketId: 0,
+    purchasePriceText: '',
     saving: false,
     statusOptions: ['主力拍', '在用', '退役'],
     statusPickerIndex: 1,
@@ -121,6 +123,7 @@ Component({
             lastStringDate: racket.lastStringDate || '',
             lastStringCost: racket.lastStringCost || 0,
           },
+          purchasePriceText: racket.purchasePrice ? `${racket.purchasePrice}` : '',
           statusPickerIndex: getStatusPickerIndex(racket.status),
         })
       } catch (error) {
@@ -186,8 +189,10 @@ Component({
       })
     },
     onPurchasePriceInput(event: InputEvent) {
+      const inputValue = event.detail.value
       this.setData({
-        'draft.purchasePrice': Number(event.detail.value) || 0,
+        purchasePriceText: inputValue,
+        'draft.purchasePrice': Number(inputValue) || 0,
       })
     },
     onStatusChange(event: PickerChangeEvent) {

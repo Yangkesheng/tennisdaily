@@ -13,7 +13,7 @@
         <view class="picker-value datetime-pill date-pill">{{startDate}}</view>
       </picker>
       <picker class="datetime-picker hour-picker" mode="selector" range="{{hourOptions}}" value="{{hourIndex}}" bindchange="onHourChange">
-        <view class="picker-value datetime-pill hour-pill">{{hourOptions[hourIndex]}}点</view>
+        <view class="picker-value datetime-pill hour-pill">{{hourOptions[hourIndex]}}时</view>
       </picker>
       <view class="minute-input-inline">
         <input value="{{minuteInput}}" type="number" maxlength="2" placeholder="00" bindinput="onMinuteInput" />
@@ -26,15 +26,15 @@
   </view>
 
   <view class="field-group">
-    <text class="field-label">时长（分钟）</text>
-    <view class="choice-options">
-      <button class="choice-option {{!isCustomDuration && draft.durationMinutes === 60 ? 'active' : ''}}" bindtap="selectSixtyMinutes">60</button>
-      <button class="choice-option {{!isCustomDuration && draft.durationMinutes === 120 ? 'active' : ''}}" bindtap="selectOneTwentyMinutes">120</button>
-      <button class="choice-option {{isCustomDuration ? 'active' : ''}}" bindtap="showCustomDuration">自定义</button>
-    </view>
-    <view wx:if="{{isCustomDuration}}" class="input-card custom-duration-card">
-      <text>分钟</text>
-      <input value="{{customDuration}}" type="number" placeholder="90" bindinput="onDurationInput" />
+    <text class="field-label">时长（小时）</text>
+    <view class="choice-options duration-options">
+      <button class="choice-option {{!isCustomDuration && draft.durationMinutes === 60 ? 'active' : ''}}" bindtap="selectSixtyMinutes">1</button>
+      <button class="choice-option {{!isCustomDuration && draft.durationMinutes === 120 ? 'active' : ''}}" bindtap="selectOneTwentyMinutes">2</button>
+      <button class="choice-option {{!isCustomDuration && draft.durationMinutes === 180 ? 'active' : ''}}" bindtap="selectThreeHours">3</button>
+      <view class="duration-custom-card {{isCustomDuration ? 'active' : ''}}">
+        <input value="{{customDuration}}" type="number" placeholder="自定义" bindinput="onDurationInput" />
+        <text>小时</text>
+      </view>
     </view>
   </view>
 

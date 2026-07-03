@@ -50,7 +50,7 @@
         </picker>
         <view class="input-card">
           <text>价格</text>
-          <input value="{{draft.purchasePrice}}" type="digit" placeholder="0" bindinput="onPurchasePriceInput" />
+          <input value="{{purchasePriceText}}" type="digit" placeholder="0" bindinput="onPurchasePriceInput" />
         </view>
         <picker range="{{statusOptions}}" value="{{statusPickerIndex}}" bindchange="onStatusChange">
           <view class="input-card">
