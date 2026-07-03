@@ -7,17 +7,16 @@
       </view>
 
   <view class="field-group">
-    <text class="field-label">开始时间</text>
+    <text class="field-label">开始时间（日期 / 小时 / 分钟）</text>
     <view class="datetime-inline">
       <picker class="datetime-picker date-picker" mode="date" value="{{startDate}}" bindchange="onDateChange">
         <view class="picker-value datetime-pill date-pill">{{startDate}}</view>
       </picker>
       <picker class="datetime-picker hour-picker" mode="selector" range="{{hourOptions}}" value="{{hourIndex}}" bindchange="onHourChange">
-        <view class="picker-value datetime-pill hour-pill">{{hourOptions[hourIndex]}}时</view>
+        <view class="picker-value datetime-pill hour-pill">{{hourOptions[hourIndex]}}</view>
       </picker>
       <view class="minute-input-inline">
         <input value="{{minuteInput}}" type="number" maxlength="2" placeholder="00" bindinput="onMinuteInput" />
-        <text>分</text>
         <picker class="minute-quick-trigger" mode="selector" range="{{minuteOptions}}" value="{{minuteIndex}}" bindchange="onMinuteChange">
           <view class="minute-arrow">▾</view>
         </picker>
