@@ -173,6 +173,12 @@
   align-items: stretch;
 }
 
+.duration-options .choice-option {
+  font-family: inherit;
+  font-size: 30rpx;
+  font-weight: 400;
+}
+
 .duration-custom-card {
   flex: 1;
   min-width: 0;
@@ -195,19 +201,13 @@
 
 .duration-custom-card input {
   width: 100%;
-  height: 38rpx;
+  height: 44rpx;
   color: #17251c;
-  font-size: 28rpx;
-  font-weight: 700;
-  line-height: 38rpx;
+  font-family: inherit;
+  font-size: 30rpx;
+  font-weight: 400;
+  line-height: 44rpx;
   text-align: center;
-}
-
-.duration-custom-card text {
-  color: rgba(13, 23, 40, 0.48);
-  font-size: 18rpx;
-  font-weight: 600;
-  line-height: 24rpx;
 }
 
 .rating-group {

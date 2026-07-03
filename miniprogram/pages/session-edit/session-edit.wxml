@@ -33,7 +33,6 @@
       <button class="choice-option {{!isCustomDuration && draft.durationMinutes === 180 ? 'active' : ''}}" bindtap="selectThreeHours">3</button>
       <view class="duration-custom-card {{isCustomDuration ? 'active' : ''}}">
         <input value="{{customDuration}}" type="number" placeholder="自定义" bindinput="onDurationInput" />
-        <text>小时</text>
       </view>
     </view>
   </view>
