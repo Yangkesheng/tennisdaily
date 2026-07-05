@@ -1,4 +1,4 @@
-import type { MatchRank, SessionCategory, SessionDraft, SessionSubCategory } from '../../models/session'
+import type { MatchRank, MatchRankOption, SessionCategory, SessionCategoryOption, SessionDraft, SessionSubCategory, SessionSubCategoryOption } from '../../models/session'
 import {
   SESSION_CATEGORY_OPTIONS,
   SESSION_SUB_CATEGORY_OPTIONS,
@@ -7,6 +7,7 @@ import {
   isMatchCategory,
 } from '../../models/session'
 import type { Racket } from '../../models/racket'
+import { getSessionConfigFromApi } from '../../services/session-config-service'
 import { listMyRacketsFromApi } from '../../services/racket-api-service'
 import {
   createDefaultSessionDraft,
@@ -37,8 +38,11 @@ interface SessionEditData {
   ratingTexts: string[]
   saving: boolean
   sessionId: string
-  categoryOptions: typeof SESSION_CATEGORY_OPTIONS
-  subCategoryOptions: typeof SESSION_SUB_CATEGORY_OPTIONS[SessionCategory]
+  categoryOptions: SessionCategoryOption[]
+  subCategoryOptions: SessionSubCategoryOption[]
+  subCategoryOptionsMap: Record<number, SessionSubCategoryOption[]>
+  matchRankOptions: MatchRankOption[]
+  sessionConfigReady: boolean
   titleText: string
   selectableRackets: Racket[]
   racketNames: string[]
@@ -119,10 +123,29 @@ const formatDurationHours = (durationMinutes: number) => {
   return Number.isInteger(hours) ? `${hours}` : `${Number(hours.toFixed(1))}`
 }
 
-const createTypeState = (draft: SessionDraft) => {
+const createTypeState = (draft: SessionDraft, subCategoryOptionsMap: Record<number, SessionSubCategoryOption[]>) => {
   return {
-    subCategoryOptions: SESSION_SUB_CATEGORY_OPTIONS[draft.category],
+    subCategoryOptions: subCategoryOptionsMap[draft.category] || [],
     isMatchType: isMatchCategory(draft.category),
+  }
+}
+
+const applyConfigToDraft = (
+  draft: SessionDraft,
+  categoryOptions: SessionCategoryOption[],
+  subCategoryOptionsMap: Record<number, SessionSubCategoryOption[]>,
+): SessionDraft => {
+  const category = subCategoryOptionsMap[draft.category] ? draft.category : categoryOptions[0]?.value || draft.category
+  const subCategoryOptions = subCategoryOptionsMap[category] || []
+  const hasSubCategory = subCategoryOptions.some((option) => option.value === draft.subCategory)
+  const subCategory = hasSubCategory ? draft.subCategory : getDefaultSubCategory(category, categoryOptions, subCategoryOptionsMap)
+
+  return {
+    ...draft,
+    category,
+    subCategory,
+    type: getSessionTypeFromCategory(category, subCategory),
+    matchRank: isMatchCategory(category) ? draft.matchRank : 0,
   }
 }
 
@@ -144,18 +167,42 @@ Page({
     sessionId: '',
     categoryOptions: SESSION_CATEGORY_OPTIONS,
     subCategoryOptions: SESSION_SUB_CATEGORY_OPTIONS[defaultDraft.category],
+    subCategoryOptionsMap: SESSION_SUB_CATEGORY_OPTIONS,
+    matchRankOptions: [],
+    sessionConfigReady: false,
     titleText: '记录',
     selectableRackets: [],
     racketNames: [],
     racketPickerIndex: -1,
   } as SessionEditData,
-  onLoad(options: { id?: string; date?: string }) {
+  async onLoad(options: { id?: string; date?: string }) {
+    await this.loadSessionConfig()
     this.loadRouteSession(options)
   },
   onShow() {
     this.loadSelectableRackets()
     if (!this.data.isPageReady) {
       this.loadRouteSession()
+    }
+  },
+  async loadSessionConfig() {
+    try {
+      const config = await getSessionConfigFromApi()
+      const draft = applyConfigToDraft(this.data.draft, config.categories, config.subCategoryOptions)
+
+      this.setData({
+        categoryOptions: config.categories,
+        subCategoryOptionsMap: config.subCategoryOptions,
+        matchRankOptions: config.matchRanks.filter((rank) => rank.value !== 0),
+        sessionConfigReady: true,
+        draft,
+        ...createTypeState(draft, config.subCategoryOptions),
+      })
+    } catch (error) {
+      wx.showToast({
+        title: error instanceof Error ? error.message : '类型配置加载失败',
+        icon: 'none',
+      })
     }
   },
   async loadSelectableRackets() {
@@ -184,6 +231,10 @@ Page({
   async loadRouteSession(routeOptions?: { id?: string; date?: string }) {
     const options = routeOptions || {}
 
+    if (!this.data.sessionConfigReady) {
+      return
+    }
+
     if (options.id && options.id === this.data.sessionId && this.data.isPageReady) {
       return
     }
@@ -198,22 +249,22 @@ Page({
 
     if (!options.id && options.date) {
       const draft = createDefaultSessionDraft()
-
       const startTime = getCurrentTimeText()
+      const configuredDraft = applyConfigToDraft({
+        ...draft,
+        date: createSessionStartText(options.date, startTime),
+      }, this.data.categoryOptions, this.data.subCategoryOptionsMap)
 
       this.setData({
-        draft: {
-          ...draft,
-          date: createSessionStartText(options.date, startTime),
-        },
+        draft: configuredDraft,
         startDate: options.date,
         ...createTimeState(startTime),
         costInput: '',
         customDuration: '',
         isCustomDuration: false,
-        ...createTypeState(draft),
+        ...createTypeState(configuredDraft, this.data.subCategoryOptionsMap),
         isPageReady: true,
-        ratingText: this.data.ratingTexts[draft.rating - 1],
+        ratingText: this.data.ratingTexts[configuredDraft.rating - 1],
         sessionId: '',
         titleText: '记录',
       })
@@ -222,7 +273,7 @@ Page({
     }
 
     if (!options.id) {
-      const draft = createDefaultSessionDraft()
+      const draft = applyConfigToDraft(createDefaultSessionDraft(), this.data.categoryOptions, this.data.subCategoryOptionsMap)
 
       this.setData({
         draft,
@@ -231,7 +282,7 @@ Page({
         costInput: '',
         customDuration: '',
         isCustomDuration: false,
-        ...createTypeState(draft),
+        ...createTypeState(draft, this.data.subCategoryOptionsMap),
         isPageReady: true,
         ratingText: this.data.ratingTexts[draft.rating - 1],
         sessionId: '',
@@ -257,67 +308,69 @@ Page({
       return
     }
 
-      this.setData({
-        draft: {
-          date: session.date,
-          durationMinutes: session.durationMinutes,
-          rating: session.rating || 3,
-          courtName: session.courtName || '',
-          partner: session.partner || '',
-          type: session.type || '',
-          category: session.category,
-          subCategory: session.subCategory,
-          matchRank: session.matchRank || '',
-          cost: session.cost || 0,
-          racketId: session.racketId || 0,
-          racketName: session.racketName || '',
-          shoeName: session.shoeName || '',
-          note: session.note || '',
-        },
-        startDate: getSessionDateText(session.date),
-        ...createTimeState(getSessionTimeText(session.date)),
-        ratingText: this.data.ratingTexts[(session.rating || 3) - 1],
-        costInput: session.cost ? `${session.cost}` : '',
-        customDuration: session.durationMinutes === 60 || session.durationMinutes === 120 || session.durationMinutes === 180 ? '' : formatDurationHours(session.durationMinutes),
-        isCustomDuration: session.durationMinutes !== 60 && session.durationMinutes !== 120 && session.durationMinutes !== 180,
-        subCategoryOptions: SESSION_SUB_CATEGORY_OPTIONS[session.category],
-        isMatchType: isMatchCategory(session.category),
-        isPageReady: true,
-        sessionId: options.id,
-        titleText: '编辑',
+    const draft = applyConfigToDraft({
+      date: session.date,
+      durationMinutes: session.durationMinutes,
+      rating: session.rating || 3,
+      courtName: session.courtName || '',
+      partner: session.partner || '',
+      type: session.type || '',
+      category: session.category,
+      subCategory: session.subCategory,
+      matchRank: session.matchRank || 0,
+      cost: session.cost || 0,
+      racketId: session.racketId || 0,
+      racketName: session.racketName || '',
+      shoeName: session.shoeName || '',
+      note: session.note || '',
+    }, this.data.categoryOptions, this.data.subCategoryOptionsMap)
+
+    this.setData({
+      draft,
+      startDate: getSessionDateText(session.date),
+      ...createTimeState(getSessionTimeText(session.date)),
+      ratingText: this.data.ratingTexts[(session.rating || 3) - 1],
+      costInput: session.cost ? `${session.cost}` : '',
+      customDuration: session.durationMinutes === 60 || session.durationMinutes === 120 || session.durationMinutes === 180 ? '' : formatDurationHours(session.durationMinutes),
+      isCustomDuration: session.durationMinutes !== 60 && session.durationMinutes !== 120 && session.durationMinutes !== 180,
+      subCategoryOptions: this.data.subCategoryOptionsMap[draft.category] || [],
+      isMatchType: isMatchCategory(draft.category),
+      isPageReady: true,
+      sessionId: options.id,
+      titleText: '编辑',
     })
   },
   selectCategory(event: WechatMiniprogram.TouchEvent) {
-      const category = Number(event.currentTarget.dataset.category) as SessionCategory
-      const subCategory = getDefaultSubCategory(category)
-      const isMatchType = isMatchCategory(category)
+    const category = Number(event.currentTarget.dataset.category) as SessionCategory
+    const subCategory = getDefaultSubCategory(category, this.data.categoryOptions, this.data.subCategoryOptionsMap)
+    const isMatchType = isMatchCategory(category)
 
-      this.setData({
-        'draft.category': category,
-        'draft.subCategory': subCategory,
-        'draft.type': getSessionTypeFromCategory(category, subCategory),
-        'draft.matchRank': isMatchType ? this.data.draft.matchRank : '',
-        subCategoryOptions: SESSION_SUB_CATEGORY_OPTIONS[category],
-        isMatchType,
-      })
-    },
-    selectSubCategory(event: WechatMiniprogram.TouchEvent) {
-      const subCategory = Number(event.currentTarget.dataset.subCategory) as SessionSubCategory
-      const category = this.data.draft.category
+    this.setData({
+      'draft.category': category,
+      'draft.subCategory': subCategory,
+      'draft.type': getSessionTypeFromCategory(category, subCategory),
+      'draft.matchRank': isMatchType ? this.data.draft.matchRank : 0,
+      subCategoryOptions: this.data.subCategoryOptionsMap[category] || [],
+      isMatchType,
+    })
+  },
+  selectSubCategory(event: WechatMiniprogram.TouchEvent) {
+    const subCategory = Number(event.currentTarget.dataset.subCategory) as SessionSubCategory
+    const category = this.data.draft.category
 
-      this.setData({
-        'draft.subCategory': subCategory,
-        'draft.type': getSessionTypeFromCategory(category, subCategory),
-      })
-    },
-    selectMatchRank(event: WechatMiniprogram.TouchEvent) {
-      const rank = event.currentTarget.dataset.rank as MatchRank
+    this.setData({
+      'draft.subCategory': subCategory,
+      'draft.type': getSessionTypeFromCategory(category, subCategory),
+    })
+  },
+  selectMatchRank(event: WechatMiniprogram.TouchEvent) {
+    const rank = Number(event.currentTarget.dataset.rank) as MatchRank
 
-      this.setData({
-        'draft.matchRank': rank,
-      })
-    },
-    onDurationInput(event: InputEvent) {
+    this.setData({
+      'draft.matchRank': rank,
+    })
+  },
+  onDurationInput(event: InputEvent) {
       const durationHours = Number(event.detail.value) || 0
       const durationMinutes = Math.round(durationHours * 60)
 

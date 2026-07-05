@@ -57,7 +57,7 @@ export const createDefaultSessionDraft = (): SessionDraft => {
     type: 'doubles',
     category: SESSION_CATEGORY.daily,
     subCategory: SESSION_SUB_CATEGORY.doubles,
-    matchRank: '',
+    matchRank: 0,
     cost: 0,
     racketId: 0,
     racketName: '',

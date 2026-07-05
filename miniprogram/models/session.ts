@@ -1,7 +1,7 @@
 export type TennisSessionType = '' | 'training' | 'singles' | 'doubles' | 'singlesMatch' | 'doublesMatch'
-export type SessionCategory = 1 | 2 | 3
-export type SessionSubCategory = 1 | 2 | 3 | 4
-export type MatchRank = '' | 'champion' | 'runnerUp' | 'semiFinal' | 'quarterFinal' | 'groupStage'
+export type SessionCategory = number
+export type SessionSubCategory = number
+export type MatchRank = number
 
 export interface SessionCategoryOption {
   label: string
@@ -11,6 +11,14 @@ export interface SessionCategoryOption {
 export interface SessionSubCategoryOption {
   label: string
   value: SessionSubCategory
+  category?: SessionCategory
+  typeText?: string
+  legacyType?: number
+}
+
+export interface MatchRankOption {
+  label: string
+  value: MatchRank
 }
 
 export const SESSION_CATEGORY = {
@@ -47,8 +55,14 @@ export const SESSION_SUB_CATEGORY_OPTIONS: Record<SessionCategory, SessionSubCat
   ],
 }
 
-export const getDefaultSubCategory = (category: SessionCategory): SessionSubCategory => {
-  return SESSION_SUB_CATEGORY_OPTIONS[category][0].value
+export const getDefaultSubCategory = (
+  category: SessionCategory,
+  categoryOptions: SessionCategoryOption[] = SESSION_CATEGORY_OPTIONS,
+  subCategoryOptions: Record<number, SessionSubCategoryOption[]> = SESSION_SUB_CATEGORY_OPTIONS,
+): SessionSubCategory => {
+  const options = subCategoryOptions[category] || []
+
+  return options[0]?.value || subCategoryOptions[categoryOptions[0]?.value]?.[0]?.value || SESSION_SUB_CATEGORY.doubles
 }
 
 export const isMatchCategory = (category: SessionCategory) => {
@@ -97,6 +111,7 @@ export interface TennisSession {
   subCategory: SessionSubCategory
   subCategoryText: string
   matchRank: MatchRank
+  matchRankLabel: string
   cost: number
   racketId: number
   racketName: string
@@ -194,6 +209,12 @@ export interface SessionCalendar {
   days: SessionCalendarDay[]
   summary: SessionCalendarSummary
   charts: SessionCalendarCharts
+}
+
+export interface SessionConfig {
+  categories: SessionCategoryOption[]
+  subCategoryOptions: Record<number, SessionSubCategoryOption[]>
+  matchRanks: MatchRankOption[]
 }
 
 export interface SessionTypeOption {

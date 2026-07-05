@@ -53,11 +53,7 @@
   <view wx:if="{{isMatchType}}" class="field-group">
     <text class="field-label">成绩</text>
     <view class="choice-options rank-options">
-      <button class="choice-option {{draft.matchRank === 'champion' ? 'active' : ''}}" data-rank="champion" bindtap="selectMatchRank">冠军</button>
-      <button class="choice-option {{draft.matchRank === 'runnerUp' ? 'active' : ''}}" data-rank="runnerUp" bindtap="selectMatchRank">亚军</button>
-      <button class="choice-option {{draft.matchRank === 'semiFinal' ? 'active' : ''}}" data-rank="semiFinal" bindtap="selectMatchRank">四强</button>
-      <button class="choice-option {{draft.matchRank === 'quarterFinal' ? 'active' : ''}}" data-rank="quarterFinal" bindtap="selectMatchRank">八强</button>
-      <button class="choice-option {{draft.matchRank === 'groupStage' ? 'active' : ''}}" data-rank="groupStage" bindtap="selectMatchRank">小组赛</button>
+      <button wx:for="{{matchRankOptions}}" wx:key="value" class="choice-option {{draft.matchRank === item.value ? 'active' : ''}}" data-rank="{{item.value}}" bindtap="selectMatchRank">{{item.label}}</button>
     </view>
   </view>
 

@@ -1,4 +1,4 @@
-import type { MatchRank, SessionPageResult, TennisSession, TennisSessionType } from '../../models/session'
+import type { SessionPageResult, TennisSession, TennisSessionType } from '../../models/session'
 import {
   deleteSessionFromApi,
   listSessionsByDateFromApi,
@@ -47,26 +47,9 @@ const getSessionTypeLabel = (type: TennisSessionType) => {
   }
 }
 
-const getMatchRankLabel = (rank: MatchRank) => {
-  switch (rank) {
-    case 'champion':
-      return '冠军'
-    case 'runnerUp':
-      return '亚军'
-    case 'semiFinal':
-      return '四强'
-    case 'quarterFinal':
-      return '八强'
-    case 'groupStage':
-      return '小组赛'
-    default:
-      return ''
-  }
-}
-
 const getSessionTypeDisplay = (session: TennisSession) => {
   const typeLabel = session.typeText || getSessionTypeLabel(session.type)
-  const rankLabel = getMatchRankLabel(session.matchRank)
+  const rankLabel = session.matchRankLabel || ''
 
   if ((session.type === 'singlesMatch' || session.type === 'doublesMatch') && rankLabel) {
     return `${typeLabel} ${rankLabel}`

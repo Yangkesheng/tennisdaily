@@ -42,15 +42,6 @@ export interface ApiSessionPayload {
   note: string
 }
 
-const localRankToApi: Record<MatchRank, number> = {
-  '': 0,
-  champion: 1,
-  runnerUp: 2,
-  semiFinal: 3,
-  quarterFinal: 4,
-  groupStage: 5,
-}
-
 const apiTypeToLocal = (type: number): TennisSessionType => {
   switch (type) {
     case 1:
@@ -69,20 +60,7 @@ const apiTypeToLocal = (type: number): TennisSessionType => {
 }
 
 const apiRankToLocal = (rank: number): MatchRank => {
-  switch (rank) {
-    case 1:
-      return 'champion'
-    case 2:
-      return 'runnerUp'
-    case 3:
-      return 'semiFinal'
-    case 4:
-      return 'quarterFinal'
-    case 5:
-      return 'groupStage'
-    default:
-      return ''
-  }
+  return typeof rank === 'number' && !Number.isNaN(rank) ? rank : 0
 }
 
 const parseApiTime = (timeText: string) => {
@@ -133,6 +111,7 @@ export const mapApiSessionToLocal = (session: ApiSession): TennisSession => {
     subCategory,
     subCategoryText,
     matchRank: apiRankToLocal(session.matchRank),
+    matchRankLabel: session.matchRankLabel || '',
     cost: session.cost || 0,
     racketId: session.racketId || 0,
     racketName: session.racketName || '',
@@ -154,7 +133,7 @@ export const mapLocalDraftToApiPayload = (draft: SessionDraft): ApiSessionPayloa
     rating: draft.rating,
     category,
     subCategory,
-    matchRank: isMatchType ? localRankToApi[draft.matchRank] : 0,
+    matchRank: isMatchType ? draft.matchRank : 0,
     courtName: draft.courtName,
     partner: draft.partner,
     cost: draft.cost,
