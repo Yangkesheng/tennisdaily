@@ -25,30 +25,14 @@ const defaultExpenseBreakdown: StatsBreakdownItem[] = [
   { key: 'stringing', label: '穿线', value: 0, percent: 0 },
 ]
 
-const defaultSessionTypeBreakdown: StatsBreakdownItem[] = [
-  { key: 'training', label: '训练', value: 0, percent: 0 },
-  { key: 'singles', label: '单打', value: 0, percent: 0 },
-  { key: 'doubles', label: '双打', value: 0, percent: 0 },
-  { key: 'match', label: '比赛', value: 0, percent: 0 },
-]
-
-const defaultSessionCategoryBreakdown: StatsBreakdownItem[] = [
-  { key: 'daily', label: '日常球局', value: 0, percent: 0 },
-  { key: 'training', label: '训练', value: 0, percent: 0 },
-  { key: 'match', label: '比赛', value: 0, percent: 0 },
-]
-
-const defaultSessionSubCategoryBreakdown: StatsBreakdownItem[] = [
-  { key: 'daily_singles', label: '日常球局 · 打单', value: 0, percent: 0 },
-  { key: 'daily_doubles', label: '日常球局 · 双打', value: 0, percent: 0 },
-  { key: 'training_serve', label: '训练 · 发球', value: 0, percent: 0 },
-  { key: 'training_other', label: '训练 · 其他', value: 0, percent: 0 },
-  { key: 'match_singles', label: '比赛 · 单打', value: 0, percent: 0 },
-  { key: 'match_doubles', label: '比赛 · 双打', value: 0, percent: 0 },
-]
+const emptyBreakdown: StatsBreakdownItem[] = []
 
 const normalizeNumber = (value: number | null | undefined) => {
   return typeof value === 'number' && !Number.isNaN(value) ? value : 0
+}
+
+const normalizeOptionalNumber = (value: number | null | undefined) => {
+  return typeof value === 'number' && !Number.isNaN(value) ? value : undefined
 }
 
 const normalizeFrequency = (items: StatsFrequencyChartItem[] | null | undefined): StatsFrequencyChartItem[] => {
@@ -74,17 +58,24 @@ const normalizeRatingTrend = (items: StatsRatingTrendItem[] | null | undefined):
   }))
 }
 
-const normalizeBreakdown = (items: StatsBreakdownItem[] | null | undefined, defaults: StatsBreakdownItem[]): StatsBreakdownItem[] => {
+const normalizeBreakdown = (items: StatsBreakdownItem[] | null | undefined, defaults: StatsBreakdownItem[] = emptyBreakdown): StatsBreakdownItem[] => {
   if (!Array.isArray(items)) {
     return defaults
   }
 
-  return items.map((item) => ({
-    key: item.key || item.label || '',
-    label: item.label || '',
-    value: normalizeNumber(item.value),
-    percent: normalizeNumber(item.percent),
-  }))
+  return items.map((item, index) => {
+    const category = normalizeOptionalNumber(item.category)
+    const subCategory = normalizeOptionalNumber(item.subCategory)
+
+    return {
+      key: item.key || item.label || `${index}`,
+      label: item.label || '',
+      value: normalizeNumber(item.value),
+      percent: normalizeNumber(item.percent),
+      ...(category !== undefined ? { category } : {}),
+      ...(subCategory !== undefined ? { subCategory } : {}),
+    }
+  })
 }
 
 const normalizeStatsCharts = (raw: ApiStatsChartsResult | null, period: StatsPeriod, year: number, month?: number): StatsChartsResult => {
@@ -115,13 +106,12 @@ const normalizeStatsCharts = (raw: ApiStatsChartsResult | null, period: StatsPer
       frequency: normalizeFrequency(charts.frequency),
       ratingTrend: normalizeRatingTrend(charts.ratingTrend),
       expenseBreakdown: normalizeBreakdown(charts.expenseBreakdown, defaultExpenseBreakdown),
-      sessionTypeBreakdown: normalizeBreakdown(charts.sessionTypeBreakdown, defaultSessionTypeBreakdown),
-      sessionCategoryCountBreakdown: normalizeBreakdown(charts.sessionCategoryCountBreakdown, defaultSessionCategoryBreakdown),
-      sessionSubCategoryCountBreakdown: normalizeBreakdown(charts.sessionSubCategoryCountBreakdown, defaultSessionSubCategoryBreakdown),
-      sessionCategoryDurationBreakdown: normalizeBreakdown(charts.sessionCategoryDurationBreakdown, defaultSessionCategoryBreakdown),
-      sessionSubCategoryDurationBreakdown: normalizeBreakdown(charts.sessionSubCategoryDurationBreakdown, defaultSessionSubCategoryBreakdown),
-      sessionCategoryCostBreakdown: normalizeBreakdown(charts.sessionCategoryCostBreakdown, defaultSessionCategoryBreakdown),
-      sessionSubCategoryCostBreakdown: normalizeBreakdown(charts.sessionSubCategoryCostBreakdown, defaultSessionSubCategoryBreakdown),
+      sessionCategoryCountBreakdown: normalizeBreakdown(charts.sessionCategoryCountBreakdown),
+      sessionSubCategoryCountBreakdown: normalizeBreakdown(charts.sessionSubCategoryCountBreakdown),
+      sessionCategoryDurationBreakdown: normalizeBreakdown(charts.sessionCategoryDurationBreakdown),
+      sessionSubCategoryDurationBreakdown: normalizeBreakdown(charts.sessionSubCategoryDurationBreakdown),
+      sessionCategoryCostBreakdown: normalizeBreakdown(charts.sessionCategoryCostBreakdown),
+      sessionSubCategoryCostBreakdown: normalizeBreakdown(charts.sessionSubCategoryCostBreakdown),
     },
   }
 }

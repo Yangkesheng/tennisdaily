@@ -32,13 +32,14 @@ export interface StatsBreakdownItem {
   label: string
   value: number
   percent: number
+  category?: number
+  subCategory?: number
 }
 
 export interface StatsCharts {
   frequency: StatsFrequencyChartItem[]
   ratingTrend: StatsRatingTrendItem[]
   expenseBreakdown: StatsBreakdownItem[]
-  sessionTypeBreakdown: StatsBreakdownItem[]
   sessionCategoryCountBreakdown: StatsBreakdownItem[]
   sessionSubCategoryCountBreakdown: StatsBreakdownItem[]
   sessionCategoryDurationBreakdown: StatsBreakdownItem[]

@@ -70,6 +70,8 @@ interface StatsBreakdownViewItem {
   label: string
   value: number
   percent: number
+  category?: number
+  subCategory?: number
 }
 
 interface BreakdownChartItem extends StatsBreakdownViewItem {
@@ -294,10 +296,14 @@ const createPieLabelStyle = (start: number, percent: number) => {
   return `left: ${left.toFixed(1)}%; top: ${top.toFixed(1)}%;`
 }
 
+const createVisibleBreakdownItems = (items: StatsBreakdownViewItem[]) => {
+  return items.filter((item) => item.percent > 0)
+}
+
 const createBreakdownChart = (items: StatsBreakdownViewItem[], colors: string[], formatter = formatMoneyText): BreakdownChartItem[] => {
   let start = 0
 
-  return sortBreakdownByPercentDesc(items).map((item, index) => {
+  return sortBreakdownByPercentDesc(createVisibleBreakdownItems(items)).map((item, index) => {
     const percent = Math.max(0, Math.min(100, item.percent))
     const chartItem = {
       ...item,
@@ -316,7 +322,7 @@ const createBreakdownChart = (items: StatsBreakdownViewItem[], colors: string[],
 const createCountBreakdownChart = (items: StatsBreakdownViewItem[], colors: string[]): BreakdownChartItem[] => {
   let start = 0
 
-  return sortBreakdownByPercentDesc(items).map((item, index) => {
+  return sortBreakdownByPercentDesc(createVisibleBreakdownItems(items)).map((item, index) => {
     const percent = Math.max(0, Math.min(100, item.percent))
     const chartItem = {
       ...item,
@@ -332,12 +338,14 @@ const createCountBreakdownChart = (items: StatsBreakdownViewItem[], colors: stri
   })
 }
 
-const createPercentBreakdown = (items: { key?: string; label: string; value: number; percent?: number }[], total: number): StatsBreakdownViewItem[] => {
+const createPercentBreakdown = (items: StatsBreakdownItem[], total: number): StatsBreakdownViewItem[] => {
   return items.map((item, index) => ({
     key: item.key || item.label || `${index}`,
     label: item.label,
     value: item.value,
-    percent: typeof item.percent === 'number' && item.percent > 0 ? item.percent : total > 0 ? Math.round((item.value / total) * 100) : 0,
+    percent: typeof item.percent === 'number' ? item.percent : total > 0 ? Math.round((item.value / total) * 100) : 0,
+    ...(typeof item.category === 'number' ? { category: item.category } : {}),
+    ...(typeof item.subCategory === 'number' ? { subCategory: item.subCategory } : {}),
   }))
 }
 
