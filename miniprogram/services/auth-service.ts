@@ -109,7 +109,7 @@ export const logoutFromApi = async (): Promise<void> => {
 }
 
 export const redirectToLogin = () => {
-  wx.redirectTo({
+  wx.navigateTo({
     url: '/pages/login/login',
   })
 }

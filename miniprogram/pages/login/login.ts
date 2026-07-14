@@ -124,8 +124,13 @@ Component({
         showPrivacyDialog: false,
       })
       wx.showToast({
-        title: '同意隐私保护指引后才能登录',
+        title: '已取消登录，可继续浏览体验',
         icon: 'none',
+      })
+    },
+    backToExperience() {
+      wx.switchTab({
+        url: '/pages/index/index',
       })
     },
     openPrivacyPolicy() {

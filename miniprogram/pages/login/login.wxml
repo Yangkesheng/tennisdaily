@@ -10,15 +10,15 @@
     <view class="feature-card">
       <view class="feature-row">
         <text class="feature-dot"></text>
-        <text>微信登录用于识别账号和同步数据</text>
+        <text>本小程序用于个人网球记录与回顾</text>
       </view>
       <view class="feature-row">
         <text class="feature-dot"></text>
-        <text>换设备后可继续查看你的记录</text>
+        <text>登录后可同步记录、管理装备和查看统计</text>
       </view>
       <view class="feature-row">
         <text class="feature-dot"></text>
-        <text>不会公开展示你的个人信息</text>
+        <text>手机号、昵称等信息仅用于账号识别</text>
       </view>
     </view>
     <view wx:if="{{needsNickname}}" class="nickname-card">
@@ -44,7 +44,7 @@
       loading="{{isLoggingIn}}"
       disabled="{{isLoggingIn}}"
     >
-      登录
+      授权登录
     </button>
     <button
       wx:else
@@ -55,6 +55,7 @@
     >
       进入
     </button>
+    <button class="secondary-button" bindtap="backToExperience">暂不登录，返回体验</button>
   </view>
 
   <privacy-dialog

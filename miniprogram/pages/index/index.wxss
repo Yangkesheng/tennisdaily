@@ -336,6 +336,24 @@
   overflow: hidden;
 }
 
+.recent-login-button {
+  width: auto;
+  height: 64rpx;
+  margin: 24rpx 0 0;
+  padding: 0 26rpx;
+  border-radius: 999rpx;
+  background: rgba(55, 120, 219, 0.1);
+  color: #3778db;
+  font-size: 24rpx;
+  font-weight: 800;
+  line-height: 64rpx;
+  text-align: center;
+}
+
+.recent-login-button:active {
+  opacity: 0.78;
+}
+
 .bottom-action {
   position: fixed;
   left: 50%;

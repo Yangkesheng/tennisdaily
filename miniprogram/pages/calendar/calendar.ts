@@ -1,5 +1,5 @@
 import type { StatsBreakdownItem, StatsChartsResult, StatsPeriod } from '../../models/stats'
-import { requireLoginPage } from '../../services/auth-service'
+import { getToken, redirectToLogin } from '../../services/auth-service'
 import { getSessionCalendarFromApi, getSessionYearCalendarFromApi, getTodayText } from '../../services/session-service'
 import { getStatsChartsFromApi } from '../../services/stats-api-service'
 
@@ -427,6 +427,15 @@ const initialYear = new Date().getFullYear()
 const initialMonth = new Date().getMonth() + 1
 const monthOptions = createMonthOptions()
 
+const createEmptyRangeText = (period: StatsPeriod, year: number, month: number) => {
+  return period === 'year' ? `${year}年` : `${year}年${month}月`
+}
+
+const createEmptyStatsView = (period: StatsPeriod, year: number, month: number): StatsView => ({
+  ...emptyStatsView,
+  rangeText: createEmptyRangeText(period, year, month),
+})
+
 Component({
   data: {
     activeTab: 'calendar',
@@ -457,10 +466,6 @@ Component({
   },
   methods: {
     async refreshCalendar(year?: number, month?: number, period?: StatsPeriod) {
-      if (requireLoginPage()) {
-        return
-      }
-
       const now = new Date()
       const requestSeq = calendarRequestSeq + 1
       calendarRequestSeq = requestSeq
@@ -468,6 +473,22 @@ Component({
       calendarPeriodState = targetPeriod
       const targetYear = year || this.data.currentYear || now.getFullYear()
       const targetMonth = month || this.data.currentMonth || now.getMonth() + 1
+
+      if (!getToken()) {
+        this.setData({
+          calendarPeriod: targetPeriod,
+          currentYear: targetYear,
+          currentMonth: targetMonth,
+          yearPickerIndex: getYearPickerIndex(this.data.yearOptions, targetYear),
+          monthPickerIndex: getMonthPickerIndex(targetMonth),
+          activeDayCount: 0,
+          calendarMonths: createCalendarMonths(targetYear, targetMonth, targetPeriod, []),
+          canGoNext: getCanGoNext(this.data.activeTab, targetPeriod, this.data.statsPeriod, targetYear, targetMonth),
+          canJumpCurrent: getCanJumpCurrent(this.data.activeTab, targetPeriod, this.data.statsPeriod, targetYear, targetMonth),
+          isCalendarLoading: false,
+        })
+        return
+      }
 
       this.setData({
         isCalendarLoading: true,
@@ -514,13 +535,24 @@ Component({
       }
     },
     async refreshStats(period?: StatsPeriod, year?: number, month?: number) {
-      if (requireLoginPage()) {
-        return
-      }
-
       const targetPeriod = period || this.data.statsPeriod
       const targetYear = year || this.data.currentYear
       const targetMonth = month || this.data.currentMonth
+
+      if (!getToken()) {
+        this.setData({
+          statsPeriod: targetPeriod,
+          statsView: createEmptyStatsView(targetPeriod, targetYear, targetMonth),
+          currentYear: targetYear,
+          currentMonth: targetMonth,
+          yearPickerIndex: getYearPickerIndex(this.data.yearOptions, targetYear),
+          monthPickerIndex: getMonthPickerIndex(targetMonth),
+          canGoNext: getCanGoNext(this.data.activeTab, this.data.calendarPeriod, targetPeriod, targetYear, targetMonth),
+          canJumpCurrent: getCanJumpCurrent(this.data.activeTab, this.data.calendarPeriod, targetPeriod, targetYear, targetMonth),
+          isStatsLoading: false,
+        })
+        return
+      }
 
       this.setData({
         isStatsLoading: true,
@@ -764,6 +796,11 @@ Component({
       }
 
       calendarPeriodState = this.data.calendarPeriod
+
+      if (!getToken()) {
+        redirectToLogin()
+        return
+      }
 
       wx.navigateTo({
         url: marked ? `/pages/session-list/session-list?date=${date}` : `/pages/session-edit/session-edit?date=${date}`,

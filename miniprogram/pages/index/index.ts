@@ -1,6 +1,6 @@
 import type { HomeRatingTrendItem } from '../../models/home'
 import type { SessionStats, TennisSession, TennisSessionType } from '../../models/session'
-import { requireLoginPage } from '../../services/auth-service'
+import { getToken, redirectToLogin } from '../../services/auth-service'
 import { getHomeSummaryRemote } from '../../services/home-api-service'
 
 interface RatingTrendItem {
@@ -25,6 +25,7 @@ interface IndexData {
   monthExpenseText: string
   isExpenseVisible: boolean
   currentYear: number
+  isLoggedIn: boolean
 }
 
 const getSessionTypeLabel = (type: TennisSessionType) => {
@@ -146,6 +147,7 @@ Component({
     monthExpenseText: '0',
     isExpenseVisible: true,
     currentYear: new Date().getFullYear(),
+    isLoggedIn: false,
   } as IndexData,
   pageLifetimes: {
     show() {
@@ -154,11 +156,30 @@ Component({
   },
   methods: {
     async refreshData() {
-      if (requireLoginPage()) {
+      const currentYear = new Date().getFullYear()
+
+      if (!getToken()) {
+        this.setData({
+          latestSession: null,
+          latestSessionSummary: '还没有打球记录，点击下方 + 快速记录一次',
+          ratingTrend: [],
+          ratingTrendText: '暂无记录',
+          stats: {
+            monthCount: 0,
+            monthMinutes: 0,
+            monthCost: 0,
+            yearCount: 0,
+            totalCount: 0,
+          },
+          monthHoursText: '0.0',
+          monthExpenseText: '0',
+          currentYear,
+          isLoggedIn: false,
+        })
         return
       }
 
-      const currentYear = new Date().getFullYear()
+      this.setData({ isLoggedIn: true })
 
       try {
         const summary = await getHomeSummaryRemote()
@@ -175,6 +196,7 @@ Component({
           monthHoursText: (stats.monthMinutes / 60).toFixed(1),
           monthExpenseText: formatMoneyText(summary.expense.totalCost),
           currentYear: summary.year || currentYear,
+          isLoggedIn: true,
         })
       } catch (error) {
         wx.showToast({
@@ -188,17 +210,40 @@ Component({
         isExpenseVisible: !this.data.isExpenseVisible,
       })
     },
+    goLogin() {
+      redirectToLogin()
+    },
+    ensureUserLoggedIn() {
+      if (getToken()) {
+        return true
+      }
+
+      redirectToLogin()
+      return false
+    },
     goCreateSession() {
+      if (!this.ensureUserLoggedIn()) {
+        return
+      }
+
       wx.navigateTo({
         url: '/pages/session-edit/session-edit',
       })
     },
     goSessionList() {
+      if (!this.ensureUserLoggedIn()) {
+        return
+      }
+
       wx.navigateTo({
         url: '/pages/session-list/session-list',
       })
     },
     goRecentSessions() {
+      if (!this.ensureUserLoggedIn()) {
+        return
+      }
+
       wx.navigateTo({
         url: '/pages/session-list/session-list?range=recent',
       })
