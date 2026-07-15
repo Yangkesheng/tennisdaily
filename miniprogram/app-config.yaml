@@ -2,7 +2,7 @@ api:
   baseUrl: http://localhost:8081
   useCloudContainer: true
   cloudEnv: prod-d6gkg1meqce4aaa7e
-  cloudService: dev
+  cloudService: cprod
 
 storage:
   tokenKey: token
