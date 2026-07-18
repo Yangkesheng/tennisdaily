@@ -1,6 +1,6 @@
 .profile-page {
   min-height: 100vh;
-  padding: 34rpx 28rpx calc(180rpx + env(safe-area-inset-bottom));
+  padding: 34rpx 28rpx calc(56rpx + env(safe-area-inset-bottom));
   background: linear-gradient(45deg, #f5efe6 0%, #eed6ca 50%, #e2bda9 100%);
   box-sizing: border-box;
   color: #05070c;
@@ -152,21 +152,4 @@
   color: #3778db;
   font-size: 26rpx;
   font-weight: 900;
-}
-
-.logout-button {
-  position: fixed;
-  left: 28rpx;
-  right: 28rpx;
-  bottom: calc(40rpx + env(safe-area-inset-bottom));
-  z-index: 10;
-  width: auto;
-  height: 78rpx;
-  margin-top: 0;
-  border-radius: 28rpx;
-  background: rgba(13, 23, 40, 0.08);
-  color: rgba(13, 23, 40, 0.68);
-  font-size: 28rpx;
-  font-weight: 900;
-  line-height: 78rpx;
 }

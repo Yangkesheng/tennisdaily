@@ -1,7 +1,7 @@
 <navigation-bar title="" back="{{false}}" color="#fff" background="transparent"></navigation-bar>
 <scroll-view class="page profile-page" scroll-y type="list">
   <view class="profile-header">
-    <button class="avatar-button" open-type="chooseAvatar" bindtap="handleAvatarTap" bindchooseavatar="onChooseAvatar">
+    <button class="avatar-button" bindtap="goUserProfile">
       <image wx:if="{{user.avatarUrl}}" class="avatar-image" src="{{user.avatarUrl}}" mode="aspectFill"></image>
       <view wx:else class="avatar-placeholder">头像</view>
     </button>
@@ -33,6 +33,5 @@
     </view>
     <text class="enter-tip">查看球拍</text>
   </view>
-  <button class="logout-button" bindtap="logout">退出登录</button>
 </scroll-view>
 

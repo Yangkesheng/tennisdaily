@@ -4,6 +4,7 @@
     "pages/login/login",
     "pages/calendar/calendar",
     "pages/profile/profile",
+    "pages/user-profile/user-profile",
     "pages/rackets/rackets",
     "pages/racket-detail/racket-detail",
     "pages/racket-library/racket-library",
