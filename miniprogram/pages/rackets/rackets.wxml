@@ -16,7 +16,8 @@
         bindtap="goDetail"
       >
         <view class="racket-mark">
-          <text>{{item.brand || 'T'}}</text>
+          <image wx:if="{{item.imageUrl}}" class="racket-image" src="{{item.imageUrl}}" mode="aspectFit"></image>
+          <text wx:else>{{item.brand || 'T'}}</text>
         </view>
         <view class="racket-content">
           <view class="racket-title-row">

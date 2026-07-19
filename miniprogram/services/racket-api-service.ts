@@ -10,6 +10,9 @@ interface ApiRacket {
   model?: string
   status: number
   imageUrl?: string
+  fileId?: string
+  fileID?: string
+  fileid?: string
   weight?: number
   headSize?: number
   purchaseDate?: string
@@ -58,6 +61,24 @@ interface ApiStringingRecord {
   updatedAt?: string
 }
 
+export interface ApiRacketLibraryItem {
+  id: number
+  brand?: string
+  model?: string
+  releaseYear?: number
+  weight?: number
+  headSize?: number
+  imageUrl?: string
+  fileId?: string
+  fileID?: string
+  fileid?: string
+}
+
+interface ApiRacketLibraryGroup {
+  brand: string
+  items: ApiRacketLibraryItem[]
+}
+
 interface ApiRacketPayload {
   libraryId?: number
   name: string
@@ -69,6 +90,10 @@ interface ApiRacketPayload {
   purchasePrice?: number
 }
 
+const getImageSource = (item: { imageUrl?: string; fileId?: string; fileID?: string; fileid?: string }) => {
+  return item.imageUrl || item.fileId || item.fileID || item.fileid || ''
+}
+
 const mapApiRacket = (racket: ApiRacket): Racket => {
   return {
     id: racket.id,
@@ -77,7 +102,7 @@ const mapApiRacket = (racket: ApiRacket): Racket => {
     brand: racket.brand || '',
     model: racket.model || '',
     status: racket.status === 1 || racket.status === 2 || racket.status === 3 ? racket.status : 2,
-    imageUrl: racket.imageUrl || '',
+    imageUrl: getImageSource(racket),
     weight: racket.weight || 0,
     headSize: racket.headSize || 0,
     purchaseDate: racket.purchaseDate || '',
@@ -136,7 +161,7 @@ const mapDraftToPayload = (draft: RacketDraft): ApiRacketPayload => {
   return payload
 }
 
-const mapLibraryGroups = (groups: RacketLibraryGroup[]): RacketLibraryGroup[] => {
+const mapLibraryGroups = (groups: ApiRacketLibraryGroup[]): RacketLibraryGroup[] => {
   return groups.map((group) => ({
     brand: group.brand,
     items: group.items.map((item) => ({
@@ -146,7 +171,7 @@ const mapLibraryGroups = (groups: RacketLibraryGroup[]): RacketLibraryGroup[] =>
       releaseYear: item.releaseYear || 0,
       weight: item.weight || 0,
       headSize: item.headSize || 0,
-      imageUrl: item.imageUrl || '',
+      imageUrl: getImageSource(item),
     })),
   }))
 }
@@ -180,7 +205,7 @@ export const createRacketFromApi = async (draft: RacketDraft): Promise<Racket> =
 
 export const listRacketLibraryFromApi = async (): Promise<RacketLibraryGroup[]> => {
   await ensureLogin()
-  const groups = await request<RacketLibraryGroup[]>({
+  const groups = await request<ApiRacketLibraryGroup[]>({
     url: '/api/racket-library',
   })
 
