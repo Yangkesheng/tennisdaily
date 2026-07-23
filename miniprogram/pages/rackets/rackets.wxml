@@ -1,4 +1,4 @@
-<navigation-bar title="球拍" back="{{true}}" color="#05070c" background="transparent"></navigation-bar>
+<navigation-bar title="我的球拍" back="{{true}}" color="#05070c" background="transparent"></navigation-bar>
 <scroll-view class="page rackets-page" scroll-y type="list">
   <view class="filter-tabs">
     <button class="filter-tab {{filter === 'using' ? 'active' : ''}}" data-filter="using" bindtap="selectFilter">使用中</button>
