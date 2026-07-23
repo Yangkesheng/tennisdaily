@@ -66,12 +66,12 @@
   z-index: 2;
   width: 100%;
   display: flex;
-  gap: 18rpx;
-  padding: 22rpx;
-  border: 1rpx solid rgba(255, 255, 255, 0.7);
+  align-items: center;
+  gap: 22rpx;
+  padding: 24rpx 22rpx;
+  border: 1rpx solid rgba(255, 255, 255, 0.86);
   border-radius: 32rpx;
-  background: rgba(255, 255, 255, 0.55);
-  backdrop-filter: blur(25px);
+  background: #fff;
   box-sizing: border-box;
   transform: translateX(0);
   transition: transform 0.18s ease;
@@ -85,8 +85,6 @@
   flex: none;
   width: 208rpx;
   height: 256rpx;
-  border-radius: 32rpx;
-  background: rgba(255, 255, 255, 0.58);
   display: flex;
   align-items: center;
   justify-content: center;
@@ -111,6 +109,9 @@
 .racket-content {
   flex: 1;
   min-width: 0;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
 }
 
 .racket-title-row,
@@ -123,13 +124,14 @@
 .racket-title-row,
 .racket-meta {
   justify-content: space-between;
-  gap: 16rpx;
+  gap: 14rpx;
 }
 
 .racket-title {
   min-width: 0;
-  font-size: 32rpx;
+  font-size: 34rpx;
   font-weight: 900;
+  line-height: 1.18;
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
@@ -154,10 +156,11 @@
 
 .stringing-line {
   display: block;
-  margin-top: 14rpx;
+  margin-top: 12rpx;
   color: rgba(13, 23, 40, 0.56);
   font-size: 24rpx;
   font-weight: 800;
+  line-height: 1.25;
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
@@ -167,30 +170,31 @@
   display: grid;
   grid-template-columns: repeat(2, minmax(0, 1fr));
   gap: 12rpx;
-  margin-top: 36rpx;
+  margin-top: 30rpx;
 }
 
 .usage-cell {
   min-width: 0;
-  padding: 14rpx 16rpx;
+  padding: 13rpx 14rpx;
   border-radius: 20rpx;
-  background: rgba(255, 255, 255, 0.48);
+  background: rgba(245, 239, 230, 0.72);
 }
 
 .usage-value {
   display: block;
   color: #05070c;
-  font-size: 28rpx;
+  font-size: 30rpx;
   font-weight: 900;
-  line-height: 1.1;
+  line-height: 1.08;
 }
 
 .usage-label {
   display: block;
-  margin-top: 6rpx;
+  margin-top: 5rpx;
   color: rgba(13, 23, 40, 0.42);
   font-size: 20rpx;
   font-weight: 800;
+  line-height: 1.15;
   white-space: nowrap;
 }
 
