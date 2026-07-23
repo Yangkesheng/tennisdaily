@@ -27,6 +27,9 @@ interface CallContainerOptions {
   fail: (err: { errMsg?: string }) => void
 }
 
+const LOGIN_PAGE_PATH = '/pages/login/login'
+let isRedirectingToLogin = false
+
 const getFriendlyErrorMessage = (message: string) => {
   if (!message || message === 'internal error') {
     return '服务暂时不可用'
@@ -60,8 +63,39 @@ const parseApiResponse = <T>(raw: unknown): ApiResponse<T> | undefined => {
   return raw as ApiResponse<T> | undefined
 }
 
+const redirectToLoginForAuth = () => {
+  if (isRedirectingToLogin) {
+    return
+  }
+
+  wx.removeStorageSync(TOKEN_STORAGE_KEY)
+  isRedirectingToLogin = true
+
+  const pages = getCurrentPages()
+  const currentRoute = pages[pages.length - 1]?.route || ''
+  if (`/${currentRoute}` === LOGIN_PAGE_PATH) {
+    isRedirectingToLogin = false
+    return
+  }
+
+  wx.navigateTo({
+    url: LOGIN_PAGE_PATH,
+    complete: () => {
+      isRedirectingToLogin = false
+    },
+  })
+}
+
+const isUnauthorizedResponse = (body: ApiResponse<unknown> | undefined) => {
+  return body?.message === 'unauthorized' || body?.code === 401 || body?.code === 40101
+}
+
 const handleApiResponse = <T>(body: ApiResponse<T> | undefined, resolve: (value: T) => void, reject: (reason?: Error) => void) => {
   if (!body || body.code !== 0) {
+    if (isUnauthorizedResponse(body)) {
+      redirectToLoginForAuth()
+    }
+
     reject(new Error(getFriendlyErrorMessage(body?.message || '请求失败')))
     return
   }

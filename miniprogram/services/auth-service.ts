@@ -23,6 +23,9 @@ interface PhoneLoginResponse {
   isNewUser: boolean
 }
 
+const LOGIN_PAGE_PATH = '/pages/login/login'
+let isRedirectingToLogin = false
+
 const requestWechatCode = (): Promise<string> => {
   return new Promise((resolve, reject) => {
     wx.login({
@@ -109,8 +112,22 @@ export const logoutFromApi = async (): Promise<void> => {
 }
 
 export const redirectToLogin = () => {
+  if (isRedirectingToLogin) {
+    return
+  }
+
+  const pages = getCurrentPages()
+  const currentRoute = pages[pages.length - 1]?.route || ''
+  if (`/${currentRoute}` === LOGIN_PAGE_PATH) {
+    return
+  }
+
+  isRedirectingToLogin = true
   wx.navigateTo({
-    url: '/pages/login/login',
+    url: LOGIN_PAGE_PATH,
+    complete: () => {
+      isRedirectingToLogin = false
+    },
   })
 }
 

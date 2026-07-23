@@ -11,7 +11,6 @@ interface RacketLibraryData {
   loadingItems: boolean
   activeRequestKey: string
   showBrands: boolean
-  titleText: string
 }
 
 const encode = (value: string | number) => {
@@ -31,8 +30,7 @@ Component({
     loadingBrands: false,
     loadingItems: false,
     activeRequestKey: '',
-    showBrands: true,
-    titleText: '选拍',
+    showBrands: false,
   } as RacketLibraryData,
   lifetimes: {
     attached() {
@@ -56,7 +54,6 @@ Component({
           brands,
           activeBrandIndex: 0,
           activeSeriesIndex: -1,
-          titleText: brands[0] ? `选拍 · ${brands[0].name}` : '选拍',
         })
 
         if (brands[0]) {
@@ -130,7 +127,14 @@ Component({
       const index = Number(event.currentTarget.dataset.index)
       const brand = this.data.brands[index]
 
-      if (!brand || index === this.data.activeBrandIndex) {
+      if (!brand) {
+        return
+      }
+
+      if (index === this.data.activeBrandIndex) {
+        this.setData({
+          showBrands: false,
+        })
         return
       }
 
@@ -139,13 +143,18 @@ Component({
         activeSeriesIndex: -1,
         series: [],
         showBrands: false,
-        titleText: `选拍 · ${brand.name}`,
       })
+
       this.loadBrandLibrary(brand.id)
     },
     toggleBrands() {
       this.setData({
         showBrands: !this.data.showBrands,
+      })
+    },
+    closeBrands() {
+      this.setData({
+        showBrands: false,
       })
     },
     selectSeries(event: WechatMiniprogram.TouchEvent) {

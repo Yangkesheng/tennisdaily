@@ -5,20 +5,22 @@
   </view>
 </navigation-bar>
 <view class="page library-page">
-  <view class="library-body">
-    <scroll-view wx:if="{{showBrands}}" class="brand-sidebar" scroll-y>
+  <view wx:if="{{showBrands}}" class="brand-mask" bindtap="closeBrands"></view>
+  <view wx:if="{{showBrands}}" class="brand-popover">
+    <scroll-view class="brand-popover-scroll" scroll-y>
       <view
         wx:for="{{brands}}"
         wx:key="id"
-        class="brand-item {{activeBrandIndex === index ? 'active' : ''}}"
+        class="brand-option {{activeBrandIndex === index ? 'active' : ''}}"
         data-index="{{index}}"
         bindtap="selectBrand"
       >
         {{item.name}}
       </view>
-      <view class="brand-item manual-brand" bindtap="manualInput">手动</view>
+      <view class="brand-option manual-option" bindtap="manualInput">手动输入</view>
     </scroll-view>
-
+  </view>
+  <view class="library-body">
     <view class="product-panel">
       <scroll-view wx:if="{{series.length}}" class="series-tabs" scroll-x enhanced show-scrollbar="{{false}}">
         <view class="series-list">
@@ -52,6 +54,11 @@
               <text wx:else class="product-mark">{{item.brand}}</text>
             </view>
             <text class="product-name">{{item.model}}</text>
+            <view class="product-specs">
+              <text wx:if="{{item.headSize}}">{{item.headSize}} in²</text>
+              <text wx:if="{{item.weight}}">{{item.weight}}g</text>
+              <text wx:if="{{item.stringPattern}}">{{item.stringPattern}}</text>
+            </view>
           </view>
         </view>
         <view wx:else class="empty-library">暂无球拍</view>
