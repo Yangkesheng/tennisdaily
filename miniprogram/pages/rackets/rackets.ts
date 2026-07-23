@@ -4,6 +4,7 @@ import { deleteRacketFromApi, listRacketsFromApi } from '../../services/racket-a
 interface RacketView extends Racket {
   statusLabel: string
   statusClass: string
+  stringingText: string
 }
 
 interface RacketsData {
@@ -16,11 +17,28 @@ interface RacketsData {
   isSwipeAction: boolean
 }
 
+const getStringingText = (racket: Racket) => {
+  if (!racket.stringName) {
+    return ''
+  }
+
+  if (racket.verticalTension && racket.horizontalTension) {
+    const tensionText = racket.verticalTension === racket.horizontalTension
+      ? `${racket.verticalTension}磅`
+      : `竖${racket.verticalTension} / 横${racket.horizontalTension}磅`
+
+    return `${racket.stringName} · ${tensionText}`
+  }
+
+  return racket.stringName
+}
+
 const createRacketView = (racket: Racket): RacketView => {
   return {
     ...racket,
     statusLabel: racket.status === 1 ? '主力' : racket.status === 3 ? '退役' : '',
     statusClass: racket.status === 1 ? 'primary' : racket.status === 3 ? 'retired' : '',
+    stringingText: getStringingText(racket),
   }
 }
 

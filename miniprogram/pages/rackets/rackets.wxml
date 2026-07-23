@@ -24,11 +24,7 @@
             <text class="racket-title">{{item.name}}</text>
             <text wx:if="{{item.statusLabel}}" class="status-badge {{item.statusClass}}">{{item.statusLabel}}</text>
           </view>
-          <text class="racket-model">{{item.brand}} {{item.model}}</text>
-          <view wx:if="{{item.weight || item.headSize}}" class="racket-spec-row">
-            <text wx:if="{{item.weight}}" class="racket-spec">{{item.weight}}g</text>
-            <text wx:if="{{item.headSize}}" class="racket-spec">{{item.headSize}} sq in</text>
-          </view>
+          <text wx:if="{{item.stringingText}}" class="stringing-line">{{item.stringingText}}</text>
           <view class="usage-grid compact">
             <view class="usage-cell">
               <text class="usage-value">{{item.usageCount}}</text>

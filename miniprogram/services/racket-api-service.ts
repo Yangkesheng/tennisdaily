@@ -22,6 +22,7 @@ interface ApiRacket {
   horizontalTension?: number
   lastStringDate?: string
   lastStringCost?: number
+  latestStringingRecord?: ApiStringingRecord
   totalMinutes?: number
   totalHours?: number
   usageCount?: number
@@ -95,6 +96,8 @@ const getImageSource = (item: { imageUrl?: string; fileId?: string; fileID?: str
 }
 
 const mapApiRacket = (racket: ApiRacket): Racket => {
+  const latestStringingRecord = racket.latestStringingRecord
+
   return {
     id: racket.id,
     libraryId: racket.libraryId,
@@ -107,11 +110,11 @@ const mapApiRacket = (racket: ApiRacket): Racket => {
     headSize: racket.headSize || 0,
     purchaseDate: racket.purchaseDate || '',
     purchasePrice: racket.purchasePrice || 0,
-    stringName: racket.stringName || '',
-    verticalTension: racket.verticalTension || 0,
-    horizontalTension: racket.horizontalTension || 0,
-    lastStringDate: racket.lastStringDate || '',
-    lastStringCost: racket.lastStringCost || 0,
+    stringName: latestStringingRecord?.stringName || racket.stringName || '',
+    verticalTension: latestStringingRecord?.verticalTension || racket.verticalTension || 0,
+    horizontalTension: latestStringingRecord?.horizontalTension || racket.horizontalTension || 0,
+    lastStringDate: latestStringingRecord?.stringDate || racket.lastStringDate || '',
+    lastStringCost: latestStringingRecord?.cost || racket.lastStringCost || 0,
     totalMinutes: racket.totalMinutes || racket.usageMinutes || 0,
     totalHours: racket.totalHours || racket.usageHours || 0,
     usageCount: racket.usageCount || 0,
