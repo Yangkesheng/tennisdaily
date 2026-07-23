@@ -1,6 +1,18 @@
 export type RacketStatus = 1 | 2 | 3
 export type RacketFilter = 'using' | 'retired'
 
+export interface RacketBrand {
+  id: number
+  name: string
+  imageUrl: string
+}
+
+export interface RacketSeries {
+  id: number
+  brandId: number
+  name: string
+}
+
 export interface Racket {
   id: number
   libraryId?: number
@@ -50,15 +62,20 @@ export interface RacketDraft {
 
 export interface RacketLibraryItem {
   id: number
+  brandId: number
   brand: string
+  seriesId: number
+  series: string
   model: string
   releaseYear: number
   weight: number
   headSize: number
+  stringPattern: string
   imageUrl: string
 }
 
 export interface RacketLibraryGroup {
+  brandId: number
   brand: string
   items: RacketLibraryItem[]
 }

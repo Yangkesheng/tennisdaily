@@ -1,4 +1,4 @@
-import type { Racket, RacketDraft, RacketLibraryGroup, StringingRecord } from '../models/racket'
+import type { Racket, RacketBrand, RacketDraft, RacketLibraryGroup, RacketLibraryItem, RacketSeries, StringingRecord } from '../models/racket'
 import { ensureLogin } from './auth-service'
 import { request } from './request'
 
@@ -62,13 +62,32 @@ interface ApiStringingRecord {
   updatedAt?: string
 }
 
+interface ApiRacketBrand {
+  id: number
+  name: string
+  imageUrl?: string
+  fileId?: string
+  fileID?: string
+  fileid?: string
+}
+
+interface ApiRacketSeries {
+  id: number
+  brandId: number
+  name: string
+}
+
 export interface ApiRacketLibraryItem {
   id: number
+  brandId?: number
   brand?: string
+  seriesId?: number
+  series?: string
   model?: string
   releaseYear?: number
   weight?: number
   headSize?: number
+  stringPattern?: string
   imageUrl?: string
   fileId?: string
   fileID?: string
@@ -76,6 +95,7 @@ export interface ApiRacketLibraryItem {
 }
 
 interface ApiRacketLibraryGroup {
+  brandId?: number
   brand: string
   items: ApiRacketLibraryItem[]
 }
@@ -164,18 +184,27 @@ const mapDraftToPayload = (draft: RacketDraft): ApiRacketPayload => {
   return payload
 }
 
+const mapApiLibraryItem = (item: ApiRacketLibraryItem, group?: ApiRacketLibraryGroup): RacketLibraryItem => {
+  return {
+    id: item.id,
+    brandId: item.brandId || group?.brandId || 0,
+    brand: item.brand || group?.brand || '',
+    seriesId: item.seriesId || 0,
+    series: item.series || '',
+    model: item.model || '',
+    releaseYear: item.releaseYear || 0,
+    weight: item.weight || 0,
+    headSize: item.headSize || 0,
+    stringPattern: item.stringPattern || '',
+    imageUrl: getImageSource(item),
+  }
+}
+
 const mapLibraryGroups = (groups: ApiRacketLibraryGroup[]): RacketLibraryGroup[] => {
   return groups.map((group) => ({
+    brandId: group.brandId || 0,
     brand: group.brand,
-    items: group.items.map((item) => ({
-      id: item.id,
-      brand: item.brand || group.brand,
-      model: item.model || '',
-      releaseYear: item.releaseYear || 0,
-      weight: item.weight || 0,
-      headSize: item.headSize || 0,
-      imageUrl: getImageSource(item),
-    })),
+    items: group.items.map((item) => mapApiLibraryItem(item, group)),
   }))
 }
 
@@ -206,13 +235,43 @@ export const createRacketFromApi = async (draft: RacketDraft): Promise<Racket> =
   return mapApiRacket(racket)
 }
 
-export const listRacketLibraryFromApi = async (): Promise<RacketLibraryGroup[]> => {
+export const listRacketBrandsFromApi = async (): Promise<RacketBrand[]> => {
   await ensureLogin()
+  const brands = await request<ApiRacketBrand[]>({
+    url: '/api/racket-brands',
+  })
+
+  return brands.map((brand) => ({
+    id: brand.id,
+    name: brand.name,
+    imageUrl: getImageSource(brand),
+  }))
+}
+
+export const listRacketSeriesFromApi = async (brandId: number): Promise<RacketSeries[]> => {
+  await ensureLogin()
+  return request<ApiRacketSeries[]>({
+    url: `/api/racket-series?brandId=${brandId}`,
+  })
+}
+
+export const listRacketLibraryFromApi = async (brandId?: number, seriesId?: number): Promise<RacketLibraryGroup[]> => {
+  await ensureLogin()
+  const params = [
+    brandId ? `brandId=${brandId}` : '',
+    seriesId ? `seriesId=${seriesId}` : '',
+  ].filter(Boolean)
   const groups = await request<ApiRacketLibraryGroup[]>({
-    url: '/api/racket-library',
+    url: `/api/racket-library${params.length ? `?${params.join('&')}` : ''}`,
   })
 
   return mapLibraryGroups(groups)
+}
+
+export const listRacketLibraryItemsFromApi = async (brandId: number, seriesId?: number): Promise<RacketLibraryItem[]> => {
+  const groups = await listRacketLibraryFromApi(brandId, seriesId)
+
+  return groups.reduce<RacketLibraryItem[]>((items, group) => items.concat(group.items), [])
 }
 
 export const getRacketDetailFromApi = async (id: number): Promise<{ racket: Racket; stringingRecords: StringingRecord[] }> => {
