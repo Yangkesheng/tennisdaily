@@ -44,7 +44,7 @@
   display: flex;
   align-items: center;
   gap: 22rpx;
-  padding: 24rpx 22rpx;
+  padding: 34rpx 22rpx 24rpx;
   border: 1rpx solid rgba(255, 255, 255, 0.86);
   border-radius: 32rpx;
   background: #fff;
@@ -99,7 +99,6 @@
 
 .racket-title-row,
 .racket-meta {
-  justify-content: space-between;
   gap: 14rpx;
 }
 
@@ -114,7 +113,10 @@
 }
 
 .status-badge {
-  flex: none;
+  position: absolute;
+  top: 18rpx;
+  right: 18rpx;
+  z-index: 3;
   padding: 8rpx 16rpx;
   border-radius: 999rpx;
   color: #fff;

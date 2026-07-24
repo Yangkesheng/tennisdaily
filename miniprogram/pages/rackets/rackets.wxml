@@ -10,6 +10,7 @@
         bindtouchend="onTouchEnd"
         bindtap="goDetail"
       >
+        <text wx:if="{{item.statusLabel}}" class="status-badge {{item.statusClass}}">{{item.statusLabel}}</text>
         <view class="racket-mark">
           <image wx:if="{{item.imageUrl}}" class="racket-image" src="{{item.imageUrl}}" mode="aspectFit"></image>
           <text wx:else>{{item.brand || 'T'}}</text>
@@ -17,7 +18,6 @@
         <view class="racket-content">
           <view class="racket-title-row">
             <text class="racket-title">{{item.name}}</text>
-            <text wx:if="{{item.statusLabel}}" class="status-badge {{item.statusClass}}">{{item.statusLabel}}</text>
           </view>
           <text class="stringing-line">{{item.stringingText}}</text>
           <view class="usage-grid compact">
