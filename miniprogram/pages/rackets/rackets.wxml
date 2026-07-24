@@ -1,10 +1,5 @@
 <navigation-bar title="我的球拍" back="{{true}}" color="#05070c" background="transparent"></navigation-bar>
 <scroll-view class="page rackets-page" scroll-y type="list">
-  <view class="filter-tabs">
-    <button class="filter-tab {{filter === 'using' ? 'active' : ''}}" data-filter="using" bindtap="selectFilter">使用中</button>
-    <button class="filter-tab {{filter === 'retired' ? 'active' : ''}}" data-filter="retired" bindtap="selectFilter">已退役</button>
-  </view>
-
   <view wx:if="{{visibleRackets.length}}" class="racket-list">
     <view wx:for="{{visibleRackets}}" wx:key="id" class="swipe-row">
       <button wx:if="{{openedRacketId === item.id}}" class="delete-action" data-id="{{item.id}}" catchtap="deleteRacket">删除</button>

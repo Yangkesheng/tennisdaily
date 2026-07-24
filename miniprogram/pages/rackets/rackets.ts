@@ -1,4 +1,4 @@
-import type { Racket, RacketFilter } from '../../models/racket'
+import type { Racket } from '../../models/racket'
 import { deleteRacketFromApi, listRacketsFromApi } from '../../services/racket-api-service'
 
 interface RacketView extends Racket {
@@ -8,7 +8,6 @@ interface RacketView extends Racket {
 }
 
 interface RacketsData {
-  filter: RacketFilter
   rackets: Racket[]
   visibleRackets: RacketView[]
   touchStartX: number
@@ -36,23 +35,14 @@ const getStringingText = (racket: Racket) => {
 const createRacketView = (racket: Racket): RacketView => {
   return {
     ...racket,
-    statusLabel: racket.status === 1 ? '主力' : racket.status === 3 ? '退役' : '',
-    statusClass: racket.status === 1 ? 'primary' : racket.status === 3 ? 'retired' : '',
+    statusLabel: racket.status === 1 ? '主力' : racket.status === 3 ? '退役' : '在用',
+    statusClass: racket.status === 1 ? 'primary' : racket.status === 3 ? 'retired' : 'active',
     stringingText: getStringingText(racket),
   }
 }
 
-const filterRackets = (rackets: Racket[], filter: RacketFilter) => {
-  if (filter === 'using') {
-    return rackets.filter((racket) => racket.status === 1 || racket.status === 2)
-  }
-
-  return rackets.filter((racket) => racket.status === 3)
-}
-
 Component({
   data: {
-    filter: 'using',
     rackets: [],
     visibleRackets: [],
     touchStartX: 0,
@@ -72,7 +62,7 @@ Component({
 
         this.setData({
           rackets,
-          visibleRackets: filterRackets(rackets, this.data.filter).map(createRacketView),
+          visibleRackets: rackets.map(createRacketView),
         })
       } catch (error) {
         wx.showToast({
@@ -80,14 +70,6 @@ Component({
           icon: 'none',
         })
       }
-    },
-    selectFilter(event: WechatMiniprogram.TouchEvent) {
-      const filter = event.currentTarget.dataset.filter as RacketFilter
-
-      this.setData({
-        filter,
-        visibleRackets: filterRackets(this.data.rackets, filter).map(createRacketView),
-      })
     },
     onTouchStart(event: WechatMiniprogram.TouchEvent) {
       const touch = event.touches[0]

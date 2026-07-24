@@ -6,30 +6,6 @@
   color: #05070c;
 }
 
-.filter-tabs {
-  display: flex;
-  gap: 12rpx;
-  margin: 18rpx 0 28rpx;
-  padding: 8rpx;
-  border-radius: 30rpx;
-  background: rgba(255, 255, 255, 0.45);
-}
-
-.filter-tab {
-  flex: 1;
-  height: 64rpx;
-  border-radius: 24rpx;
-  color: rgba(13, 23, 40, 0.52);
-  font-size: 24rpx;
-  font-weight: 800;
-  line-height: 64rpx;
-}
-
-.filter-tab.active {
-  background: rgba(255, 255, 255, 0.82);
-  color: #3778db;
-}
-
 .racket-list {
   display: flex;
   flex-direction: column;
@@ -146,7 +122,8 @@
   font-weight: 900;
 }
 
-.status-badge.primary {
+.status-badge.primary,
+.status-badge.active {
   background: rgba(55, 120, 219, 0.76);
 }
 
