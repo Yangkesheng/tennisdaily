@@ -18,6 +18,7 @@ interface ApiRacket {
   purchaseDate?: string
   purchasePrice?: number
   stringName?: string
+  storeName?: string
   verticalTension?: number
   horizontalTension?: number
   lastStringDate?: string
@@ -54,6 +55,7 @@ interface ApiStringingRecord {
   id: number
   racketId: number
   stringName: string
+  storeName?: string
   verticalTension?: number
   horizontalTension?: number
   cost: number
@@ -131,6 +133,7 @@ const mapApiRacket = (racket: ApiRacket): Racket => {
     purchaseDate: racket.purchaseDate || '',
     purchasePrice: racket.purchasePrice || 0,
     stringName: latestStringingRecord?.stringName || racket.stringName || '',
+    storeName: latestStringingRecord?.storeName || racket.storeName || '',
     verticalTension: latestStringingRecord?.verticalTension || racket.verticalTension || 0,
     horizontalTension: latestStringingRecord?.horizontalTension || racket.horizontalTension || 0,
     lastStringDate: latestStringingRecord?.stringDate || racket.lastStringDate || '',
@@ -153,6 +156,7 @@ const mapApiStringingRecord = (record: ApiStringingRecord): StringingRecord => {
     id: record.id,
     racketId: record.racketId,
     stringName: record.stringName,
+    storeName: record.storeName || '',
     verticalTension: record.verticalTension || 0,
     horizontalTension: record.horizontalTension || 0,
     cost: record.cost || 0,
@@ -330,20 +334,40 @@ export const retireRacketFromApi = async (id: number): Promise<void> => {
   })
 }
 
+export interface StringingRecordPayload {
+  stringName: string
+  storeName?: string
+  verticalTension: number
+  horizontalTension: number
+  cost: number
+  stringDate: string
+}
+
 export const createStringingRecordFromApi = async (
   id: number,
-  record: {
-    stringName: string
-    verticalTension: number
-    horizontalTension: number
-    cost: number
-    stringDate: string
-  },
+  record: StringingRecordPayload,
 ): Promise<void> => {
   await ensureLogin()
   await request<WechatMiniprogram.IAnyObject>({
     url: `/api/rackets/${id}/stringing-records`,
     method: 'POST',
     data: record,
+  })
+}
+
+export const updateStringingRecordFromApi = async (racketId: number, recordId: number, record: StringingRecordPayload): Promise<void> => {
+  await ensureLogin()
+  await request<WechatMiniprogram.IAnyObject>({
+    url: `/api/rackets/${racketId}/stringing-records/${recordId}`,
+    method: 'PUT',
+    data: record,
+  })
+}
+
+export const deleteStringingRecordFromApi = async (racketId: number, recordId: number): Promise<void> => {
+  await ensureLogin()
+  await request<WechatMiniprogram.IAnyObject>({
+    url: `/api/rackets/${racketId}/stringing-records/${recordId}`,
+    method: 'DELETE',
   })
 }

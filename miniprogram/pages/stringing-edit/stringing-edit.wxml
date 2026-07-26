@@ -1,9 +1,9 @@
-<navigation-bar title="穿线" back="{{true}}" color="#05070c" background="transparent"></navigation-bar>
+<navigation-bar title="{{pageTitle}}" back="{{true}}" color="#05070c" background="transparent"></navigation-bar>
 <view class="page stringing-page">
   <scroll-view class="stringing-scroll" scroll-y>
     <view class="stringing-content">
       <view class="edit-hero">
-        <text class="edit-title">穿线</text>
+        <text class="edit-title">{{pageTitle}}</text>
         <text class="racket-name">{{racketName}}</text>
       </view>
 
@@ -11,6 +11,10 @@
         <view class="input-card">
           <text>球线</text>
           <input value="{{draft.stringName}}" placeholder="Poly Tour Pro" bindinput="onStringNameInput" />
+        </view>
+        <view class="input-card">
+          <text>门店</text>
+          <input value="{{draft.storeName}}" placeholder="冠军穿线工作室" bindinput="onStoreNameInput" />
         </view>
         <view class="input-card tension-card">
           <text>磅数</text>

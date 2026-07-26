@@ -26,6 +26,7 @@ export interface Racket {
   purchaseDate: string
   purchasePrice: number
   stringName: string
+  storeName: string
   verticalTension: number
   horizontalTension: number
   lastStringDate: string
@@ -54,6 +55,7 @@ export interface RacketDraft {
   purchaseDate: string
   purchasePrice: number
   stringName: string
+  storeName?: string
   verticalTension: number
   horizontalTension: number
   lastStringDate: string
@@ -84,6 +86,7 @@ export interface StringingRecord {
   id: number
   racketId: number
   stringName: string
+  storeName: string
   verticalTension: number
   horizontalTension: number
   cost: number

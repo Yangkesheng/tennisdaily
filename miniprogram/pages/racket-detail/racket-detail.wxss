@@ -185,13 +185,53 @@
   gap: 14rpx;
 }
 
+.stringing-swipe-row {
+  position: relative;
+  overflow: hidden;
+  border-radius: 24rpx;
+}
+
+.stringing-delete-action {
+  position: absolute;
+  top: 0;
+  right: 0;
+  width: 160rpx;
+  height: 100%;
+  border-radius: 0 24rpx 24rpx 0;
+  padding-left: 26rpx;
+  background: #d93025;
+  color: #fff;
+  font-size: 26rpx;
+  font-weight: 900;
+  line-height: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1;
+}
+
 .stringing-row {
+  position: relative;
+  z-index: 2;
   display: flex;
   align-items: center;
   justify-content: space-between;
   gap: 16rpx;
   padding: 20rpx 0;
   border-top: 1rpx solid rgba(13, 23, 40, 0.08);
+  background: rgba(255, 255, 255, 0.01);
+  box-sizing: border-box;
+  transform: translateX(0);
+  transition: transform 0.18s ease;
+}
+
+.stringing-row.opened {
+  transform: translateX(-160rpx);
+}
+
+.stringing-main {
+  flex: 1;
+  min-width: 0;
 }
 
 .stringing-name {
@@ -199,6 +239,14 @@
   color: #05070c;
   font-size: 28rpx;
   font-weight: 900;
+}
+
+.stringing-store {
+  display: block;
+  margin-top: 6rpx;
+  color: rgba(13, 23, 40, 0.5);
+  font-size: 23rpx;
+  font-weight: 800;
 }
 
 .stringing-meta,
@@ -211,8 +259,15 @@
 }
 
 .stringing-cost {
+  flex: none;
   color: rgba(13, 23, 40, 0.62);
   font-size: 26rpx;
   font-weight: 900;
+  opacity: 1;
+  transition: opacity 0.18s ease;
+}
+
+.stringing-row.opened .stringing-cost {
+  opacity: 0;
 }
 

@@ -42,12 +42,22 @@
         <view class="small-button" bindtap="goStringing">新增</view>
       </view>
       <view wx:if="{{stringingRecords.length}}" class="stringing-list">
-        <view wx:for="{{stringingRecords}}" wx:key="id" class="stringing-row">
-          <view>
-            <text class="stringing-name">{{item.stringName}}</text>
-            <text class="stringing-meta">{{item.stringDate}} · 竖{{item.verticalTension || '-'}} / 横{{item.horizontalTension || '-'}}磅</text>
+        <view wx:for="{{stringingRecords}}" wx:key="id" class="stringing-swipe-row">
+          <button wx:if="{{openedRecordId === item.id}}" class="stringing-delete-action" data-id="{{item.id}}" catchtap="deleteStringingRecord">删除</button>
+          <view
+            class="stringing-row {{openedRecordId === item.id ? 'opened' : ''}}"
+            data-id="{{item.id}}"
+            bindtouchstart="onRecordTouchStart"
+            bindtouchend="onRecordTouchEnd"
+            bindtap="editStringingRecord"
+          >
+            <view class="stringing-main">
+              <text class="stringing-name">{{item.stringName}}</text>
+              <text wx:if="{{item.storeName}}" class="stringing-store">{{item.storeName}}</text>
+              <text class="stringing-meta">{{item.stringDate}} · 竖{{item.verticalTension || '-'}} / 横{{item.horizontalTension || '-'}}磅</text>
+            </view>
+            <text class="stringing-cost">¥{{item.cost}}</text>
           </view>
-          <text class="stringing-cost">¥{{item.cost}}</text>
         </view>
       </view>
       <view wx:else class="empty-text">暂无穿线记录</view>
