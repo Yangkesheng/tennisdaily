@@ -53,6 +53,47 @@
     </view>
   </view>
 
+  <view class="primary-racket-section" wx:if="{{primaryRacket}}" bindtap="goPrimaryRacket">
+    <view class="racket-card">
+      <text class="status-badge primary">主力</text>
+      <view class="racket-mark">
+        <image wx:if="{{primaryRacket.imageUrl}}" class="racket-image" src="{{primaryRacket.imageUrl}}" mode="aspectFit"></image>
+        <text wx:else>{{primaryRacket.brand || 'T'}}</text>
+      </view>
+      <view class="racket-content">
+        <view class="racket-title-row">
+          <text class="racket-title">{{primaryRacket.name}}</text>
+          <text wx:if="{{primaryRacket.accompanyDaysText}}" class="racket-days">已陪伴{{primaryRacket.accompanyDaysText}}</text>
+        </view>
+        <view wx:if="{{primaryRacket.stringName}}" class="stringing-line">
+          <text class="stringing-name">{{primaryRacket.stringName}}</text>
+          <text wx:if="{{primaryRacket.tensionText}}" class="stringing-tension">{{primaryRacket.tensionText}}</text>
+          <text wx:if="{{primaryRacket.stringingDaysText}}" class="stringing-days">已穿线{{primaryRacket.stringingDaysText}}</text>
+        </view>
+        <text wx:else class="stringing-line empty-stringing-line">暂无穿线记录</text>
+        <view class="usage-grid compact">
+          <view class="usage-cell">
+            <text class="usage-value">{{primaryRacket.usageCount}}</text>
+            <text class="usage-label">累计次数</text>
+          </view>
+          <view class="usage-cell">
+            <text class="usage-value">{{primaryRacket.usageHours}}h</text>
+            <text class="usage-label">累计时间</text>
+          </view>
+        </view>
+      </view>
+    </view>
+  </view>
+
+  <view class="primary-racket-tip" wx:elif="{{shouldShowPrimaryRacketTip}}" bindtap="goRackets">
+    <view class="primary-tip-icon">T</view>
+    <view class="primary-tip-copy">
+      <text class="primary-tip-title">添加球拍或设置主力拍</text>
+      <text class="primary-tip-subtitle">记录后首页会展示你的主力球拍</text>
+    </view>
+    <text class="primary-tip-action">去设置</text>
+  </view>
+
   <view class="trend-card">
     <view class="card-section-header">
       <text class="card-section-title">近几场手感</text>

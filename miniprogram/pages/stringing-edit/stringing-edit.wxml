@@ -13,8 +13,8 @@
           <input value="{{draft.stringName}}" placeholder="Poly Tour Pro" bindinput="onStringNameInput" />
         </view>
         <view class="input-card">
-          <text>门店</text>
-          <input value="{{draft.storeName}}" placeholder="冠军穿线工作室" bindinput="onStoreNameInput" />
+          <text>穿线地点</text>
+          <input value="{{draft.storeName}}" placeholder="可不填" bindinput="onStoreNameInput" />
         </view>
         <view class="input-card tension-card">
           <text>磅数</text>

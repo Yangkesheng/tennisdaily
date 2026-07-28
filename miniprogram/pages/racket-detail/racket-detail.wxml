@@ -52,9 +52,12 @@
             bindtap="editStringingRecord"
           >
             <view class="stringing-main">
-              <text class="stringing-name">{{item.stringName}}</text>
+              <view class="stringing-title-row">
+                <text class="stringing-name">{{item.stringName}}</text>
+                <text class="stringing-tension">竖{{item.verticalTension || '-'}} / 横{{item.horizontalTension || '-'}}磅</text>
+              </view>
               <text wx:if="{{item.storeName}}" class="stringing-store">{{item.storeName}}</text>
-              <text class="stringing-meta">{{item.stringDate}} · 竖{{item.verticalTension || '-'}} / 横{{item.horizontalTension || '-'}}磅</text>
+              <text class="stringing-meta">{{item.stringDate}}</text>
             </view>
             <text class="stringing-cost">¥{{item.cost}}</text>
           </view>

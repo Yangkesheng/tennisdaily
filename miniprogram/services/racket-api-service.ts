@@ -299,6 +299,15 @@ export const listMyRacketsFromApi = async (): Promise<Racket[]> => {
   return rackets.map(mapApiRacket)
 }
 
+export const getMyPrimaryRacketFromApi = async (): Promise<Racket | null> => {
+  await ensureLogin()
+  const racket = await request<ApiRacket | null>({
+    url: '/api/my-rackets/primary',
+  })
+
+  return racket ? mapApiRacket(racket) : null
+}
+
 export const updateRacketFromApi = async (id: number, draft: RacketDraft): Promise<Racket> => {
   await ensureLogin()
   const racket = await request<ApiRacket>({

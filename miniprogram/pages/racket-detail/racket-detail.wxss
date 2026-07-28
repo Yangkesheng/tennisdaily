@@ -234,11 +234,33 @@
   min-width: 0;
 }
 
+.stringing-title-row {
+  display: flex;
+  align-items: center;
+  gap: 18rpx;
+  min-width: 0;
+}
+
 .stringing-name {
-  display: block;
+  flex: none;
+  max-width: 52%;
   color: #05070c;
   font-size: 28rpx;
   font-weight: 900;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.stringing-tension {
+  flex: 1;
+  min-width: 0;
+  color: rgba(13, 23, 40, 0.52);
+  font-size: 24rpx;
+  font-weight: 800;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 }
 
 .stringing-store {

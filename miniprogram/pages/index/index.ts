@@ -1,7 +1,9 @@
 import type { HomeRatingTrendItem } from '../../models/home'
+import type { Racket } from '../../models/racket'
 import type { SessionStats, TennisSession, TennisSessionType } from '../../models/session'
 import { getToken, redirectToLogin } from '../../services/auth-service'
 import { getHomeSummaryRemote } from '../../services/home-api-service'
+import { getMyPrimaryRacketFromApi } from '../../services/racket-api-service'
 
 interface RatingTrendItem {
   key: string
@@ -15,9 +17,17 @@ interface LatestSessionView extends TennisSession {
   typeLabel: string
 }
 
+interface PrimaryRacketView extends Racket {
+  accompanyDaysText: string
+  tensionText: string
+  stringingDaysText: string
+}
+
 interface IndexData {
   latestSession: LatestSessionView | null
   latestSessionSummary: string
+  primaryRacket: PrimaryRacketView | null
+  shouldShowPrimaryRacketTip: boolean
   ratingTrend: RatingTrendItem[]
   ratingTrendText: string
   stats: SessionStats
@@ -85,6 +95,48 @@ const createLatestSessionSummary = (session: TennisSession | null) => {
   return parts.join(' · ')
 }
 
+const getElapsedDaysText = (dateText: string) => {
+  const datePart = dateText.split(' ')[0]
+  if (!datePart) {
+    return ''
+  }
+
+  const [year, month, day] = datePart.split('-').map(Number)
+  if (!year || !month || !day) {
+    return ''
+  }
+
+  const start = new Date(year, month - 1, day)
+  const today = new Date()
+  const todayStart = new Date(today.getFullYear(), today.getMonth(), today.getDate())
+  const diffDays = Math.floor((todayStart.getTime() - start.getTime()) / 86400000)
+
+  return `${Math.max(diffDays + 1, 1)}天`
+}
+
+const getTensionText = (racket: Racket) => {
+  if (!racket.verticalTension || !racket.horizontalTension) {
+    return ''
+  }
+
+  return racket.verticalTension === racket.horizontalTension
+    ? `${racket.verticalTension}磅`
+    : `竖${racket.verticalTension} / 横${racket.horizontalTension}磅`
+}
+
+const createPrimaryRacketView = (racket: Racket | null): PrimaryRacketView | null => {
+  if (!racket) {
+    return null
+  }
+
+  return {
+    ...racket,
+    accompanyDaysText: getElapsedDaysText(racket.purchaseDate),
+    tensionText: getTensionText(racket),
+    stringingDaysText: getElapsedDaysText(racket.lastStringDate),
+  }
+}
+
 const getRatingLevel = (rating: number): RatingTrendItem['level'] => {
   if (rating >= 4) {
     return 'high'
@@ -134,6 +186,8 @@ Component({
   data: {
     latestSession: null,
     latestSessionSummary: '还没有打球记录，点击下方 + 快速记录一次',
+    primaryRacket: null,
+    shouldShowPrimaryRacketTip: false,
     ratingTrend: [],
     ratingTrendText: '暂无记录',
     stats: {
@@ -162,6 +216,8 @@ Component({
         this.setData({
           latestSession: null,
           latestSessionSummary: '还没有打球记录，点击下方 + 快速记录一次',
+          primaryRacket: null,
+          shouldShowPrimaryRacketTip: false,
           ratingTrend: [],
           ratingTrendText: '暂无记录',
           stats: {
@@ -182,14 +238,20 @@ Component({
       this.setData({ isLoggedIn: true })
 
       try {
-        const summary = await getHomeSummaryRemote()
+        const [summary, primaryRacket] = await Promise.all([
+          getHomeSummaryRemote(),
+          getMyPrimaryRacketFromApi(),
+        ])
         const stats = summary.session
         const latestSession = createLatestSessionView(summary.latestSession)
         const ratingTrend = createRatingTrend(summary.ratingTrend)
+        const primaryRacketView = createPrimaryRacketView(primaryRacket)
 
         this.setData({
           latestSession,
           latestSessionSummary: createLatestSessionSummary(latestSession),
+          primaryRacket: primaryRacketView,
+          shouldShowPrimaryRacketTip: !primaryRacketView,
           ratingTrend,
           ratingTrendText: createRatingTrendText(ratingTrend),
           stats,
@@ -246,6 +308,24 @@ Component({
 
       wx.navigateTo({
         url: '/pages/session-list/session-list?range=recent',
+      })
+    },
+    goPrimaryRacket() {
+      if (!this.ensureUserLoggedIn() || !this.data.primaryRacket) {
+        return
+      }
+
+      wx.navigateTo({
+        url: `/pages/racket-detail/racket-detail?id=${this.data.primaryRacket.id}`,
+      })
+    },
+    goRackets() {
+      if (!this.ensureUserLoggedIn()) {
+        return
+      }
+
+      wx.navigateTo({
+        url: '/pages/rackets/rackets',
       })
     },
   },
