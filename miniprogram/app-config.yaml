@@ -1,6 +1,6 @@
 api:
   baseUrl: http://localhost:8081
-  useCloudContainer: true
+  useCloudContainer: false
   cloudEnv: prod-d6gkg1meqce4aaa7e
   cloudService: cprod
   cloudStorageBucket: 7072-prod-d6gkg1meqce4aaa7e-1440725645

@@ -63,14 +63,22 @@
       <view class="racket-content">
         <view class="racket-title-row">
           <text class="racket-title">{{primaryRacket.name}}</text>
-          <text wx:if="{{primaryRacket.accompanyDaysText}}" class="racket-days">已陪伴{{primaryRacket.accompanyDaysText}}</text>
         </view>
-        <view wx:if="{{primaryRacket.stringName}}" class="stringing-line">
+        <view wx:if="{{primaryRacket.accompanyDaysText}}" class="racket-life-row">
+          <text class="life-pill">陪伴 {{primaryRacket.accompanyDaysText}}</text>
+        </view>
+        <view wx:if="{{primaryRacket.stringName}}" class="stringing-panel">
+          <text class="stringing-label">当前球线</text>
           <text class="stringing-name">{{primaryRacket.stringName}}</text>
-          <text wx:if="{{primaryRacket.tensionText}}" class="stringing-tension">{{primaryRacket.tensionText}}</text>
-          <text wx:if="{{primaryRacket.stringingDaysText}}" class="stringing-days">已穿线{{primaryRacket.stringingDaysText}}</text>
+          <view class="stringing-meta-row">
+            <text wx:if="{{primaryRacket.tensionText}}" class="stringing-tension">{{primaryRacket.tensionText}}</text>
+            <text wx:if="{{primaryRacket.stringingDaysText}}" class="stringing-days">已穿 {{primaryRacket.stringingDaysText}}</text>
+          </view>
         </view>
-        <text wx:else class="stringing-line empty-stringing-line">暂无穿线记录</text>
+        <view wx:else class="stringing-panel empty-stringing-panel">
+          <text class="stringing-label">当前球线</text>
+          <text class="empty-stringing-line">暂无穿线记录</text>
+        </view>
         <view class="usage-grid compact">
           <view class="usage-cell">
             <text class="usage-value">{{primaryRacket.usageCount}}</text>
