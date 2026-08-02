@@ -55,14 +55,16 @@
 
   <view class="primary-racket-section" wx:if="{{primaryRacket}}" bindtap="goPrimaryRacket">
     <view class="racket-card">
-      <text class="status-badge primary">主力</text>
       <view class="racket-mark">
         <image wx:if="{{primaryRacket.imageUrl}}" class="racket-image" src="{{primaryRacket.imageUrl}}" mode="aspectFit"></image>
         <text wx:else>{{primaryRacket.brand || 'T'}}</text>
       </view>
       <view class="racket-content">
-        <view class="racket-title-row">
-          <text class="racket-title">{{primaryRacket.name}}</text>
+        <view class="racket-heading">
+          <view class="racket-title-block">
+            <text class="racket-title">{{primaryRacket.name}}</text>
+          </view>
+          <text class="status-badge primary">主力</text>
         </view>
         <view wx:if="{{primaryRacket.accompanyDaysText}}" class="racket-life-row">
           <text class="life-pill">陪伴 {{primaryRacket.accompanyDaysText}}</text>
