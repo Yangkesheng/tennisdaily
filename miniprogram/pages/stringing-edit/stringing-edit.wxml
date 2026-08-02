@@ -9,7 +9,7 @@
 
       <view class="field-grid">
         <view class="input-card">
-          <text>球线</text>
+          <text>球线名称</text>
           <input value="{{draft.stringName}}" placeholder="Poly Tour Pro" bindinput="onStringNameInput" />
         </view>
         <view class="input-card">
@@ -52,4 +52,3 @@
     <button class="submit-button" loading="{{saving}}" disabled="{{saving}}" bindtap="submitStringing">保存</button>
   </view>
 </view>
-

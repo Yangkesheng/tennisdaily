@@ -268,7 +268,7 @@
   display: flex;
   align-items: flex-start;
   justify-content: space-between;
-  gap: 16rpx;
+  gap: 18rpx;
 }
 
 .racket-title-block {
@@ -291,17 +291,18 @@
 .racket-life-row {
   display: flex;
   align-items: center;
-  margin-top: 10rpx;
+  margin-top: 9rpx;
 }
 
 .life-pill {
   max-width: 100%;
-  padding: 7rpx 16rpx;
+  padding: 5rpx 12rpx;
   border-radius: 999rpx;
-  background: rgba(55, 120, 219, 0.08);
-  color: rgba(55, 120, 219, 0.92);
-  font-size: 22rpx;
+  background: rgba(13, 23, 40, 0.05);
+  color: rgba(13, 23, 40, 0.52);
+  font-size: 21rpx;
   font-weight: 900;
+  line-height: 1.15;
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;

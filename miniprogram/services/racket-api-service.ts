@@ -1,4 +1,4 @@
-import type { Racket, RacketBrand, RacketDraft, RacketLibraryGroup, RacketLibraryItem, RacketSeries, StringingRecord } from '../models/racket'
+import type { Racket, RacketDraft, RacketLibraryGroup, RacketLibraryItem, RacketLibraryStatsBrand, StringingRecord } from '../models/racket'
 import { ensureLogin } from './auth-service'
 import { request } from './request'
 
@@ -64,19 +64,17 @@ interface ApiStringingRecord {
   updatedAt?: string
 }
 
-interface ApiRacketBrand {
-  id: number
-  name: string
-  imageUrl?: string
-  fileId?: string
-  fileID?: string
-  fileid?: string
+interface ApiRacketLibraryStatsSeries {
+  seriesId: number
+  series: string
+  count: number
 }
 
-interface ApiRacketSeries {
-  id: number
+interface ApiRacketLibraryStatsBrand {
   brandId: number
-  name: string
+  brand: string
+  count: number
+  series: ApiRacketLibraryStatsSeries[]
 }
 
 export interface ApiRacketLibraryItem {
@@ -239,24 +237,24 @@ export const createRacketFromApi = async (draft: RacketDraft): Promise<Racket> =
   return mapApiRacket(racket)
 }
 
-export const listRacketBrandsFromApi = async (): Promise<RacketBrand[]> => {
+export const getRacketLibraryStatsFromApi = async (): Promise<RacketLibraryStatsBrand[]> => {
   await ensureLogin()
-  const brands = await request<ApiRacketBrand[]>({
-    url: '/api/racket-brands',
+  const stats = await request<ApiRacketLibraryStatsBrand[]>({
+    url: '/api/racket-library/stats',
   })
 
-  return brands.map((brand) => ({
-    id: brand.id,
-    name: brand.name,
-    imageUrl: getImageSource(brand),
+  return stats.map((brand) => ({
+    id: brand.brandId,
+    name: brand.brand,
+    imageUrl: '',
+    count: brand.count,
+    series: brand.series.map((series) => ({
+      id: series.seriesId,
+      brandId: brand.brandId,
+      name: series.series,
+      count: series.count,
+    })),
   }))
-}
-
-export const listRacketSeriesFromApi = async (brandId: number): Promise<RacketSeries[]> => {
-  await ensureLogin()
-  return request<ApiRacketSeries[]>({
-    url: `/api/racket-series?brandId=${brandId}`,
-  })
 }
 
 export const listRacketLibraryFromApi = async (brandId?: number, seriesId?: number): Promise<RacketLibraryGroup[]> => {

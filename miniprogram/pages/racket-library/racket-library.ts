@@ -1,5 +1,5 @@
-import type { RacketBrand, RacketLibraryItem, RacketSeries } from '../../models/racket'
-import { listRacketBrandsFromApi, listRacketLibraryItemsFromApi, listRacketSeriesFromApi } from '../../services/racket-api-service'
+import type { RacketBrand, RacketLibraryItem, RacketLibraryStatsBrand, RacketSeries } from '../../models/racket'
+import { getRacketLibraryStatsFromApi, listRacketLibraryItemsFromApi } from '../../services/racket-api-service'
 
 interface RacketLibraryData {
   brands: RacketBrand[]
@@ -19,6 +19,25 @@ const encode = (value: string | number) => {
 
 const seriesCache: Record<number, RacketSeries[]> = {}
 const itemCache: Record<string, RacketLibraryItem[]> = {}
+
+const mapStatsToBrands = (stats: RacketLibraryStatsBrand[]): RacketBrand[] => {
+  return stats.map((brand) => ({
+    id: brand.id,
+    name: brand.name,
+    imageUrl: brand.imageUrl,
+    count: brand.count,
+  }))
+}
+
+const cacheStatsSeries = (stats: RacketLibraryStatsBrand[]) => {
+  stats.forEach((brand) => {
+    seriesCache[brand.id] = brand.series
+  })
+}
+
+const getFirstSeriesId = (brandId: number) => {
+  return seriesCache[brandId]?.[0]?.id || 0
+}
 
 Component({
   data: {
@@ -48,16 +67,18 @@ Component({
       })
 
       try {
-        const brands = await listRacketBrandsFromApi()
+        const stats = await getRacketLibraryStatsFromApi()
+        const brands = mapStatsToBrands(stats)
+        cacheStatsSeries(stats)
 
         this.setData({
           brands,
           activeBrandIndex: 0,
-          activeSeriesIndex: -1,
+          activeSeriesIndex: getFirstSeriesId(brands[0]?.id || 0) ? 0 : -1,
         })
 
         if (brands[0]) {
-          this.loadBrandLibrary(brands[0].id)
+          this.loadBrandLibrary(brands[0].id, getFirstSeriesId(brands[0].id))
         }
       } catch (error) {
         wx.showToast({
@@ -77,11 +98,11 @@ Component({
 
       const cacheKey = `${brandId}-${seriesId}`
       const cachedItems = itemCache[cacheKey]
-      const cachedSeries = seriesCache[brandId]
+      const cachedSeries = seriesCache[brandId] || []
 
-      if (cachedItems && (cachedSeries || seriesId > 0)) {
+      if (cachedItems) {
         this.setData({
-          series: cachedSeries || this.data.series,
+          series: cachedSeries,
           visibleItems: cachedItems,
         })
         return
@@ -94,10 +115,8 @@ Component({
       })
 
       try {
-        const [series, items] = await Promise.all([
-          cachedSeries ? Promise.resolve(cachedSeries) : listRacketSeriesFromApi(brandId),
-          listRacketLibraryItemsFromApi(brandId, seriesId || undefined),
-        ])
+        const items = await listRacketLibraryItemsFromApi(brandId, seriesId || undefined)
+        const series = seriesCache[brandId] || []
 
         seriesCache[brandId] = series
         itemCache[cacheKey] = items
@@ -138,14 +157,16 @@ Component({
         return
       }
 
+      const firstSeriesId = getFirstSeriesId(brand.id)
+
       this.setData({
         activeBrandIndex: index,
-        activeSeriesIndex: -1,
+        activeSeriesIndex: firstSeriesId ? 0 : -1,
         series: [],
         showBrands: false,
       })
 
-      this.loadBrandLibrary(brand.id)
+      this.loadBrandLibrary(brand.id, firstSeriesId)
     },
     toggleBrands() {
       this.setData({
@@ -196,4 +217,3 @@ Component({
     },
   },
 })
-

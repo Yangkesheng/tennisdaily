@@ -5,12 +5,19 @@ export interface RacketBrand {
   id: number
   name: string
   imageUrl: string
+  count?: number
 }
 
 export interface RacketSeries {
   id: number
   brandId: number
   name: string
+  count?: number
+}
+
+export interface RacketLibraryStatsBrand extends RacketBrand {
+  series: RacketSeries[]
+  count: number
 }
 
 export interface Racket {

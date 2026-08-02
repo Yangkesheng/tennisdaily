@@ -1,7 +1,7 @@
 <navigation-bar back="{{true}}" color="#05070c" background="transparent">
   <view slot="center" class="nav-title">
     <text>选拍</text>
-    <text wx:if="{{brands[activeBrandIndex].name}}" class="nav-brand-name" bindtap="toggleBrands">{{brands[activeBrandIndex].name}}</text>
+    <text wx:if="{{brands[activeBrandIndex].name}}" class="nav-brand-name" bindtap="toggleBrands">{{brands[activeBrandIndex].name}} ({{brands[activeBrandIndex].count}})</text>
   </view>
 </navigation-bar>
 <view class="page library-page">
@@ -15,7 +15,7 @@
         data-index="{{index}}"
         bindtap="selectBrand"
       >
-        {{item.name}}
+        {{item.name}} ({{item.count}})
       </view>
       <view class="brand-option manual-option" bindtap="manualInput">手动输入</view>
     </scroll-view>
@@ -25,17 +25,12 @@
       <scroll-view wx:if="{{series.length}}" class="series-tabs" scroll-x enhanced show-scrollbar="{{false}}">
         <view class="series-list">
           <view
-            class="series-chip {{activeSeriesIndex === -1 ? 'active' : ''}}"
-            data-index="-1"
-            bindtap="selectSeries"
-          >全部</view>
-          <view
             wx:for="{{series}}"
             wx:key="id"
             class="series-chip {{activeSeriesIndex === index ? 'active' : ''}}"
             data-index="{{index}}"
             bindtap="selectSeries"
-          >{{item.name}}</view>
+          >{{item.name}} ({{item.count}})</view>
         </view>
       </scroll-view>
 
@@ -66,4 +61,3 @@
     </view>
   </view>
 </view>
-
