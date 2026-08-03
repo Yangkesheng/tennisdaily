@@ -69,6 +69,17 @@ Page({
       url: `/pages/stringing-edit/stringing-edit?id=${this.data.racket.id}&name=${encodeURIComponent(this.data.racket.name)}`,
     })
   },
+  previewRacketImage() {
+    const imageUrl = this.data.racket?.imageUrl
+    if (!imageUrl) {
+      return
+    }
+
+    wx.previewImage({
+      urls: [imageUrl],
+      current: imageUrl,
+    })
+  },
   onRecordTouchStart(event: WechatMiniprogram.TouchEvent) {
     const touch = event.touches[0]
     if (!touch) {

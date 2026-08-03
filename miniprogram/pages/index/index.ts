@@ -18,7 +18,7 @@ interface LatestSessionView extends TennisSession {
 }
 
 interface PrimaryRacketView extends Racket {
-  accompanyDaysText: string
+  accompanyDays: number
   identityText: string
   hasStringingInfo: boolean
   stringingSpecText: string
@@ -99,15 +99,15 @@ const createLatestSessionSummary = (session: TennisSession | null) => {
   return parts.join(' · ')
 }
 
-const getElapsedDaysText = (dateText: string) => {
+const getElapsedDays = (dateText: string) => {
   const datePart = dateText.split(' ')[0]
   if (!datePart) {
-    return ''
+    return 0
   }
 
   const [year, month, day] = datePart.split('-').map(Number)
   if (!year || !month || !day) {
-    return ''
+    return 0
   }
 
   const start = new Date(year, month - 1, day)
@@ -115,7 +115,7 @@ const getElapsedDaysText = (dateText: string) => {
   const todayStart = new Date(today.getFullYear(), today.getMonth(), today.getDate())
   const diffDays = Math.floor((todayStart.getTime() - start.getTime()) / 86400000)
 
-  return `${Math.max(diffDays + 1, 1)} 天`
+  return Math.max(diffDays + 1, 1)
 }
 
 const getTensionText = (racket: Racket) => {
@@ -168,7 +168,7 @@ const createPrimaryRacketView = (racket: Racket | null): PrimaryRacketView | nul
 
   return {
     ...racket,
-    accompanyDaysText: getElapsedDaysText(racket.purchaseDate),
+    accompanyDays: getElapsedDays(racket.purchaseDate),
     identityText: getPrimaryRacketIdentity(racket),
     hasStringingInfo: !!stringingSpecText || !!racket.lastStringDate || racket.afterStringingUsageHours > 0,
     stringingSpecText,

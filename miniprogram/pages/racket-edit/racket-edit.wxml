@@ -8,12 +8,11 @@
 
       <view wx:if="{{hasSelectedLibrary}}" class="racket-detail-card">
         <view class="detail-image-wrap">
-          <image wx:if="{{draft.imageUrl}}" class="detail-image" src="{{draft.imageUrl}}" mode="aspectFit"></image>
+          <image wx:if="{{draft.imageUrl}}" class="detail-image" src="{{draft.imageUrl}}" mode="aspectFit" bindtap="previewDetailImage"></image>
           <text wx:else class="detail-mark">{{draft.brand}}</text>
         </view>
         <view class="detail-copy">
           <text class="detail-name">{{draft.model}}</text>
-          <text class="detail-brand">{{draft.brand}}</text>
           <view class="detail-specs">
             <text>{{draft.weight || '-'}}g</text>
             <text>{{draft.headSize || '-'}} in²</text>

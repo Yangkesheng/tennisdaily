@@ -64,17 +64,18 @@
           <text class="racket-code">{{primaryRacket.identityText}}</text>
           <text class="status-badge primary">主力</text>
         </view>
-        <view class="service-row">
-          <text wx:if="{{primaryRacket.accompanyDaysText}}" class="service-days">已服役 {{primaryRacket.accompanyDaysText}}</text>
-        </view>
         <view class="racket-metric-grid">
-          <view class="racket-metric">
-            <text class="racket-metric-value">{{primaryRacket.usageCount}}</text>
-            <text class="racket-metric-label">场出战</text>
+          <view wx:if="{{primaryRacket.accompanyDays}}" class="racket-metric">
+            <text class="racket-metric-value">{{primaryRacket.accompanyDays}}<text class="racket-metric-unit">天</text></text>
+            <text class="racket-metric-label">已服役</text>
           </view>
           <view class="racket-metric">
-            <text class="racket-metric-value">{{primaryRacket.usageHours}}</text>
-            <text class="racket-metric-label">h陪伴</text>
+            <text class="racket-metric-value">{{primaryRacket.usageCount}}<text class="racket-metric-unit">场</text></text>
+            <text class="racket-metric-label">出战</text>
+          </view>
+          <view class="racket-metric">
+            <text class="racket-metric-value">{{primaryRacket.usageHours}}<text class="racket-metric-unit">h</text></text>
+            <text class="racket-metric-label">陪伴</text>
           </view>
         </view>
         <view wx:if="{{primaryRacket.hasStringingInfo}}" class="stringing-panel health-{{primaryRacket.stringingHealthState}}">

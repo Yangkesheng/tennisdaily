@@ -158,6 +158,17 @@ Component({
         'draft.headSize': Number(options.headSize) || 0,
       })
     },
+    previewDetailImage() {
+      const imageUrl = this.data.draft.imageUrl
+      if (!imageUrl) {
+        return
+      }
+
+      wx.previewImage({
+        urls: [imageUrl],
+        current: imageUrl,
+      })
+    },
     onNameInput(event: InputEvent) {
       this.setData({
         'draft.name': event.detail.value,

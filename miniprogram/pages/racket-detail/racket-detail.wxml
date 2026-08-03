@@ -3,7 +3,7 @@
   <view wx:if="{{racket}}" class="detail-content">
     <view class="hero-card">
       <view class="racket-mark">
-        <image wx:if="{{racket.imageUrl}}" class="racket-image" src="{{racket.imageUrl}}" mode="aspectFit"></image>
+        <image wx:if="{{racket.imageUrl}}" class="racket-image" src="{{racket.imageUrl}}" mode="aspectFit" bindtap="previewRacketImage"></image>
         <text wx:else>{{racket.brand || 'T'}}</text>
       </view>
       <view class="hero-copy">

@@ -234,17 +234,17 @@
 
 .racket-mark {
   flex: none;
-  width: 172rpx;
-  min-height: 196rpx;
+  width: 208rpx;
+  height: 256rpx;
   display: flex;
   align-items: center;
   justify-content: center;
 }
 
 .racket-image {
-  width: 104%;
+  width: 100%;
   height: 100%;
-  border-radius: 0;
+  border-radius: 32rpx;
 }
 
 .racket-mark text {
@@ -277,26 +277,9 @@
   flex: 1;
   min-width: 0;
   color: #111827;
-  font-size: 24rpx;
+  font-size: 34rpx;
   font-weight: 900;
-  line-height: 1.12;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
-}
-
-.service-row {
-  display: flex;
-  align-items: center;
-  margin-top: 7rpx;
-}
-
-.service-days {
-  max-width: 100%;
-  min-width: 0;
-  color: rgba(13, 23, 40, 0.48);
-  font-size: 20rpx;
-  font-weight: 800;
+  line-height: 1.18;
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
@@ -321,13 +304,13 @@
 }
 
 .racket-metric-grid {
-  display: grid;
-  grid-template-columns: repeat(2, minmax(0, 1fr));
+  display: flex;
   gap: 10rpx;
   margin-top: 14rpx;
 }
 
 .racket-metric {
+  flex: 1;
   min-width: 0;
   padding: 10rpx 12rpx 8rpx;
   border-radius: 16rpx;
@@ -339,6 +322,14 @@
   color: #26313f;
   font-size: 34rpx;
   font-weight: 900;
+  line-height: 1;
+}
+
+.racket-metric-unit {
+  display: inline-block;
+  margin-left: 4rpx;
+  font-size: 20rpx;
+  font-weight: 800;
   line-height: 1;
 }
 

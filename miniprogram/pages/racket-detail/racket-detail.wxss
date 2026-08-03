@@ -33,7 +33,7 @@
   width: 176rpx;
   height: 216rpx;
   border-radius: 30rpx;
-  background: rgba(255, 255, 255, 0.58);
+  background: #fff;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -292,4 +292,3 @@
 .stringing-row.opened .stringing-cost {
   opacity: 0;
 }
-
