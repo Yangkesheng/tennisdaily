@@ -223,27 +223,28 @@
   width: 100%;
   display: flex;
   align-items: stretch;
-  gap: 24rpx;
-  padding: 30rpx 24rpx 26rpx;
+  gap: 18rpx;
+  min-height: 240rpx;
+  padding: 22rpx;
   border: 1rpx solid rgba(255, 255, 255, 0.86);
-  border-radius: 32rpx;
+  border-radius: 28rpx;
   background: #fff;
   box-sizing: border-box;
 }
 
 .racket-mark {
   flex: none;
-  width: 194rpx;
-  min-height: 274rpx;
+  width: 172rpx;
+  min-height: 196rpx;
   display: flex;
   align-items: center;
   justify-content: center;
 }
 
 .racket-image {
-  width: 100%;
+  width: 104%;
   height: 100%;
-  border-radius: 32rpx;
+  border-radius: 0;
 }
 
 .racket-mark text {
@@ -261,48 +262,41 @@
   min-width: 0;
   display: flex;
   flex-direction: column;
-  justify-content: space-between;
+  justify-content: flex-start;
 }
 
-.racket-heading {
+.racket-status-row {
   display: flex;
-  align-items: flex-start;
+  align-items: center;
   justify-content: space-between;
-  gap: 18rpx;
-}
-
-.racket-title-block {
-  flex: 1;
+  gap: 10rpx;
   min-width: 0;
 }
 
-.racket-title {
-  display: -webkit-box;
-  color: #152018;
-  font-size: 32rpx;
+.racket-code {
+  flex: 1;
+  min-width: 0;
+  color: #111827;
+  font-size: 24rpx;
   font-weight: 900;
-  line-height: 1.16;
+  line-height: 1.12;
   overflow: hidden;
-  word-break: break-word;
-  -webkit-box-orient: vertical;
-  -webkit-line-clamp: 2;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 }
 
-.racket-life-row {
+.service-row {
   display: flex;
   align-items: center;
-  margin-top: 9rpx;
+  margin-top: 7rpx;
 }
 
-.life-pill {
+.service-days {
   max-width: 100%;
-  padding: 5rpx 12rpx;
-  border-radius: 999rpx;
-  background: rgba(13, 23, 40, 0.05);
-  color: rgba(13, 23, 40, 0.52);
-  font-size: 21rpx;
-  font-weight: 900;
-  line-height: 1.15;
+  min-width: 0;
+  color: rgba(13, 23, 40, 0.48);
+  font-size: 20rpx;
+  font-weight: 800;
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
@@ -310,14 +304,14 @@
 
 .status-badge {
   flex: none;
-  min-width: 70rpx;
-  height: 42rpx;
-  padding: 0 16rpx;
+  min-width: 68rpx;
+  height: 40rpx;
+  padding: 0 14rpx;
   border-radius: 999rpx;
   color: #fff;
-  font-size: 21rpx;
+  font-size: 20rpx;
   font-weight: 900;
-  line-height: 42rpx;
+  line-height: 40rpx;
   text-align: center;
   box-sizing: border-box;
 }
@@ -326,47 +320,59 @@
   background: rgba(55, 120, 219, 0.76);
 }
 
+.racket-metric-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 10rpx;
+  margin-top: 14rpx;
+}
+
+.racket-metric {
+  min-width: 0;
+  padding: 10rpx 12rpx 8rpx;
+  border-radius: 16rpx;
+  background: rgba(13, 23, 40, 0.03);
+}
+
+.racket-metric-value {
+  display: block;
+  color: #26313f;
+  font-size: 34rpx;
+  font-weight: 900;
+  line-height: 1;
+}
+
+.racket-metric-label {
+  display: block;
+  margin-top: 4rpx;
+  color: rgba(13, 23, 40, 0.48);
+  font-size: 21rpx;
+  font-weight: 800;
+  line-height: 1;
+}
+
 .stringing-panel {
-  margin-top: 16rpx;
-  padding: 16rpx 18rpx;
-  border-radius: 20rpx;
-  background: rgba(245, 239, 230, 0.64);
+  margin-top: 14rpx;
+  padding: 12rpx 14rpx 11rpx;
+  border-radius: 16rpx;
+  background: rgba(80, 203, 112, 0.1);
   box-sizing: border-box;
 }
 
-.stringing-label {
+.stringing-spec {
   display: block;
-  color: rgba(13, 23, 40, 0.36);
-  font-size: 20rpx;
+  color: rgba(13, 23, 40, 0.78);
+  font-size: 23rpx;
   font-weight: 900;
-  line-height: 1.1;
-}
-
-.stringing-name {
-  display: block;
-  margin-top: 9rpx;
-  color: rgba(13, 23, 40, 0.76);
-  font-size: 26rpx;
-  font-weight: 900;
-  line-height: 1.18;
+  line-height: 1.12;
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
 }
 
-.stringing-meta-row {
-  display: flex;
-  align-items: center;
-  gap: 12rpx;
-  margin-top: 9rpx;
-  min-width: 0;
-}
-
-.stringing-tension,
-.stringing-days {
-  min-width: 0;
-  padding: 5rpx 10rpx;
-  border-radius: 999rpx;
+.stringing-health-text {
+  display: block;
+  margin-top: 7rpx;
   font-size: 20rpx;
   font-weight: 900;
   line-height: 1.15;
@@ -375,63 +381,98 @@
   white-space: nowrap;
 }
 
-.stringing-tension {
-  flex: none;
-  max-width: 58%;
-  background: rgba(13, 23, 40, 0.06);
-  color: rgba(13, 23, 40, 0.62);
+.stringing-health-segments {
+  display: flex;
+  gap: 6rpx;
+  margin-top: 10rpx;
 }
 
-.stringing-days {
+.stringing-health-segment {
   flex: 1;
-  background: rgba(80, 203, 112, 0.12);
-  color: rgba(31, 122, 77, 0.88);
+  height: 12rpx;
+  border-radius: 4rpx;
+  background: rgba(13, 23, 40, 0.08);
+}
+
+.stringing-health-segment.on {
+  background: rgba(31, 122, 77, 0.8);
+}
+
+.stringing-panel.health-fresh {
+  background: rgba(80, 203, 112, 0.1);
+}
+
+.stringing-panel.health-fresh .stringing-health-text {
+  color: rgba(31, 122, 77, 0.92);
+}
+
+.stringing-panel.health-peak {
+  background: rgba(80, 203, 112, 0.1);
+}
+
+.stringing-panel.health-peak .stringing-health-text {
+  color: rgba(31, 122, 77, 0.92);
+}
+
+.stringing-panel.health-good {
+  background: rgba(45, 212, 191, 0.12);
+}
+
+.stringing-panel.health-good .stringing-health-text {
+  color: rgba(13, 148, 136, 0.94);
+}
+
+.stringing-panel.health-good .stringing-health-segment.on {
+  background: rgba(13, 148, 136, 0.85);
+}
+
+.stringing-panel.health-decline {
+  background: rgba(251, 191, 36, 0.12);
+}
+
+.stringing-panel.health-decline .stringing-health-text {
+  color: rgba(180, 83, 9, 0.94);
+}
+
+.stringing-panel.health-decline .stringing-health-segment.on {
+  background: rgba(217, 119, 6, 0.85);
+}
+
+.stringing-panel.health-dead {
+  background: rgba(251, 146, 60, 0.14);
+}
+
+.stringing-panel.health-dead .stringing-health-text {
+  color: rgba(194, 65, 12, 0.94);
+}
+
+.stringing-panel.health-dead .stringing-health-segment.on {
+  background: rgba(234, 88, 12, 0.88);
+}
+
+.stringing-panel.health-expired {
+  background: rgba(248, 113, 113, 0.12);
+}
+
+.stringing-panel.health-expired .stringing-health-text {
+  color: rgba(185, 28, 28, 0.94);
+}
+
+.stringing-panel.health-expired .stringing-health-segment.on {
+  background: rgba(220, 38, 38, 0.88);
 }
 
 .empty-stringing-panel {
-  padding-bottom: 16rpx;
+  background: rgba(13, 23, 40, 0.04);
 }
 
 .empty-stringing-line {
   display: block;
-  margin-top: 7rpx;
   color: rgba(13, 23, 40, 0.42);
-  font-size: 24rpx;
+  font-size: 23rpx;
   font-weight: 800;
   overflow: hidden;
   text-overflow: ellipsis;
-  white-space: nowrap;
-}
-
-.usage-grid {
-  display: grid;
-  grid-template-columns: repeat(2, minmax(0, 1fr));
-  gap: 12rpx;
-  margin-top: 14rpx;
-}
-
-.usage-cell {
-  min-width: 0;
-  padding: 15rpx 16rpx;
-  border-radius: 20rpx;
-  background: rgba(245, 239, 230, 0.72);
-}
-
-.usage-value {
-  display: block;
-  color: #05070c;
-  font-size: 30rpx;
-  font-weight: 900;
-  line-height: 1.08;
-}
-
-.usage-label {
-  display: block;
-  margin-top: 5rpx;
-  color: rgba(13, 23, 40, 0.42);
-  font-size: 20rpx;
-  font-weight: 800;
-  line-height: 1.15;
   white-space: nowrap;
 }
 

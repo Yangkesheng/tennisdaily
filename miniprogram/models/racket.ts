@@ -15,6 +15,15 @@ export interface RacketSeries {
   count?: number
 }
 
+export type StringHealthState = 'fresh' | 'peak' | 'good' | 'decline' | 'dead' | 'expired'
+
+export interface StringHealth {
+  state: StringHealthState
+  display: string
+  score: number
+  remainingHours: number
+}
+
 export interface RacketLibraryStatsBrand extends RacketBrand {
   series: RacketSeries[]
   count: number
@@ -46,6 +55,7 @@ export interface Racket {
   afterStringingUsageCount: number
   afterStringingUsageMinutes: number
   afterStringingUsageHours: number
+  stringHealth?: StringHealth
   createdAt?: string
   updatedAt?: string
 }

@@ -19,8 +19,12 @@ interface LatestSessionView extends TennisSession {
 
 interface PrimaryRacketView extends Racket {
   accompanyDaysText: string
-  tensionText: string
-  stringingDaysText: string
+  identityText: string
+  hasStringingInfo: boolean
+  stringingSpecText: string
+  stringingHealthText: string
+  stringingHealthState: string
+  stringingHealthSegments: Array<{ key: number; on: boolean }>
 }
 
 interface IndexData {
@@ -111,7 +115,7 @@ const getElapsedDaysText = (dateText: string) => {
   const todayStart = new Date(today.getFullYear(), today.getMonth(), today.getDate())
   const diffDays = Math.floor((todayStart.getTime() - start.getTime()) / 86400000)
 
-  return `${Math.max(diffDays + 1, 1)}天`
+  return `${Math.max(diffDays + 1, 1)} 天`
 }
 
 const getTensionText = (racket: Racket) => {
@@ -120,8 +124,39 @@ const getTensionText = (racket: Racket) => {
   }
 
   return racket.verticalTension === racket.horizontalTension
-    ? `${racket.verticalTension}磅`
-    : `竖${racket.verticalTension} / 横${racket.horizontalTension}磅`
+    ? `${racket.verticalTension} lbs`
+    : `${racket.verticalTension}/${racket.horizontalTension} lbs`
+}
+
+const getPrimaryRacketIdentity = (racket: Racket) => {
+  return racket.name || racket.model || racket.brand || '一号机'
+}
+
+const getStringingSpecText = (racket: Racket) => {
+  const tensionText = getTensionText(racket)
+  const stringName = racket.stringName || '未命名球线'
+
+  if (!racket.stringName && !tensionText) {
+    return ''
+  }
+
+  return tensionText ? `${stringName} · ${tensionText}` : stringName
+}
+
+const getStringingHealthText = (racket: Racket) => {
+  return racket.stringHealth?.display || ''
+}
+
+const getStringingHealthSegments = (racket: Racket) => {
+  const score = racket.stringHealth?.score
+  const filled = (typeof score === 'number' && !Number.isNaN(score))
+    ? Math.max(Math.min(Math.round(score / 10), 10), 0)
+    : 0
+
+  return Array.from({ length: 10 }, (_, index) => ({
+    key: index,
+    on: index < filled,
+  }))
 }
 
 const createPrimaryRacketView = (racket: Racket | null): PrimaryRacketView | null => {
@@ -129,11 +164,17 @@ const createPrimaryRacketView = (racket: Racket | null): PrimaryRacketView | nul
     return null
   }
 
+  const stringingSpecText = getStringingSpecText(racket)
+
   return {
     ...racket,
     accompanyDaysText: getElapsedDaysText(racket.purchaseDate),
-    tensionText: getTensionText(racket),
-    stringingDaysText: getElapsedDaysText(racket.lastStringDate),
+    identityText: getPrimaryRacketIdentity(racket),
+    hasStringingInfo: !!stringingSpecText || !!racket.lastStringDate || racket.afterStringingUsageHours > 0,
+    stringingSpecText,
+    stringingHealthText: getStringingHealthText(racket),
+    stringingHealthState: racket.stringHealth?.state || '',
+    stringingHealthSegments: getStringingHealthSegments(racket),
   }
 }
 

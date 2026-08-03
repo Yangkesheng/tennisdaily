@@ -1,4 +1,4 @@
-import type { Racket, RacketDraft, RacketLibraryGroup, RacketLibraryItem, RacketLibraryStatsBrand, StringingRecord } from '../models/racket'
+import type { Racket, RacketDraft, RacketLibraryGroup, RacketLibraryItem, RacketLibraryStatsBrand, StringHealth, StringingRecord } from '../models/racket'
 import { ensureLogin } from './auth-service'
 import { request } from './request'
 
@@ -32,8 +32,16 @@ interface ApiRacket {
   afterStringingUsageCount?: number
   afterStringingUsageMinutes?: number
   afterStringingUsageHours?: number
+  stringHealth?: ApiStringHealth
   createdAt?: string
   updatedAt?: string
+}
+
+interface ApiStringHealth {
+  state: string
+  display: string
+  score: number
+  remainingHours: number
 }
 
 interface ApiRacketStats {
@@ -115,6 +123,19 @@ const getImageSource = (item: { imageUrl?: string; fileId?: string; fileID?: str
   return item.imageUrl || item.fileId || item.fileID || item.fileid || ''
 }
 
+const mapApiStringHealth = (health: ApiStringHealth | undefined): StringHealth | undefined => {
+  if (!health) {
+    return undefined
+  }
+
+  return {
+    state: health.state as StringHealth['state'],
+    display: health.display || '',
+    score: health.score || 0,
+    remainingHours: health.remainingHours || 0,
+  }
+}
+
 const mapApiRacket = (racket: ApiRacket): Racket => {
   const latestStringingRecord = racket.latestStringingRecord
 
@@ -144,6 +165,7 @@ const mapApiRacket = (racket: ApiRacket): Racket => {
     afterStringingUsageCount: racket.afterStringingUsageCount || 0,
     afterStringingUsageMinutes: racket.afterStringingUsageMinutes || 0,
     afterStringingUsageHours: racket.afterStringingUsageHours || 0,
+    stringHealth: mapApiStringHealth(racket.stringHealth),
     createdAt: racket.createdAt,
     updatedAt: racket.updatedAt,
   }
