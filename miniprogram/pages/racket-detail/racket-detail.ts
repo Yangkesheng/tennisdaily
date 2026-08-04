@@ -37,6 +37,22 @@ Page({
       this.loadDetail()
     }
   },
+  onShareAppMessage() {
+    const racketName = this.data.racket?.name
+
+    return {
+      title: racketName ? `我的 ${racketName}` : '我的网球装备',
+      path: this.data.racketId ? `/pages/racket-detail/racket-detail?id=${this.data.racketId}` : '/pages/rackets/rackets',
+    }
+  },
+  onShareTimeline() {
+    const racketName = this.data.racket?.name
+
+    return {
+      title: racketName ? `我的 ${racketName}` : '我的网球装备',
+      query: this.data.racketId ? `id=${this.data.racketId}` : '',
+    }
+  },
   async loadDetail() {
     if (!this.data.racketId) {
       return

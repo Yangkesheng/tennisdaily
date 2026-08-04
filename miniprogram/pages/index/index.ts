@@ -369,5 +369,16 @@ Component({
         url: '/pages/rackets/rackets',
       })
     },
+    onShareAppMessage() {
+      return {
+        title: '我的网球日记',
+        path: '/pages/index/index',
+      }
+    },
+    onShareTimeline() {
+      return {
+        title: '我的网球日记',
+      }
+    },
   },
 })

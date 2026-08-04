@@ -806,5 +806,16 @@ Component({
         url: marked ? `/pages/session-list/session-list?date=${date}` : `/pages/session-edit/session-edit?date=${date}`,
       })
     },
+    onShareAppMessage() {
+      return {
+        title: '我的网球日历',
+        path: '/pages/calendar/calendar',
+      }
+    },
+    onShareTimeline() {
+      return {
+        title: '我的网球日历',
+      }
+    },
   },
 })

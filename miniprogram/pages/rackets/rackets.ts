@@ -153,6 +153,16 @@ Component({
         url: '/pages/racket-library/racket-library',
       })
     },
-
+    onShareAppMessage() {
+      return {
+        title: '我的网球装备',
+        path: '/pages/rackets/rackets',
+      }
+    },
+    onShareTimeline() {
+      return {
+        title: '我的网球装备',
+      }
+    },
   },
 })

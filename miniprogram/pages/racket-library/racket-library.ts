@@ -215,5 +215,16 @@ Component({
         url: '/pages/racket-edit/racket-edit',
       })
     },
+    onShareAppMessage() {
+      return {
+        title: '网球拍图鉴',
+        path: '/pages/racket-library/racket-library',
+      }
+    },
+    onShareTimeline() {
+      return {
+        title: '网球拍图鉴',
+      }
+    },
   },
 })

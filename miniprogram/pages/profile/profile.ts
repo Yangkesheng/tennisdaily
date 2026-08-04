@@ -55,5 +55,16 @@ Component({
         url: '/pages/user-profile/user-profile',
       })
     },
+    onShareAppMessage() {
+      return {
+        title: '我的网球装备',
+        path: '/pages/profile/profile',
+      }
+    },
+    onShareTimeline() {
+      return {
+        title: '我的网球装备',
+      }
+    },
   },
 })

@@ -195,6 +195,30 @@ Page({
   onShow() {
     this.refreshSessions()
   },
+  onShareAppMessage() {
+    const dateFilter = this.data.routeDateFilter
+    const rangeFilter = this.data.routeRangeFilter
+    const query = [dateFilter ? `date=${dateFilter}` : '', rangeFilter ? `range=${rangeFilter}` : '']
+      .filter(Boolean)
+      .join('&')
+
+    return {
+      title: dateFilter ? `${dateFilter} 的打球记录` : rangeFilter === 'recent' ? '最近打球记录' : '我的打球记录',
+      path: query ? `/pages/session-list/session-list?${query}` : '/pages/session-list/session-list',
+    }
+  },
+  onShareTimeline() {
+    const dateFilter = this.data.routeDateFilter
+    const rangeFilter = this.data.routeRangeFilter
+    const query = [dateFilter ? `date=${dateFilter}` : '', rangeFilter ? `range=${rangeFilter}` : '']
+      .filter(Boolean)
+      .join('&')
+
+    return {
+      title: dateFilter ? `${dateFilter} 的打球记录` : rangeFilter === 'recent' ? '最近打球记录' : '我的打球记录',
+      query,
+    }
+  },
   async refreshSessions() {
       const dateFilter = this.data.routeDateFilter
       const rangeFilter = this.data.routeRangeFilter
