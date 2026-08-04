@@ -1,9 +1,10 @@
 import { getCurrentUserFromApi, logoutFromApi, requireLoginPage, updateUserProfile, type UserProfile } from '../../services/auth-service'
-import { deleteAvatarFromCloudStorage, uploadAvatarToCloudStorage } from '../../services/avatar-upload-service'
+import { deleteAvatarFromCloudStorage, prepareAvatarForUpload, uploadAvatarToCloudStorage } from '../../services/avatar-upload-service'
 
 interface ChooseMediaSuccessResult {
   tempFiles: Array<{
     tempFilePath: string
+    size: number
   }>
 }
 
@@ -159,10 +160,11 @@ Page({
     wx.chooseMedia({
       count: 1,
       mediaType: ['image'],
+      sizeType: ['compressed'],
       sourceType: ['album', 'camera'],
       success: async (result: ChooseMediaSuccessResult) => {
-        const filePath = result.tempFiles[0]?.tempFilePath
-        if (!filePath) {
+        const file = result.tempFiles[0]
+        if (!file?.tempFilePath) {
           return
         }
 
@@ -170,13 +172,18 @@ Page({
 
         this.setData({
           isSavingAvatar: true,
-          user: {
-            ...currentUser,
-            avatarUrl: filePath,
-          },
         })
 
         try {
+          const filePath = await prepareAvatarForUpload(file.tempFilePath, file.size)
+
+          this.setData({
+            user: {
+              ...currentUser,
+              avatarUrl: filePath,
+            },
+          })
+
           const uploadedAvatarUrl = await uploadAvatarToCloudStorage(filePath)
           const user = await updateUserProfile({
             nickname: currentUser.nickname || '',

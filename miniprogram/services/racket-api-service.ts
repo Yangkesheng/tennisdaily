@@ -120,7 +120,7 @@ interface ApiRacketPayload {
 }
 
 const getImageSource = (item: { imageUrl?: string; fileId?: string; fileID?: string; fileid?: string }) => {
-  return item.imageUrl || item.fileId || item.fileID || item.fileid || ''
+  return item.fileId || item.fileID || item.fileid || item.imageUrl || ''
 }
 
 const mapApiStringHealth = (health: ApiStringHealth | undefined): StringHealth | undefined => {
