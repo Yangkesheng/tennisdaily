@@ -232,7 +232,7 @@ export interface TennisSession {
 | `type` | TennisSessionType | 打球类型 |
 | `matchRank` | MatchRank | 比赛成绩 |
 | `cost` | number | 花费 |
-| `racketName` | string | 球拍 |
+| `racketName` | string | 球拍名称，由后端按 `racketId` 关联我的球拍返回 |
 | `shoeName` | string | 球鞋 |
 | `note` | string | 备注，当前页面暂未重点使用 |
 | `createdAt` | number | 创建时间戳 |

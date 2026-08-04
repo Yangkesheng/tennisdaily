@@ -18,6 +18,7 @@ interface UserProfileData {
   isSavingAvatar: boolean
   isSavingNickname: boolean
   nicknameDraft: string
+  avatarSrc: string
   showNicknameEditor: boolean
   nicknameInputFocus: boolean
   user: UserProfile | null
@@ -30,10 +31,12 @@ Page({
     isSavingAvatar: false,
     isSavingNickname: false,
     nicknameDraft: '',
+    avatarSrc: '',
     showNicknameEditor: false,
     nicknameInputFocus: false,
     user: null,
   } as UserProfileData,
+  refreshSeq: 0,
   onShow() {
     this.refreshUser()
   },
@@ -42,10 +45,19 @@ Page({
       return
     }
 
+    if (this.data.isSavingAvatar) {
+      return
+    }
+
+    const seq = ++this.refreshSeq
     try {
       const user = await getCurrentUserFromApi()
+      if (seq !== this.refreshSeq) {
+        return
+      }
       this.setData({
         nicknameDraft: user.nickname || '',
+        avatarSrc: user.avatarUrl || '',
         user,
       })
     } catch (error) {
@@ -140,6 +152,7 @@ Page({
         icon: 'none',
       })
     } finally {
+      this.refreshSeq += 1
       this.setData({ isSavingNickname: false })
     }
   },
@@ -172,17 +185,11 @@ Page({
 
         this.setData({
           isSavingAvatar: true,
+          avatarSrc: file.tempFilePath,
         })
 
         try {
           const filePath = await prepareAvatarForUpload(file.tempFilePath, file.size)
-
-          this.setData({
-            user: {
-              ...currentUser,
-              avatarUrl: filePath,
-            },
-          })
 
           const uploadedAvatarUrl = await uploadAvatarToCloudStorage(filePath)
           const user = await updateUserProfile({
@@ -201,12 +208,16 @@ Page({
             })
           }
         } catch (error) {
-          this.setData({ user: currentUser })
+          this.setData({
+            avatarSrc: currentUser.avatarUrl || '',
+            user: currentUser,
+          })
           wx.showToast({
             title: error instanceof Error ? error.message : '头像保存失败',
             icon: 'none',
           })
         } finally {
+          this.refreshSeq += 1
           this.setData({ isSavingAvatar: false })
         }
       },

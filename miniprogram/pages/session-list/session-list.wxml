@@ -2,6 +2,7 @@
 <scroll-view class="page list-page" scroll-y type="list">
   <view class="list-header">
     <text>{{titleText}}</text>
+    <text class="header-settings-icon" hover-class="header-settings-hover" bindtap="openDisplaySettings">⚙︎</text>
   </view>
 
   <view wx:if="{{sessions.length}}" class="session-list">
@@ -21,16 +22,16 @@
             <text class="session-date">{{item.date}}</text>
             <text class="session-type type-{{item.typeClass}}">{{item.typeLabel}}</text>
           </view>
-          <text class="session-duration">{{item.durationMinutes}} 分钟</text>
+          <text wx:if="{{item.showDuration}}" class="session-duration">{{item.durationMinutes}} 分钟</text>
         </view>
-        <view class="session-meta">
-          <text wx:if="{{item.courtName}}">{{item.courtName}}</text>
-          <text wx:if="{{item.partner}}">{{item.partner}}</text>
-          <text wx:if="{{item.racketName}}">{{item.racketName}}</text>
-          <text wx:if="{{item.shoeName}}">{{item.shoeName}}</text>
-          <text wx:if="{{item.cost}}">¥{{item.cost}}</text>
+        <view class="session-meta" wx:if="{{item.showCourtName || item.showPartner || item.showRacketName || item.showShoeName || item.showCost}}">
+          <text wx:if="{{item.courtName && item.showCourtName}}">{{item.courtName}}</text>
+          <text wx:if="{{item.partner && item.showPartner}}">{{item.partner}}</text>
+          <text wx:if="{{item.racketName && item.showRacketName}}">{{item.racketName}}</text>
+          <text wx:if="{{item.shoeName && item.showShoeName}}">{{item.shoeName}}</text>
+          <text wx:if="{{item.cost && item.showCost}}">¥{{item.cost}}</text>
         </view>
-        <text wx:if="{{item.note}}" class="session-note">{{item.note}}</text>
+        <text wx:if="{{item.note && item.showNote}}" class="session-note">{{item.note}}</text>
       </view>
     </view>
   </view>
@@ -51,3 +52,29 @@
     </view>
   </view>
 </scroll-view>
+
+<view wx:if="{{showDisplaySettings}}" class="settings-mask" catchtouchmove="noop" bindtap="closeDisplaySettings">
+  <view class="settings-panel" catchtap="noop">
+    <view class="settings-header">
+      <text class="settings-title">列表展示字段</text>
+      <text class="settings-subtitle">勾选后，列表卡片将显示对应信息，选择仅保存在本机</text>
+    </view>
+    <view class="settings-list">
+      <view
+        wx:for="{{displayFieldOptions}}"
+        wx:key="key"
+        class="settings-row"
+        data-field="{{item.key}}"
+        bindtap="onToggleDisplayField"
+      >
+        <text class="settings-row-label">{{item.label}}</text>
+        <view class="settings-checkbox {{item.visible ? 'checked' : ''}}">
+          <text wx:if="{{item.visible}}">✓</text>
+        </view>
+      </view>
+    </view>
+    <view class="settings-footer">
+      <text class="settings-reset" bindtap="resetDisplayFields">恢复默认</text>
+    </view>
+  </view>
+</view>

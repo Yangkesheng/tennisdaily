@@ -182,10 +182,11 @@ Authorization: Bearer <token>
 
 ```json
 {
-  "racketId": 1,
-  "racketName": "EZONE 主力拍"
+  "racketId": 1
 }
 ```
+
+球拍名称不再由前端传入；接口返回的 `racketName` 由后端按 `racketId` 关联我的球拍当前名称。
 
 ### 18.6 添加球拍
 
@@ -487,4 +488,3 @@ Authorization: Bearer <token>
 
 - 统计口径以后端 `/api/rackets/stats` 为准。
 - 前端不再通过 `GET /api/rackets` 和 `GET /api/rackets/:id` 组合计算我的页面消费统计。
-

@@ -2,9 +2,8 @@
 <scroll-view class="page user-profile-page" scroll-y type="list">
   <view class="profile-card">
     <view class="avatar-button {{isSavingAvatar ? 'is-saving' : ''}}" bindtap="onAvatarTap">
-      <image wx:if="{{user.avatarUrl}}" class="avatar-image" src="{{user.avatarUrl}}" mode="aspectFill"></image>
+      <image wx:if="{{avatarSrc}}" class="avatar-image" src="{{avatarSrc}}" mode="aspectFill"></image>
       <view wx:else class="avatar-placeholder">头像</view>
-      <view wx:if="{{isSavingAvatar}}" class="avatar-mask">上传中</view>
     </view>
     <view class="info-list">
       <view class="info-row" bindtap="openNicknameEditor">

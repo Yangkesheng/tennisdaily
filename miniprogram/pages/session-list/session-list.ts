@@ -4,12 +4,29 @@ import {
   listSessionsByDateFromApi,
   listSessionsPageFromApi,
 } from '../../services/session-service'
+import type { SessionDisplayField, SessionDisplayFieldOption } from '../../utils/session-display'
+import {
+  SESSION_DISPLAY_FIELD_OPTIONS,
+  loadVisibleDisplayFields,
+  saveVisibleDisplayFields,
+} from '../../utils/session-display'
 
 interface SessionListItem extends TennisSession {
   typeLabel: string
   typeClass: string
   offsetX: number
   deleteOpacity: number
+  showDuration: boolean
+  showCourtName: boolean
+  showPartner: boolean
+  showRacketName: boolean
+  showShoeName: boolean
+  showCost: boolean
+  showNote: boolean
+}
+
+interface SessionDisplayFieldView extends SessionDisplayFieldOption {
+  visible: boolean
 }
 
 interface SessionListData {
@@ -28,6 +45,9 @@ interface SessionListData {
   swipeStartOffset: number
   swipingSessionId: string
   deleteWidthPx: number
+  showDisplaySettings: boolean
+  visibleFields: SessionDisplayField[]
+  displayFieldOptions: SessionDisplayFieldView[]
 }
 
 const getSessionTypeLabel = (type: TennisSessionType) => {
@@ -90,13 +110,35 @@ const getSessionTypeClass = (type: TennisSessionType) => {
   }
 }
 
-const withTypeLabel = (sessions: TennisSession[]): SessionListItem[] => {
+const createShowFlags = (visibleFields: SessionDisplayField[]) => {
+  const visible = new Set(visibleFields)
+
+  return {
+    showDuration: visible.has('duration'),
+    showCourtName: visible.has('courtName'),
+    showPartner: visible.has('partner'),
+    showRacketName: visible.has('racketName'),
+    showShoeName: visible.has('shoeName'),
+    showCost: visible.has('cost'),
+    showNote: visible.has('note'),
+  }
+}
+
+const withTypeLabel = (sessions: TennisSession[], visibleFields: SessionDisplayField[]): SessionListItem[] => {
   return sessions.map((session) => ({
     ...session,
     typeLabel: getSessionTypeDisplay(session),
     typeClass: getSessionTypeClass(session.type),
     offsetX: 0,
     deleteOpacity: 0,
+    ...createShowFlags(visibleFields),
+  }))
+}
+
+const buildDisplayFieldOptions = (visibleFields: SessionDisplayField[]): SessionDisplayFieldView[] => {
+  return SESSION_DISPLAY_FIELD_OPTIONS.map((option) => ({
+    ...option,
+    visible: visibleFields.includes(option.key),
   }))
 }
 
@@ -135,12 +177,19 @@ Page({
     swipeStartOffset: 0,
     swipingSessionId: '',
     deleteWidthPx: getDeleteWidthPx(),
+    showDisplaySettings: false,
+    visibleFields: [],
+    displayFieldOptions: [],
   } as SessionListData,
   onLoad(options: { date?: string; range?: string }) {
+    const visibleFields = loadVisibleDisplayFields()
+
     this.setData({
       routeDateFilter: options.date || '',
       routeRangeFilter: options.range || '',
       page: 1,
+      visibleFields,
+      displayFieldOptions: buildDisplayFieldOptions(visibleFields),
     })
   },
   onShow() {
@@ -156,7 +205,7 @@ Page({
           const sessions = await listSessionsByDateFromApi(dateFilter)
 
           this.setData({
-            sessions: withTypeLabel(sessions),
+            sessions: withTypeLabel(sessions, this.data.visibleFields),
             titleText,
             page: 1,
             pageSize: sessions.length || this.data.pageSize,
@@ -175,7 +224,7 @@ Page({
         })
 
         this.setData({
-          sessions: withTypeLabel(result.list),
+          sessions: withTypeLabel(result.list, this.data.visibleFields),
           titleText,
           page: result.page,
           pageSize: result.pageSize,
@@ -191,6 +240,51 @@ Page({
           icon: 'none',
         })
       }
+    },
+    applyDisplayFields() {
+      this.setData({
+        sessions: this.data.sessions.map((session) => ({
+          ...session,
+          ...createShowFlags(this.data.visibleFields),
+        })),
+      })
+    },
+    openDisplaySettings() {
+      this.setData({
+        showDisplaySettings: true,
+      })
+    },
+    closeDisplaySettings() {
+      this.setData({
+        showDisplaySettings: false,
+      })
+    },
+    noop() {
+      // 阻止点击冒泡与滚动穿透
+    },
+    onToggleDisplayField(event: WechatMiniprogram.TouchEvent) {
+      const key = event.currentTarget.dataset.field as SessionDisplayField
+      const displayFieldOptions = this.data.displayFieldOptions.map((option) =>
+        option.key === key ? { ...option, visible: !option.visible } : option,
+      )
+      const visibleFields = displayFieldOptions.filter((option) => option.visible).map((option) => option.key)
+
+      saveVisibleDisplayFields(visibleFields)
+      this.setData({
+        displayFieldOptions,
+        visibleFields,
+      })
+      this.applyDisplayFields()
+    },
+    resetDisplayFields() {
+      const visibleFields = SESSION_DISPLAY_FIELD_OPTIONS.map((option) => option.key)
+
+      saveVisibleDisplayFields(visibleFields)
+      this.setData({
+        displayFieldOptions: buildDisplayFieldOptions(visibleFields),
+        visibleFields,
+      })
+      this.applyDisplayFields()
     },
     onPageSizeInput(event: { detail: { value: string } }) {
       this.setData({

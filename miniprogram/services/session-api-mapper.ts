@@ -37,7 +37,6 @@ export interface ApiSessionPayload {
   partner: string
   cost: number
   racketId: number
-  racketName: string
   shoeName: string
   note: string
 }
@@ -138,7 +137,6 @@ export const mapLocalDraftToApiPayload = (draft: SessionDraft): ApiSessionPayloa
     partner: draft.partner,
     cost: draft.cost,
     racketId: draft.racketId,
-    racketName: draft.racketName,
     shoeName: draft.shoeName,
     note: draft.note,
   }
