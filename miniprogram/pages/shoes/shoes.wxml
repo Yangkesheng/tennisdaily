@@ -1,0 +1,37 @@
+<navigation-bar title="我的球鞋" back="{{true}}" color="#05070c" background="transparent"></navigation-bar>
+<scroll-view class="page shoes-page" scroll-y type="list">
+  <view wx:if="{{visibleShoes.length}}" class="shoe-list">
+    <view wx:for="{{visibleShoes}}" wx:key="id" class="swipe-row">
+      <button wx:if="{{openedShoeId === item.id}}" class="delete-action" data-id="{{item.id}}" catchtap="deleteShoe">删除</button>
+      <view
+        class="shoe-card {{openedShoeId === item.id ? 'opened' : ''}}"
+        data-id="{{item.id}}"
+        bindtouchstart="onTouchStart"
+        bindtouchend="onTouchEnd"
+        bindtap="goEdit"
+      >
+        <text wx:if="{{item.statusLabel}}" class="status-badge {{item.statusClass}}">{{item.statusLabel}}</text>
+        <view class="shoe-mark">
+          <image wx:if="{{item.imageUrl}}" class="shoe-image" src="{{item.imageUrl}}" mode="aspectFit"></image>
+          <text wx:else>{{item.brand || 'S'}}</text>
+        </view>
+        <view class="shoe-content">
+          <view class="shoe-title-row">
+            <text class="shoe-title">{{item.name}}</text>
+          </view>
+          <text class="meta-line">{{item.metaText}}</text>
+          <view class="purchase-line">
+            <text>{{item.purchaseDate || '未填写购入日期'}}</text>
+            <text>¥{{item.purchasePrice}}</text>
+          </view>
+        </view>
+      </view>
+    </view>
+  </view>
+
+  <view wx:else class="empty-equipment">
+    <text>暂无球鞋</text>
+  </view>
+
+  <button class="add-shoe" bindtap="addShoe">+ 新增球鞋</button>
+</scroll-view>

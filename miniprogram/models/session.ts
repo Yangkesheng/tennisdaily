@@ -115,6 +115,7 @@ export interface TennisSession {
   cost: number
   racketId: number
   racketName: string
+  shoeId: number
   shoeName: string
   note: string
   createdAt: number
@@ -134,6 +135,7 @@ export interface SessionDraft {
   cost: number
   racketId: number
   racketName: string
+  shoeId: number
   shoeName: string
   note: string
 }

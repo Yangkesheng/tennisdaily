@@ -19669,3 +19669,16 @@ declare function setTimeout(
     /** param1, param2, ..., paramN 等附加参数，它们会作为参数传递给回调函数。 */
     rest?: any
 ): number
+
+declare namespace WechatMiniprogram {
+    interface RequirePrivacyAuthorizeOption {
+        /** 隐私授权成功回调 */
+        success?: () => void
+        /** 隐私授权失败回调 */
+        fail?: (res: { errMsg: string; errno?: number }) => void
+    }
+    interface Wx {
+        /** 询问用户是否授权隐私 */
+        requirePrivacyAuthorize(option: RequirePrivacyAuthorizeOption): void
+    }
+}

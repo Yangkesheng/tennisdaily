@@ -231,15 +231,17 @@
 .session-meta {
   display: flex;
   flex-wrap: wrap;
-  gap: 12rpx;
-  margin-top: 16rpx;
+  row-gap: 18rpx;
+  column-gap: 20rpx;
+  margin-top: 24rpx;
   color: #607166;
   font-size: 26rpx;
+  line-height: 1.5;
 }
 
 .session-note {
   display: block;
-  margin-top: 18rpx;
+  margin-top: 28rpx;
   color: #425047;
   font-size: 28rpx;
   line-height: 1.6;

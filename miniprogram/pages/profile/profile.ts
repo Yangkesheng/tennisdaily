@@ -1,9 +1,12 @@
 import type { RacketDashboard } from '../../models/racket'
+import type { ShoeStats } from '../../models/shoe'
 import { getCurrentUserFromApi, requireLoginPage, type UserProfile } from '../../services/auth-service'
 import { getRacketStatsFromApi } from '../../services/racket-api-service'
+import { getShoeStatsFromApi } from '../../services/shoe-api-service'
 
 interface ProfileData {
   dashboard: RacketDashboard
+  shoeDashboard: ShoeStats
   user: UserProfile | null
 }
 
@@ -18,24 +21,36 @@ Component({
       stringingCostText: '0.00',
       totalCostText: '0.00',
     },
+    shoeDashboard: {
+      shoeCount: 0,
+      shoeCost: 0,
+      totalCost: 0,
+      shoeCostText: '0.00',
+      totalCostText: '0.00',
+    },
     user: null,
   } as ProfileData,
   pageLifetimes: {
     show() {
-      this.refreshRackets()
+      this.refreshDashboard()
     },
   },
   methods: {
-    async refreshRackets() {
+    async refreshDashboard() {
       if (requireLoginPage()) {
         return
       }
 
       try {
-        const [dashboard, user] = await Promise.all([getRacketStatsFromApi(), getCurrentUserFromApi()])
+        const [dashboard, shoeDashboard, user] = await Promise.all([
+          getRacketStatsFromApi(),
+          getShoeStatsFromApi(),
+          getCurrentUserFromApi(),
+        ])
 
         this.setData({
           dashboard,
+          shoeDashboard,
           user,
         })
       } catch (error) {
@@ -44,6 +59,11 @@ Component({
           icon: 'none',
         })
       }
+    },
+    goShoes() {
+      wx.navigateTo({
+        url: '/pages/shoes/shoes',
+      })
     },
     goRackets() {
       wx.navigateTo({

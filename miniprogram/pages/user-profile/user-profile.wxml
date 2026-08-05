@@ -27,15 +27,17 @@
       <text class="nickname-popup-title">修改昵称</text>
       <text class="nickname-popup-close" bindtap="closeNicknameEditor">×</text>
     </view>
-    <text class="nickname-popup-desc">点击输入框可使用微信昵称，也可以手动输入。</text>
+    <text class="nickname-popup-desc">请输入昵称。</text>
     <input
       class="nickname-popup-input"
-      type="nickname"
+      type="text"
       value="{{nicknameDraft}}"
       placeholder="请输入昵称"
       maxlength="20"
       focus="{{nicknameInputFocus}}"
       bindinput="onNicknameInput"
+      bindconfirm="onNicknameInput"
+      bindblur="onNicknameInput"
     />
     <button class="save-button" bindtap="saveNickname" loading="{{isSavingNickname}}" disabled="{{isSavingNickname}}">保存昵称</button>
   </view>

@@ -1,4 +1,4 @@
-import { getCurrentUserFromApi, logoutFromApi, requireLoginPage, updateUserProfile, type UserProfile } from '../../services/auth-service'
+import { ensurePrivacyAuthorized, getCurrentUserFromApi, logoutFromApi, requireLoginPage, updateUserProfile, type UserProfile } from '../../services/auth-service'
 import { deleteAvatarFromCloudStorage, prepareAvatarForUpload, uploadAvatarToCloudStorage } from '../../services/avatar-upload-service'
 
 interface ChooseMediaSuccessResult {
@@ -131,6 +131,7 @@ Page({
     this.setData({ isSavingNickname: true })
 
     try {
+      await ensurePrivacyAuthorized()
       const user = await updateUserProfile({
         nickname,
         avatarUrl: currentUser.avatarUrl || '',

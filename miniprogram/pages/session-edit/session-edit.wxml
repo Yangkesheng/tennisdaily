@@ -72,6 +72,12 @@
         <view class="picker-inline">{{draft.racketName || '选择球拍'}}</view>
       </view>
     </picker>
+    <picker range="{{shoeNames}}" value="{{shoePickerIndex}}" bindchange="onShoeChange">
+      <view class="input-card">
+        <text>球鞋</text>
+        <view class="picker-inline">{{draft.shoeName || '选择球鞋'}}</view>
+      </view>
+    </picker>
     <view class="input-card">
       <text>搭档</text>
       <input value="{{draft.partner}}" placeholder="搭档姓名，可不填" bindinput="onPartnerInput" />

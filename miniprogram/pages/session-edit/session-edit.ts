@@ -7,8 +7,10 @@ import {
   isMatchCategory,
 } from '../../models/session'
 import type { Racket } from '../../models/racket'
+import type { Shoe } from '../../models/shoe'
 import { getSessionConfigFromApi } from '../../services/session-config-service'
 import { listMyRacketsFromApi } from '../../services/racket-api-service'
+import { listShoesFromApi } from '../../services/shoe-api-service'
 import {
   createDefaultSessionDraft,
   createSessionStartText,
@@ -47,6 +49,9 @@ interface SessionEditData {
   selectableRackets: Racket[]
   racketNames: string[]
   racketPickerIndex: number
+  selectableShoes: Shoe[]
+  shoeNames: string[]
+  shoePickerIndex: number
 }
 
 interface InputEvent {
@@ -79,6 +84,26 @@ const getRacketPickerNames = (rackets: Racket[], selectedRacketId: number) => {
 
 const getPrimaryRacket = (rackets: Racket[]) => {
   return rackets.find((racket) => racket.status === 1) || null
+}
+
+const getShoeDisplayName = (shoe: Shoe) => {
+  return shoe.name || shoe.model || shoe.brand || '未命名球鞋'
+}
+
+const getShoePickerIndex = (shoes: Shoe[], shoeId: number) => {
+  return shoes.findIndex((shoe) => shoe.id === shoeId)
+}
+
+const getShoePickerNames = (shoes: Shoe[], selectedShoeId: number) => {
+  return shoes.map((shoe) => {
+    const name = getShoeDisplayName(shoe)
+
+    return shoe.id === selectedShoeId ? `${name} ✓` : name
+  })
+}
+
+const getPrimaryShoe = (shoes: Shoe[]) => {
+  return shoes.find((shoe) => shoe.status === 1) || null
 }
 
 const defaultDraft = createDefaultSessionDraft()
@@ -174,6 +199,9 @@ Page({
     selectableRackets: [],
     racketNames: [],
     racketPickerIndex: -1,
+    selectableShoes: [],
+    shoeNames: [],
+    shoePickerIndex: -1,
   } as SessionEditData,
   async onLoad(options: { id?: string; date?: string }) {
     await this.loadSessionConfig()
@@ -181,6 +209,7 @@ Page({
   },
   onShow() {
     this.loadSelectableRackets()
+    this.loadSelectableShoes()
     if (!this.data.isPageReady) {
       this.loadRouteSession()
     }
@@ -224,6 +253,29 @@ Page({
     } catch (error) {
       wx.showToast({
         title: error instanceof Error ? error.message : '球拍加载失败',
+        icon: 'none',
+      })
+    }
+  },
+  async loadSelectableShoes() {
+    try {
+      const shoes = await listShoesFromApi(false)
+      const shouldUsePrimaryShoe = !this.data.sessionId && !this.data.draft.shoeId
+      const primaryShoe = shouldUsePrimaryShoe ? getPrimaryShoe(shoes) : null
+      const selectedShoeId = primaryShoe ? primaryShoe.id : this.data.draft.shoeId
+      const selectedShoeName = primaryShoe ? getShoeDisplayName(primaryShoe) : this.data.draft.shoeName
+      const shoePickerIndex = getShoePickerIndex(shoes, selectedShoeId)
+
+      this.setData({
+        selectableShoes: shoes,
+        shoeNames: getShoePickerNames(shoes, selectedShoeId),
+        shoePickerIndex,
+        'draft.shoeId': selectedShoeId,
+        'draft.shoeName': selectedShoeName,
+      })
+    } catch (error) {
+      wx.showToast({
+        title: error instanceof Error ? error.message : '球鞋加载失败',
         icon: 'none',
       })
     }
@@ -321,6 +373,7 @@ Page({
       cost: session.cost || 0,
       racketId: session.racketId || 0,
       racketName: session.racketName || '',
+      shoeId: session.shoeId || 0,
       shoeName: session.shoeName || '',
       note: session.note || '',
     }, this.data.categoryOptions, this.data.subCategoryOptionsMap)
@@ -478,9 +531,19 @@ Page({
         racketPickerIndex: index,
       })
     },
-    onShoeInput(event: InputEvent) {
+    onShoeChange(event: PickerChangeEvent) {
+      const index = Number(event.detail.value)
+      const shoe = this.data.selectableShoes[index]
+
+      if (!shoe) {
+        return
+      }
+
       this.setData({
-        'draft.shoeName': event.detail.value,
+        'draft.shoeId': shoe.id,
+        'draft.shoeName': getShoeDisplayName(shoe),
+        shoeNames: getShoePickerNames(this.data.selectableShoes, shoe.id),
+        shoePickerIndex: index,
       })
     },
   async submitSession() {

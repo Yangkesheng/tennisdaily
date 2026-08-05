@@ -33,5 +33,23 @@
     </view>
     <text class="enter-tip">查看球拍</text>
   </view>
-</scroll-view>
 
+  <view class="dashboard-card" bindtap="goShoes">
+    <view class="dashboard-row">
+      <view>
+        <text class="metric-label">球鞋</text>
+        <view class="metric-value-row">
+          <text class="metric-value">{{shoeDashboard.shoeCount}}</text>
+          <text class="metric-unit">双</text>
+        </view>
+      </view>
+    </view>
+    <view class="cost-list">
+      <view class="cost-row">
+        <text>球鞋总消费</text>
+        <text>¥{{shoeDashboard.shoeCostText}}</text>
+      </view>
+    </view>
+    <text class="enter-tip">查看球鞋</text>
+  </view>
+</scroll-view>

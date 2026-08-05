@@ -1,0 +1,58 @@
+<navigation-bar title="{{titleText}}" back="{{true}}" color="#05070c" background="transparent"></navigation-bar>
+<view class="page shoe-edit-page">
+  <scroll-view class="shoe-edit-scroll" scroll-y>
+    <view class="shoe-edit-content">
+      <view class="edit-hero">
+        <text class="edit-title">球鞋</text>
+      </view>
+
+      <view wx:if="{{hasSelectedLibrary}}" class="shoe-detail-card">
+        <view class="detail-image-wrap">
+          <image wx:if="{{draft.imageUrl}}" class="detail-image" src="{{draft.imageUrl}}" mode="aspectFit" bindtap="previewDetailImage"></image>
+          <text wx:else class="detail-mark">{{draft.brand}}</text>
+        </view>
+        <view class="detail-copy">
+          <text class="detail-name">{{draft.model}}</text>
+          <view class="detail-specs">
+            <text wx:if="{{draft.colorway}}">{{draft.colorway}}</text>
+          </view>
+        </view>
+      </view>
+
+      <view class="field-grid">
+        <view wx:if="{{!hasSelectedLibrary}}" class="input-card">
+          <text>品牌</text>
+          <input value="{{draft.brand}}" placeholder="Nike" bindinput="onBrandInput" />
+        </view>
+        <view wx:if="{{!hasSelectedLibrary}}" class="input-card">
+          <text>型号</text>
+          <input value="{{draft.model}}" placeholder="Vapor 12" bindinput="onModelInput" />
+        </view>
+        <view class="input-card">
+          <text>配色</text>
+          <input value="{{draft.colorway}}" placeholder="White/Orewood Brown" bindinput="onColorwayInput" />
+        </view>
+        <picker mode="date" value="{{draft.purchaseDate}}" bindchange="onPurchaseDateChange">
+          <view class="input-card">
+            <text>购入</text>
+            <view class="picker-inline">{{draft.purchaseDate}}</view>
+          </view>
+        </picker>
+        <view class="input-card">
+          <text>价格</text>
+          <input value="{{purchasePriceText}}" type="digit" placeholder="0" bindinput="onPurchasePriceInput" />
+        </view>
+        <picker range="{{statusOptions}}" value="{{statusPickerIndex}}" bindchange="onStatusChange">
+          <view class="input-card">
+            <text>状态</text>
+            <view class="picker-inline">{{statusOptions[statusPickerIndex]}}</view>
+          </view>
+        </picker>
+      </view>
+    </view>
+  </scroll-view>
+
+  <view class="bottom-action-area">
+    <button class="submit-button" loading="{{saving}}" disabled="{{saving}}" bindtap="submitShoe">保存</button>
+  </view>
+</view>

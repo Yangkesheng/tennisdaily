@@ -61,6 +61,7 @@ export const createDefaultSessionDraft = (): SessionDraft => {
     cost: 0,
     racketId: 0,
     racketName: '',
+    shoeId: 0,
     shoeName: '',
     note: '',
   }

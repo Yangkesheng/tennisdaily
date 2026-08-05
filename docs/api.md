@@ -188,7 +188,25 @@ Authorization: Bearer <token>
 
 球拍名称不再由前端传入；接口返回的 `racketName` 由后端按 `racketId` 关联我的球拍当前名称。
 
-### 18.6 添加球拍
+### 18.6 获取可选球鞋列表
+
+新增打球记录时使用，只返回未退役球鞋：
+
+```text
+GET /api/shoes?includeRetired=false
+```
+
+对应 `status IN (1, 2)` 的未删除球鞋。前端新增/编辑打球记录时写入：
+
+```json
+{
+  "shoeId": 1
+}
+```
+
+球鞋名称不再由前端传入；接口返回的 `shoeName` 由后端按 `shoeId` 关联我的球鞋当前名称，`shoeId = 0` 时回退快照 `shoe_name`。
+
+### 18.7 添加球拍
 
 添加球拍只维护球拍本体信息，不创建穿线记录。
 

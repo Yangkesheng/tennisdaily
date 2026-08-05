@@ -99,6 +99,24 @@ export const updateUserProfile = async (profile: Pick<UserProfile, 'nickname' | 
   })
 }
 
+/**
+ * 确保已通过微信官方隐私授权（type="nickname" 输入框在未授权时会降级为普通输入框）。
+ * 已授权时立即成功，不会重复弹出授权弹窗。
+ */
+export const ensurePrivacyAuthorized = (): Promise<void> => {
+  return new Promise((resolve, reject) => {
+    if (typeof wx.requirePrivacyAuthorize !== 'function') {
+      resolve()
+      return
+    }
+
+    wx.requirePrivacyAuthorize({
+      success: () => resolve(),
+      fail: () => reject(new Error('需要同意隐私授权后才能设置昵称')),
+    })
+  })
+}
+
 export const logoutFromApi = async (): Promise<void> => {
   const token = getToken()
   if (token) {

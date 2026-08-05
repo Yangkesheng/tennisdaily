@@ -20,6 +20,7 @@ export interface ApiSession {
   cost: number
   racketId?: number
   racketName: string
+  shoeId?: number
   shoeName: string
   note: string
   createdAt: string
@@ -37,6 +38,7 @@ export interface ApiSessionPayload {
   partner: string
   cost: number
   racketId: number
+  shoeId: number
   shoeName: string
   note: string
 }
@@ -114,6 +116,7 @@ export const mapApiSessionToLocal = (session: ApiSession): TennisSession => {
     cost: session.cost || 0,
     racketId: session.racketId || 0,
     racketName: session.racketName || '',
+    shoeId: session.shoeId || 0,
     shoeName: session.shoeName || '',
     note: session.note || '',
     createdAt: parseApiTime(session.createdAt),
@@ -137,6 +140,7 @@ export const mapLocalDraftToApiPayload = (draft: SessionDraft): ApiSessionPayloa
     partner: draft.partner,
     cost: draft.cost,
     racketId: draft.racketId,
+    shoeId: draft.shoeId,
     shoeName: draft.shoeName,
     note: draft.note,
   }

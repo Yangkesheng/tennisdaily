@@ -94,6 +94,10 @@
   opacity: 0.78;
 }
 
+.dashboard-card + .dashboard-card {
+  margin-top: 22rpx;
+}
+
 .dashboard-row {
   display: flex;
   justify-content: space-between;

@@ -1,0 +1,70 @@
+<navigation-bar back="{{true}}" color="#05070c" background="transparent">
+  <view slot="center" class="nav-title">
+    <text>选鞋</text>
+    <text wx:if="{{brands[activeBrandIndex].name}}" class="nav-brand-name" bindtap="toggleBrands">{{brands[activeBrandIndex].name}} ({{brands[activeBrandIndex].count}})</text>
+  </view>
+  <view slot="right" class="nav-gender">
+    <picker range="{{genderLabels}}" value="{{activeGenderIndex}}" bindchange="onGenderChange">
+      <view class="gender-current">
+        <text class="gender-current-text">{{genderLabels[activeGenderIndex]}}</text>
+        <text class="gender-current-arrow">⌄</text>
+      </view>
+    </picker>
+  </view>
+</navigation-bar>
+<view class="page library-page">
+  <view wx:if="{{showBrands}}" class="brand-mask" bindtap="closeBrands"></view>
+  <view wx:if="{{showBrands}}" class="brand-popover">
+    <scroll-view class="brand-popover-scroll" scroll-y>
+      <view
+        wx:for="{{brands}}"
+        wx:key="id"
+        class="brand-option {{activeBrandIndex === index ? 'active' : ''}}"
+        data-index="{{index}}"
+        bindtap="selectBrand"
+      >
+        {{item.name}} ({{item.count}})
+      </view>
+      <view class="brand-option manual-option" bindtap="manualInput">手动输入</view>
+    </scroll-view>
+  </view>
+  <view class="library-body">
+    <view class="product-panel">
+      <scroll-view wx:if="{{series.length}}" class="series-tabs" scroll-x enhanced show-scrollbar="{{false}}">
+        <view class="series-list">
+          <view
+            wx:for="{{series}}"
+            wx:key="id"
+            class="series-chip {{activeSeriesIndex === index ? 'active' : ''}}"
+            data-index="{{index}}"
+            bindtap="selectSeries"
+          >{{item.name}}<text wx:if="{{item.count}}" class="series-count"> ({{item.count}})</text></view>
+        </view>
+      </scroll-view>
+
+      <scroll-view class="product-scroll" scroll-y>
+        <view wx:if="{{loadingItems}}" class="empty-library">加载中...</view>
+        <view wx:elif="{{visibleItems.length}}" class="product-grid">
+          <view
+            wx:for="{{visibleItems}}"
+            wx:key="id"
+            class="product-card"
+            data-index="{{index}}"
+            bindtap="selectShoe"
+          >
+            <view class="product-image-wrap">
+              <image wx:if="{{item.imageUrl}}" class="product-image" src="{{item.imageUrl}}" mode="aspectFit"></image>
+              <text wx:else class="product-mark">{{item.brand}}</text>
+            </view>
+            <text class="product-name">{{item.model}}</text>
+            <text class="product-colorway">{{item.colorway}}</text>
+            <view class="product-specs">
+              <text>{{item.series}}</text>
+            </view>
+          </view>
+        </view>
+        <view wx:else class="empty-library">暂无球鞋</view>
+      </scroll-view>
+    </view>
+  </view>
+</view>

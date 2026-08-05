@@ -24,14 +24,17 @@
     <view wx:if="{{needsNickname}}" class="nickname-card">
       <text class="nickname-title">设置昵称</text>
       <text class="nickname-desc">首次登录请设置一个昵称，之后会展示在我的页面。</text>
-      <text wx:if="{{showNicknameTip}}" class="nickname-tip">请点击昵称输入框授权微信昵称，或手动输入昵称</text>
+      <text wx:if="{{showNicknameTip}}" class="nickname-tip">请输入昵称</text>
       <input
         class="nickname-input"
-        type="nickname"
+        type="text"
+        maxlength="20"
         value="{{nickname}}"
         placeholder="请输入昵称"
         focus="{{nicknameInputFocus}}"
         bindinput="onNicknameInput"
+        bindconfirm="onNicknameInput"
+        bindblur="onNicknameInput"
       />
     </view>
   </view>

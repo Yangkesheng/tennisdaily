@@ -10,6 +10,9 @@
     "pages/racket-library/racket-library",
     "pages/racket-edit/racket-edit",
     "pages/stringing-edit/stringing-edit",
+    "pages/shoes/shoes",
+    "pages/shoe-library/shoe-library",
+    "pages/shoe-edit/shoe-edit",
     "pages/session-edit/session-edit",
     "pages/session-list/session-list",
     "pages/privacy/privacy",
@@ -21,6 +24,7 @@
   },
   "style": "v2",
   "lazyCodeLoading": "requiredComponents",
+  "__usePrivacyCheck__": true,
   "sitemapLocation": "sitemap.json",
   "tabBar": {
     "color": "#a8aab0",

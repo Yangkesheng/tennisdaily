@@ -1,4 +1,4 @@
-import { getCurrentUserFromApi, getToken, loginWithWechat, updateUserProfile } from '../../services/auth-service'
+import { ensurePrivacyAuthorized, getCurrentUserFromApi, getToken, loginWithWechat, updateUserProfile } from '../../services/auth-service'
 
 const PRIVACY_ACCEPTED_STORAGE_KEY = 'privacy_policy_accepted'
 
@@ -159,6 +159,7 @@ Component({
       this.setData({ isSavingNickname: true })
 
       try {
+        await ensurePrivacyAuthorized()
         await updateUserProfile({
           nickname,
           avatarUrl: '',
