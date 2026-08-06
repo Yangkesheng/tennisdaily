@@ -1,0 +1,313 @@
+.shoe-detail-page {
+  min-height: 100vh;
+  padding: 28rpx 28rpx calc(56rpx + env(safe-area-inset-bottom));
+  background: linear-gradient(45deg, #f5efe6 0%, #eed6ca 50%, #e2bda9 100%);
+  background-attachment: fixed;
+  box-sizing: border-box;
+  color: #05070c;
+}
+
+.detail-content {
+  display: flex;
+  flex-direction: column;
+  gap: 22rpx;
+}
+
+.hero-card,
+.section-card,
+.stat-card {
+  border-radius: 32rpx;
+  background: rgba(255, 255, 255, 0.55);
+  box-shadow: inset 0 0 0 1rpx rgba(255, 255, 255, 0.8);
+  backdrop-filter: blur(20px);
+}
+
+.hero-card {
+  display: flex;
+  gap: 22rpx;
+  padding: 28rpx;
+}
+
+.shoe-mark {
+  flex: none;
+  width: 176rpx;
+  height: 216rpx;
+  border-radius: 30rpx;
+  background: #fff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.shoe-image {
+  width: 100%;
+  height: 100%;
+  border-radius: 30rpx;
+}
+
+.shoe-mark text {
+  max-width: 138rpx;
+  color: rgba(13, 23, 40, 0.62);
+  font-size: 30rpx;
+  font-weight: 900;
+  text-align: center;
+}
+
+.hero-copy {
+  flex: 1;
+  min-width: 0;
+}
+
+.title-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16rpx;
+}
+
+.shoe-name {
+  flex: 1;
+  min-width: 0;
+  color: #05070c;
+  font-size: 36rpx;
+  font-weight: 900;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.status-badge {
+  flex: none;
+  width: 72rpx;
+  height: 40rpx;
+  padding: 0;
+  border-radius: 999rpx;
+  color: #fff;
+  font-size: 20rpx;
+  font-weight: 900;
+  line-height: 40rpx;
+  text-align: center;
+  box-sizing: border-box;
+}
+
+.status-badge.primary,
+.status-badge.active {
+  background: rgba(55, 120, 219, 0.76);
+}
+
+.status-badge.retired {
+  background: rgba(13, 23, 40, 0.34);
+}
+
+.shoe-model,
+.purchase-line {
+  display: block;
+  margin-top: 14rpx;
+  color: rgba(13, 23, 40, 0.56);
+  font-size: 26rpx;
+  font-weight: 700;
+}
+
+.edit-button {
+  display: flex;
+  width: 72rpx;
+  height: 40rpx;
+  margin: 16rpx 0 0 auto;
+  padding: 0;
+  align-items: center;
+  justify-content: center;
+  border-radius: 999rpx;
+  background: #3778db;
+  color: #fff;
+  font-size: 22rpx;
+  font-weight: 900;
+  line-height: 40rpx;
+  text-align: center;
+  box-sizing: border-box;
+}
+
+.edit-button:active {
+  opacity: 0.72;
+}
+
+.stats-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 16rpx;
+}
+
+.stat-card {
+  padding: 24rpx;
+}
+
+.stat-value {
+  display: block;
+  color: #05070c;
+  font-size: 42rpx;
+  font-weight: 900;
+}
+
+.stat-label {
+  display: block;
+  margin-top: 8rpx;
+  color: rgba(13, 23, 40, 0.42);
+  font-size: 24rpx;
+  font-weight: 800;
+}
+
+.section-card {
+  padding: 28rpx;
+}
+
+.section-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 18rpx;
+}
+
+.section-title {
+  color: rgba(13, 23, 40, 0.6);
+  font-size: 28rpx;
+  font-weight: 900;
+}
+
+.wear-panel {
+  padding: 16rpx;
+  border-radius: 20rpx;
+  background: rgba(80, 203, 112, 0.1);
+  box-sizing: border-box;
+}
+
+.wear-text {
+  display: block;
+  color: rgba(13, 23, 40, 0.82);
+  font-size: 26rpx;
+  font-weight: 900;
+  line-height: 1.2;
+}
+
+.wear-segments {
+  display: flex;
+  gap: 6rpx;
+  margin-top: 14rpx;
+}
+
+.wear-segment {
+  flex: 1;
+  height: 12rpx;
+  border-radius: 4rpx;
+  background: rgba(13, 23, 40, 0.08);
+}
+
+.wear-segment.on {
+  background: rgba(31, 122, 77, 0.8);
+}
+
+.wear-foot {
+  display: flex;
+  justify-content: space-between;
+  gap: 16rpx;
+  margin-top: 12rpx;
+  color: rgba(13, 23, 40, 0.46);
+  font-size: 22rpx;
+  font-weight: 800;
+}
+
+.wear-panel.wear-fresh {
+  background: rgba(80, 203, 112, 0.1);
+}
+
+.wear-panel.wear-fresh .wear-text {
+  color: rgba(31, 122, 77, 0.92);
+}
+
+.wear-panel.wear-good {
+  background: rgba(45, 212, 191, 0.12);
+}
+
+.wear-panel.wear-good .wear-text {
+  color: rgba(13, 148, 136, 0.94);
+}
+
+.wear-panel.wear-good .wear-segment.on {
+  background: rgba(13, 148, 136, 0.85);
+}
+
+.wear-panel.wear-worn {
+  background: rgba(251, 191, 36, 0.12);
+}
+
+.wear-panel.wear-worn .wear-text {
+  color: rgba(180, 83, 9, 0.94);
+}
+
+.wear-panel.wear-worn .wear-segment.on {
+  background: rgba(217, 119, 6, 0.85);
+}
+
+.wear-panel.wear-tired {
+  background: rgba(251, 146, 60, 0.14);
+}
+
+.wear-panel.wear-tired .wear-text {
+  color: rgba(194, 65, 12, 0.94);
+}
+
+.wear-panel.wear-tired .wear-segment.on {
+  background: rgba(234, 88, 12, 0.88);
+}
+
+.wear-panel.wear-dead,
+.wear-panel.wear-expired {
+  background: rgba(248, 113, 113, 0.12);
+}
+
+.wear-panel.wear-dead .wear-text,
+.wear-panel.wear-expired .wear-text {
+  color: rgba(185, 28, 28, 0.94);
+}
+
+.wear-panel.wear-dead .wear-segment.on,
+.wear-panel.wear-expired .wear-segment.on {
+  background: rgba(220, 38, 38, 0.88);
+}
+
+.info-list {
+  display: flex;
+  flex-direction: column;
+  gap: 18rpx;
+}
+
+.info-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 20rpx;
+}
+
+.info-label {
+  flex: none;
+  color: rgba(13, 23, 40, 0.46);
+  font-size: 25rpx;
+  font-weight: 800;
+}
+
+.info-value {
+  flex: 1;
+  min-width: 0;
+  color: rgba(13, 23, 40, 0.82);
+  font-size: 25rpx;
+  font-weight: 800;
+  text-align: right;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.empty-text {
+  display: block;
+  color: rgba(13, 23, 40, 0.46);
+  font-size: 24rpx;
+  font-weight: 700;
+}

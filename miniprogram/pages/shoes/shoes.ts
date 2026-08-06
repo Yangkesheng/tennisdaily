@@ -120,7 +120,7 @@ Component({
         },
       })
     },
-    goEdit(event: WechatMiniprogram.TouchEvent) {
+    goDetail(event: WechatMiniprogram.TouchEvent) {
       const id = event.currentTarget.dataset.id as number | undefined
 
       if (this.data.isSwipeAction) {
@@ -135,7 +135,7 @@ Component({
       }
 
       wx.navigateTo({
-        url: `/pages/shoe-edit/shoe-edit?id=${id}`,
+        url: `/pages/shoe-detail/shoe-detail?id=${id}`,
       })
     },
     addShoe() {

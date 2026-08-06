@@ -14,8 +14,11 @@ import {
 interface SessionListItem extends TennisSession {
   typeLabel: string
   typeClass: string
+  dateText: string
+  startTimeText: string
   offsetX: number
   deleteOpacity: number
+  showStartTime: boolean
   showDuration: boolean
   showCourtName: boolean
   showPartner: boolean
@@ -110,10 +113,19 @@ const getSessionTypeClass = (type: TennisSessionType) => {
   }
 }
 
+const getDateText = (dateTimeText: string) => {
+  return (dateTimeText || '').slice(0, 10)
+}
+
+const getStartTimeText = (dateTimeText: string) => {
+  return (dateTimeText || '').slice(11, 16)
+}
+
 const createShowFlags = (visibleFields: SessionDisplayField[]) => {
   const visible = new Set(visibleFields)
 
   return {
+    showStartTime: visible.has('startTime'),
     showDuration: visible.has('duration'),
     showCourtName: visible.has('courtName'),
     showPartner: visible.has('partner'),
@@ -129,6 +141,8 @@ const withTypeLabel = (sessions: TennisSession[], visibleFields: SessionDisplayF
     ...session,
     typeLabel: getSessionTypeDisplay(session),
     typeClass: getSessionTypeClass(session.type),
+    dateText: getDateText(session.date),
+    startTimeText: getStartTimeText(session.date),
     offsetX: 0,
     deleteOpacity: 0,
     ...createShowFlags(visibleFields),

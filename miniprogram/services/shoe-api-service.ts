@@ -1,4 +1,5 @@
-import type { Shoe, ShoeBrand, ShoeDraft, ShoeLibraryGroup, ShoeLibraryItem, ShoeLibraryStatsBrand, ShoeSeries, ShoeStats } from '../models/shoe'
+import type { CreateShoeBrandPayload, CreateShoeLibraryPayload, CreateShoeLibraryResult, CreateShoeSeriesPayload, Shoe, ShoeBrand, ShoeDraft, ShoeLibraryGroup, ShoeLibraryItem, ShoeLibraryStatsBrand, ShoeSeries, ShoeStats } from '../models/shoe'
+import type { ShoeWear } from '../models/shoe'
 import { ensureLogin } from './auth-service'
 import { request } from './request'
 
@@ -19,6 +20,12 @@ interface ApiShoe {
   fileID?: string
   fileid?: string
   imageUrl?: string
+  usageCount?: number
+  usageMinutes?: number
+  usageHours?: number
+  totalMinutes?: number
+  totalHours?: number
+  wear?: ShoeWear
   createdAt?: string
   updatedAt?: string
 }
@@ -101,6 +108,12 @@ const mapApiShoe = (shoe: ApiShoe): Shoe => {
     purchasePrice: shoe.purchasePrice || 0,
     releaseYear: shoe.releaseYear || 0,
     imageUrl: getImageSource(shoe),
+    usageCount: shoe.usageCount || 0,
+    usageMinutes: shoe.usageMinutes || 0,
+    usageHours: shoe.usageHours || 0,
+    totalMinutes: shoe.totalMinutes || 0,
+    totalHours: shoe.totalHours || 0,
+    wear: shoe.wear || null,
     createdAt: shoe.createdAt,
     updatedAt: shoe.updatedAt,
   }
@@ -164,6 +177,15 @@ export const listShoesFromApi = async (includeRetired = true): Promise<Shoe[]> =
   })
 
   return shoes.map(mapApiShoe)
+}
+
+export const getMyPrimaryShoeFromApi = async (): Promise<Shoe | null> => {
+  await ensureLogin()
+  const shoe = await request<ApiShoe | null>({
+    url: '/api/my-shoes/primary',
+  })
+
+  return shoe ? mapApiShoe(shoe) : null
 }
 
 export const getShoeStatsFromApi = async (): Promise<ShoeStats> => {
@@ -288,4 +310,31 @@ export const mapShoeBrands = (brands: ShoeLibraryStatsBrand[]): ShoeBrand[] => {
     count: brand.count,
     series: brand.series,
   }))
+}
+
+export const createShoeBrandFromApi = async (payload: CreateShoeBrandPayload): Promise<{ id: number; name: string }> => {
+  await ensureLogin()
+  return request<{ id: number; name: string }>({
+    url: '/api/admin/shoe-brands',
+    method: 'POST',
+    data: payload,
+  })
+}
+
+export const createShoeSeriesFromApi = async (payload: CreateShoeSeriesPayload): Promise<{ id: number; brandId: number; gender: number; name: string }> => {
+  await ensureLogin()
+  return request<{ id: number; brandId: number; gender: number; name: string }>({
+    url: '/api/admin/shoe-series',
+    method: 'POST',
+    data: payload,
+  })
+}
+
+export const createShoeLibraryItemsFromApi = async (payload: CreateShoeLibraryPayload): Promise<CreateShoeLibraryResult> => {
+  await ensureLogin()
+  return request<CreateShoeLibraryResult>({
+    url: '/api/admin/shoe-library',
+    method: 'POST',
+    data: payload,
+  })
 }

@@ -1,4 +1,4 @@
-export type SessionDisplayField = 'duration' | 'courtName' | 'partner' | 'racketName' | 'shoeName' | 'cost' | 'note'
+export type SessionDisplayField = 'startTime' | 'duration' | 'courtName' | 'partner' | 'racketName' | 'shoeName' | 'cost' | 'note'
 
 export interface SessionDisplayFieldOption {
   key: SessionDisplayField
@@ -8,6 +8,7 @@ export interface SessionDisplayFieldOption {
 const STORAGE_KEY = 'session_list_display_fields_v1'
 
 export const SESSION_DISPLAY_FIELD_OPTIONS: SessionDisplayFieldOption[] = [
+  { key: 'startTime', label: '打球时间点' },
   { key: 'duration', label: '时长' },
   { key: 'courtName', label: '场地' },
   { key: 'partner', label: '搭档' },
@@ -31,7 +32,8 @@ export const loadVisibleDisplayFields = (): SessionDisplayField[] => {
       const fields = stored.filter(isDisplayField)
 
       if (fields.length) {
-        return fields
+        // 旧版本保存的字段里没有"打球时间点"，默认补上，保持现在的时间显示逻辑
+        return fields.includes('startTime') ? fields : [...fields, 'startTime']
       }
     }
   } catch {

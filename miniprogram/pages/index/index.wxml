@@ -107,6 +107,58 @@
     <text class="primary-tip-action">去设置</text>
   </view>
 
+  <view class="primary-shoe-section" wx:if="{{primaryShoe}}" bindtap="goPrimaryShoe">
+    <view class="shoe-card">
+      <view class="shoe-mark">
+        <image wx:if="{{primaryShoe.imageUrl}}" class="shoe-image" src="{{primaryShoe.imageUrl}}" mode="aspectFit"></image>
+        <text wx:else>{{primaryShoe.brand || 'S'}}</text>
+      </view>
+      <view class="shoe-content">
+        <view class="shoe-status-row">
+          <text class="shoe-code">{{primaryShoe.identityText}}</text>
+          <text class="status-badge primary">主力</text>
+        </view>
+        <view class="shoe-metric-grid">
+          <view wx:if="{{primaryShoe.accompanyDays}}" class="shoe-metric">
+            <text class="shoe-metric-value">{{primaryShoe.accompanyDays}}<text class="shoe-metric-unit">天</text></text>
+            <text class="shoe-metric-label">已服役</text>
+          </view>
+          <view class="shoe-metric">
+            <text class="shoe-metric-value">{{primaryShoe.usageCount}}<text class="shoe-metric-unit">场</text></text>
+            <text class="shoe-metric-label">出战</text>
+          </view>
+          <view class="shoe-metric">
+            <text class="shoe-metric-value">{{primaryShoe.usageHours}}<text class="shoe-metric-unit">h</text></text>
+            <text class="shoe-metric-label">陪伴</text>
+          </view>
+        </view>
+        <view class="wear-panel {{primaryShoe.wearState ? 'wear-' + primaryShoe.wearState : 'empty-wear-panel'}}">
+          <text wx:if="{{primaryShoe.shoeSpecText}}" class="wear-spec">{{primaryShoe.shoeSpecText}}</text>
+          <block wx:if="{{primaryShoe.wearText}}">
+            <text class="wear-text">{{primaryShoe.wearText}}</text>
+            <view class="wear-segments">
+              <view
+                wx:for="{{primaryShoe.wearSegments}}"
+                wx:key="key"
+                class="wear-segment {{item.on ? 'on' : ''}}"
+              ></view>
+            </view>
+          </block>
+          <text wx:else class="empty-wear-line">暂无磨损数据</text>
+        </view>
+      </view>
+    </view>
+  </view>
+
+  <view class="primary-shoe-tip" wx:elif="{{shouldShowPrimaryShoeTip}}" bindtap="goShoes">
+    <view class="primary-tip-icon">S</view>
+    <view class="primary-tip-copy">
+      <text class="primary-tip-title">添加球鞋或设置主力鞋</text>
+      <text class="primary-tip-subtitle">记录后首页会展示你的主力球鞋</text>
+    </view>
+    <text class="primary-tip-action">去设置</text>
+  </view>
+
   <view class="trend-card">
     <view class="card-section-header">
       <text class="card-section-title">近几场手感</text>

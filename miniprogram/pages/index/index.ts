@@ -1,9 +1,11 @@
 import type { HomeRatingTrendItem } from '../../models/home'
 import type { Racket } from '../../models/racket'
 import type { SessionStats, TennisSession, TennisSessionType } from '../../models/session'
+import type { Shoe, ShoeWear } from '../../models/shoe'
 import { getToken, redirectToLogin } from '../../services/auth-service'
 import { getHomeSummaryRemote } from '../../services/home-api-service'
 import { getMyPrimaryRacketFromApi } from '../../services/racket-api-service'
+import { getMyPrimaryShoeFromApi } from '../../services/shoe-api-service'
 
 interface RatingTrendItem {
   key: string
@@ -27,11 +29,22 @@ interface PrimaryRacketView extends Racket {
   stringingHealthSegments: Array<{ key: number; on: boolean }>
 }
 
+interface PrimaryShoeView extends Shoe {
+  accompanyDays: number
+  identityText: string
+  shoeSpecText: string
+  wearState: string
+  wearText: string
+  wearSegments: Array<{ key: number; on: boolean }>
+}
+
 interface IndexData {
   latestSession: LatestSessionView | null
   latestSessionSummary: string
   primaryRacket: PrimaryRacketView | null
   shouldShowPrimaryRacketTip: boolean
+  primaryShoe: PrimaryShoeView | null
+  shouldShowPrimaryShoeTip: boolean
   ratingTrend: RatingTrendItem[]
   ratingTrendText: string
   stats: SessionStats
@@ -132,6 +145,23 @@ const getPrimaryRacketIdentity = (racket: Racket) => {
   return racket.name || racket.model || racket.brand || '一号机'
 }
 
+const getPrimaryShoeIdentity = (shoe: Shoe) => {
+  return shoe.name || shoe.model || shoe.brand || '主力鞋'
+}
+
+const getShoeSpecText = (shoe: Shoe) => {
+  const parts: string[] = []
+
+  if (shoe.size) {
+    parts.push(`尺码 ${shoe.size}`)
+  }
+  if (shoe.colorway) {
+    parts.push(shoe.colorway)
+  }
+
+  return parts.join(' · ')
+}
+
 const getStringingSpecText = (racket: Racket) => {
   const tensionText = getTensionText(racket)
   const stringName = racket.stringName || '未命名球线'
@@ -159,6 +189,18 @@ const getStringingHealthSegments = (racket: Racket) => {
   }))
 }
 
+const getWearSegments = (wear: ShoeWear | null | undefined) => {
+  const score = wear?.score
+  const filled = (typeof score === 'number' && !Number.isNaN(score))
+    ? Math.max(Math.min(Math.round(score / 10), 10), 0)
+    : 0
+
+  return Array.from({ length: 10 }, (_, index) => ({
+    key: index,
+    on: index < filled,
+  }))
+}
+
 const createPrimaryRacketView = (racket: Racket | null): PrimaryRacketView | null => {
   if (!racket) {
     return null
@@ -175,6 +217,22 @@ const createPrimaryRacketView = (racket: Racket | null): PrimaryRacketView | nul
     stringingHealthText: getStringingHealthText(racket),
     stringingHealthState: racket.stringHealth?.state || '',
     stringingHealthSegments: getStringingHealthSegments(racket),
+  }
+}
+
+const createPrimaryShoeView = (shoe: Shoe | null): PrimaryShoeView | null => {
+  if (!shoe) {
+    return null
+  }
+
+  return {
+    ...shoe,
+    accompanyDays: getElapsedDays(shoe.purchaseDate),
+    identityText: getPrimaryShoeIdentity(shoe),
+    shoeSpecText: getShoeSpecText(shoe),
+    wearState: shoe.wear?.state || '',
+    wearText: shoe.wear?.display || '',
+    wearSegments: getWearSegments(shoe.wear),
   }
 }
 
@@ -229,6 +287,8 @@ Component({
     latestSessionSummary: '还没有打球记录，点击下方 + 快速记录一次',
     primaryRacket: null,
     shouldShowPrimaryRacketTip: false,
+    primaryShoe: null,
+    shouldShowPrimaryShoeTip: false,
     ratingTrend: [],
     ratingTrendText: '暂无记录',
     stats: {
@@ -259,6 +319,8 @@ Component({
           latestSessionSummary: '还没有打球记录，点击下方 + 快速记录一次',
           primaryRacket: null,
           shouldShowPrimaryRacketTip: false,
+          primaryShoe: null,
+          shouldShowPrimaryShoeTip: false,
           ratingTrend: [],
           ratingTrendText: '暂无记录',
           stats: {
@@ -279,20 +341,24 @@ Component({
       this.setData({ isLoggedIn: true })
 
       try {
-        const [summary, primaryRacket] = await Promise.all([
+        const [summary, primaryRacket, primaryShoe] = await Promise.all([
           getHomeSummaryRemote(),
           getMyPrimaryRacketFromApi(),
+          getMyPrimaryShoeFromApi(),
         ])
         const stats = summary.session
         const latestSession = createLatestSessionView(summary.latestSession)
         const ratingTrend = createRatingTrend(summary.ratingTrend)
         const primaryRacketView = createPrimaryRacketView(primaryRacket)
+        const primaryShoeView = createPrimaryShoeView(primaryShoe)
 
         this.setData({
           latestSession,
           latestSessionSummary: createLatestSessionSummary(latestSession),
           primaryRacket: primaryRacketView,
           shouldShowPrimaryRacketTip: !primaryRacketView,
+          primaryShoe: primaryShoeView,
+          shouldShowPrimaryShoeTip: !primaryShoeView,
           ratingTrend,
           ratingTrendText: createRatingTrendText(ratingTrend),
           stats,
@@ -367,6 +433,24 @@ Component({
 
       wx.navigateTo({
         url: '/pages/rackets/rackets',
+      })
+    },
+    goPrimaryShoe() {
+      if (!this.ensureUserLoggedIn() || !this.data.primaryShoe) {
+        return
+      }
+
+      wx.navigateTo({
+        url: `/pages/shoe-detail/shoe-detail?id=${this.data.primaryShoe.id}`,
+      })
+    },
+    goShoes() {
+      if (!this.ensureUserLoggedIn()) {
+        return
+      }
+
+      wx.navigateTo({
+        url: '/pages/shoes/shoes',
       })
     },
     onShareAppMessage() {

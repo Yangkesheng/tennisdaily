@@ -18,7 +18,7 @@ interface NicknameInputEvent {
   }
 }
 
-Component({
+Component<LoginData, {}, WechatMiniprogram.IAnyObject, { nicknameInputValue: string }>({
   data: {
     isLoggingIn: false,
     isSavingNickname: false,
@@ -106,11 +106,22 @@ Component({
         this.setData({ isLoggingIn: false })
       }
     },
+    onNicknameFocus() {
+      this.setData({
+        showNicknameTip: false,
+        nicknameInputFocus: false,
+      })
+    },
     onNicknameInput(event: NicknameInputEvent) {
+      // 输入过程中不调用 setData，避免输入框重渲染导致 iOS 失焦
+      this.nicknameInputValue = event.detail.value
+    },
+    syncNicknameValue(event: NicknameInputEvent) {
+      // 失焦/确认时才一次性同步到 data
+      this.nicknameInputValue = event.detail.value
       this.setData({
         nickname: event.detail.value,
         showNicknameTip: false,
-        nicknameInputFocus: false,
       })
     },
     onAcceptPrivacy() {
@@ -143,7 +154,7 @@ Component({
         return
       }
 
-      const nickname = this.data.nickname.trim()
+      const nickname = (this.nicknameInputValue || this.data.nickname).trim()
       if (!nickname) {
         this.setData({
           showNicknameTip: true,

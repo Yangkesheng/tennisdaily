@@ -91,6 +91,12 @@ export const getCurrentUserFromApi = async (): Promise<UserProfile> => {
   })
 }
 
+export const getAdminPermissionsFromApi = async (): Promise<{ isAdmin: boolean }> => {
+  return request<{ isAdmin: boolean }>({
+    url: '/api/admin/permissions',
+  })
+}
+
 export const updateUserProfile = async (profile: Pick<UserProfile, 'nickname' | 'avatarUrl'>): Promise<UserProfile> => {
   return request<UserProfile>({
     url: '/api/auth/profile',

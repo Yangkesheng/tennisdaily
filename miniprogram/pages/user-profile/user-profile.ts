@@ -37,6 +37,7 @@ Page({
     user: null,
   } as UserProfileData,
   refreshSeq: 0,
+  nicknameInputValue: '',
   onShow() {
     this.refreshUser()
   },
@@ -77,6 +78,7 @@ Page({
       return
     }
 
+    this.nicknameInputValue = currentUser.nickname || ''
     this.setData({
       nicknameDraft: currentUser.nickname || '',
       showNicknameEditor: true,
@@ -94,7 +96,17 @@ Page({
     })
   },
   noop() {},
+  onNicknameFocus() {
+    // 聚焦后立即释放 focus 标志，避免输入过程中焦点状态反复触发
+    this.setData({ nicknameInputFocus: false })
+  },
   onNicknameInput(event: NicknameInputEvent) {
+    // 输入过程中不调用 setData，避免弹层内输入框重渲染导致 iOS 失焦
+    this.nicknameInputValue = event.detail.value
+  },
+  syncNicknameValue(event: NicknameInputEvent) {
+    // 失焦/确认时才一次性同步到 data
+    this.nicknameInputValue = event.detail.value
     this.setData({ nicknameDraft: event.detail.value })
   },
   async saveNickname() {
@@ -111,7 +123,7 @@ Page({
       return
     }
 
-    const nickname = this.data.nicknameDraft.trim()
+    const nickname = (this.nicknameInputValue || this.data.nicknameDraft).trim()
     if (!nickname) {
       wx.showToast({
         title: '请输入昵称',
@@ -143,6 +155,7 @@ Page({
         nicknameInputFocus: false,
         user,
       })
+      this.nicknameInputValue = user.nickname || ''
       wx.showToast({
         title: '昵称已保存',
         icon: 'success',
@@ -202,6 +215,7 @@ Page({
             nicknameDraft: user.nickname || '',
             user,
           })
+          this.nicknameInputValue = user.nickname || ''
 
           if (previousAvatarUrl && previousAvatarUrl !== uploadedAvatarUrl && isCloudFileId(previousAvatarUrl)) {
             deleteAvatarFromCloudStorage(previousAvatarUrl).catch((error) => {

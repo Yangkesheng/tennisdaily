@@ -40,8 +40,9 @@ const cloudEnv = readScalar(yamlContent, 'api', 'cloudEnv', '')
 const cloudService = readScalar(yamlContent, 'api', 'cloudService', '')
 const cloudStorageBucket = readScalar(yamlContent, 'api', 'cloudStorageBucket', '')
 const cloudAvatarFolder = readScalar(yamlContent, 'api', 'cloudAvatarFolder', 'avatar')
+const cloudShoeFolder = readScalar(yamlContent, 'api', 'cloudShoeFolder', 'shoes')
 const tokenKey = readScalar(yamlContent, 'storage', 'tokenKey', 'token')
-const output = `// This file is generated from miniprogram/app-config.yaml. Do not edit manually.\nexport const API_BASE_URL = '${apiBaseUrl}'\nexport const USE_CLOUD_CONTAINER = ${useCloudContainer}\nexport const CLOUD_ENV = '${cloudEnv}'\nexport const CLOUD_SERVICE = '${cloudService}'\nexport const CLOUD_STORAGE_BUCKET = '${cloudStorageBucket}'\nexport const CLOUD_AVATAR_FOLDER = '${cloudAvatarFolder}'\nexport const TOKEN_STORAGE_KEY = '${tokenKey}'\n`
+const output = `// This file is generated from miniprogram/app-config.yaml. Do not edit manually.\nexport const API_BASE_URL = '${apiBaseUrl}'\nexport const USE_CLOUD_CONTAINER = ${useCloudContainer}\nexport const CLOUD_ENV = '${cloudEnv}'\nexport const CLOUD_SERVICE = '${cloudService}'\nexport const CLOUD_STORAGE_BUCKET = '${cloudStorageBucket}'\nexport const CLOUD_AVATAR_FOLDER = '${cloudAvatarFolder}'\nexport const CLOUD_SHOE_FOLDER = '${cloudShoeFolder}'\nexport const TOKEN_STORAGE_KEY = '${tokenKey}'\n`
 
 fs.writeFileSync(outputPath, output)
 console.log(`Generated ${path.relative(rootDir, outputPath)} from ${path.relative(rootDir, yamlPath)}`)

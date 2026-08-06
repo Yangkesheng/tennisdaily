@@ -73,7 +73,6 @@ Component({
           brand?: string
           model?: string
           colorway?: string
-          price?: string
           imageUrl?: string
         }
       }
@@ -127,7 +126,6 @@ Component({
       brand?: string
       model?: string
       colorway?: string
-      price?: string
       imageUrl?: string
     }) {
       const libraryId = Number(options.libraryId) || 0
@@ -137,7 +135,6 @@ Component({
       }
 
       const model = decodeURIComponent(options.model || '')
-      const price = Number(options.price) || 0
 
       this.setData({
         hasSelectedLibrary: true,
@@ -146,9 +143,7 @@ Component({
         'draft.brand': decodeURIComponent(options.brand || ''),
         'draft.model': model,
         'draft.colorway': decodeURIComponent(options.colorway || ''),
-        'draft.purchasePrice': price,
         'draft.imageUrl': decodeURIComponent(options.imageUrl || ''),
-        purchasePriceText: price ? `${price}` : '0',
       })
     },
     previewDetailImage() {

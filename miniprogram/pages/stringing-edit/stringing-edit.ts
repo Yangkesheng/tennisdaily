@@ -98,7 +98,8 @@ Component({
       }
 
       const stringDateTime = decodeURIComponent(options.stringDate || '')
-      const [stringDate = getTodayText(), stringTimeText = `${getCurrentHourText()}:00`] = stringDateTime.split(' ')
+      const [stringDateText = '', stringTimeText = `${getCurrentHourText()}:00`] = stringDateTime.split(' ')
+      const stringDate = stringDateText || getTodayText()
       const stringHour = stringTimeText.split(':')[0] || getCurrentHourText()
       const verticalTensionText = decodeURIComponent(options.verticalTension || '')
       const horizontalTensionText = decodeURIComponent(options.horizontalTension || '')
@@ -236,4 +237,3 @@ Component({
     },
   },
 })
-

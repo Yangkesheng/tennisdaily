@@ -1,0 +1,140 @@
+<navigation-bar title="新增鞋款" back="{{true}}" color="#05070c" background="transparent"></navigation-bar>
+<view class="page admin-shoe-edit-page">
+  <scroll-view class="form-scroll" scroll-y>
+    <view class="form-content">
+      <view class="edit-hero">
+        <text class="edit-title">球鞋库</text>
+      </view>
+
+      <view class="field-grid">
+        <view class="input-card">
+          <text>品牌<text class="required-star">*</text></text>
+          <input class="inline-input" value="{{brandName}}" placeholder="选择或输入品牌" bindinput="onBrandInput" />
+          <picker range="{{brandNames}}" value="{{activeBrandIndex}}" bindchange="onBrandChange" disabled="{{!brandNames.length}}">
+            <view class="picker-btn">选择</view>
+          </picker>
+        </view>
+
+        <view class="input-card">
+          <text>系列<text class="required-star">*</text></text>
+          <input class="inline-input" value="{{seriesName}}" placeholder="选择或输入系列" bindinput="onSeriesInput" />
+          <view class="picker-btn" bindtap="openSeriesPicker">选择</view>
+        </view>
+
+        <view class="input-card">
+          <text>性别</text>
+          <picker range="{{genderLabels}}" value="{{genderIndex}}" bindchange="onGenderChange">
+            <view class="picker-inline">{{genderLabels[genderIndex]}}</view>
+          </picker>
+        </view>
+
+        <view class="input-card">
+          <text>型号</text>
+          <input class="inline-input" value="{{model}}" placeholder="Vapor 12" bindinput="onModelInput" />
+        </view>
+
+        <view class="colorway-card">
+          <text class="colorway-title">配色（可多选，合并为一条）</text>
+          <view wx:if="{{colorways.length}}" class="colorway-chips">
+            <view wx:for="{{colorways}}" wx:key="*this" class="colorway-chip">
+              <text class="chip-text">{{item}}</text>
+              <text class="chip-remove" data-index="{{index}}" bindtap="removeColorway">×</text>
+            </view>
+          </view>
+          <view wx:if="{{colorways.length}}" class="colorway-preview">配色结果：{{colorwayPreview}}</view>
+          <view class="colorway-input-row">
+            <input class="colorway-input" value="{{colorwayInput}}" placeholder="点击选择或输入配色" bindinput="onColorwayInput" bindconfirm="addColorway" bindtap="openColorwayPicker" />
+            <view class="colorway-add" bindtap="addColorway">添加</view>
+          </view>
+        </view>
+
+        <view class="input-card">
+          <text>年份</text>
+          <input class="inline-input" value="{{releaseYearText}}" type="number" placeholder="2025" bindinput="onReleaseYearInput" />
+        </view>
+        <view class="input-card">
+          <text>价格</text>
+          <input class="inline-input" value="{{priceText}}" type="digit" placeholder="0" bindinput="onPriceInput" />
+        </view>
+        <view class="input-card">
+          <text>重量</text>
+          <input class="inline-input" value="{{weight}}" placeholder="14.6 ounces" bindinput="onWeightInput" />
+        </view>
+        <view class="input-card">
+          <text>宽度</text>
+          <input class="inline-input" value="{{width}}" placeholder="Snug Medium" bindinput="onWidthInput" />
+        </view>
+        <view class="input-card">
+          <text>场地</text>
+          <input class="inline-input" value="{{surface}}" placeholder="Hard (all court)" bindinput="onSurfaceInput" />
+        </view>
+        <view class="image-upload-card">
+          <text class="image-label">图片（选填）</text>
+          <view class="image-picker {{imageTempPath ? 'has-image' : ''}}" bindtap="onImageTap">
+            <image wx:if="{{imageTempPath}}" class="image-preview" src="{{imageTempPath}}" mode="aspectFit"></image>
+            <view wx:else class="image-placeholder">
+              <text class="image-plus">{{uploadingImage ? '' : '+'}}</text>
+              <text class="image-hint">{{uploadingImage ? '上传中...' : '上传到球鞋库'}}</text>
+            </view>
+          </view>
+          <view wx:if="{{imageTempPath}}" class="image-remove" catchtap="removeImage">移除图片</view>
+        </view>
+      </view>
+    </view>
+  </scroll-view>
+
+  <view wx:if="{{showColorwayPicker}}" class="colorway-mask" bindtap="closeColorwayPicker"></view>
+  <view wx:if="{{showColorwayPicker}}" class="colorway-sheet">
+    <view class="sheet-header">
+      <text class="sheet-title">选择配色</text>
+      <text class="sheet-count">合计 {{pickedColorways.length}} 个</text>
+    </view>
+    <scroll-view class="sheet-scroll" scroll-y>
+      <view wx:if="{{colorwayOptions.length}}" class="sheet-grid">
+        <view
+          wx:for="{{colorwayOptions}}"
+          wx:key="*this"
+          class="sheet-chip {{pickedColorwayMap[item] ? 'picked' : ''}}"
+          data-colorway="{{item}}"
+          bindtap="toggleColorwayOption"
+        >{{item}}</view>
+      </view>
+      <view wx:else class="sheet-empty">暂无主流配色可选，请手动输入</view>
+    </scroll-view>
+    <view class="sheet-custom-row">
+      <input class="sheet-custom-input" value="{{colorwayInput}}" placeholder="输入自定义配色" bindinput="onColorwayInput" bindconfirm="addColorway" />
+      <view class="sheet-custom-add" bindtap="addColorway">添加</view>
+    </view>
+    <view class="sheet-actions">
+      <view class="sheet-cancel" bindtap="closeColorwayPicker">取消</view>
+      <view class="sheet-confirm" bindtap="confirmColorwayPicker">确定</view>
+    </view>
+  </view>
+
+  <view wx:if="{{showSeriesPicker}}" class="colorway-mask" bindtap="closeSeriesPicker"></view>
+  <view wx:if="{{showSeriesPicker}}" class="colorway-sheet">
+    <view class="sheet-header">
+      <text class="sheet-title">选择系列</text>
+      <text class="sheet-count">{{series.length}} 个</text>
+    </view>
+    <scroll-view class="sheet-scroll" scroll-y>
+      <view wx:if="{{series.length}}" class="sheet-list">
+        <view
+          wx:for="{{series}}"
+          wx:key="id"
+          class="sheet-row {{activeSeriesIndex === index ? 'picked' : ''}}"
+          data-index="{{index}}"
+          bindtap="selectSeriesOption"
+        >{{item.name}}</view>
+      </view>
+      <view wx:else class="sheet-empty">该品牌下暂无系列，可直接输入系列名</view>
+    </scroll-view>
+    <view class="sheet-actions">
+      <view class="sheet-cancel" bindtap="closeSeriesPicker">取消</view>
+    </view>
+  </view>
+
+  <view class="bottom-action-area">
+    <button class="submit-button" loading="{{saving}}" disabled="{{saving}}" bindtap="submitShoe">保存到球鞋库</button>
+  </view>
+</view>

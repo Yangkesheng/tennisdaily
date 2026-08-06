@@ -1,0 +1,447 @@
+.admin-shoe-edit-page {
+  display: flex;
+  flex-direction: column;
+  height: 100vh;
+  box-sizing: border-box;
+  background: linear-gradient(45deg, #f5efe6 0%, #eed6ca 50%, #e2bda9 100%);
+  background-attachment: fixed;
+}
+
+.form-scroll {
+  flex: 1;
+  min-height: 0;
+}
+
+.form-content {
+  padding: 28rpx 28rpx 40rpx;
+  box-sizing: border-box;
+}
+
+.edit-hero {
+  padding: 26rpx 0 44rpx;
+}
+
+.edit-title {
+  display: block;
+  color: #05070c;
+  font-size: 64rpx;
+  font-weight: 800;
+  line-height: 1.12;
+}
+
+.field-grid {
+  display: flex;
+  flex-direction: column;
+  gap: 18rpx;
+}
+
+.input-card {
+  min-height: 92rpx;
+  padding: 24rpx;
+  border-radius: 28rpx;
+  background: rgba(255, 255, 255, 0.55);
+  box-sizing: border-box;
+  box-shadow: inset 0 0 0 1rpx rgba(255, 255, 255, 0.8);
+  backdrop-filter: blur(20px);
+  display: flex;
+  align-items: center;
+  gap: 24rpx;
+}
+
+.input-card text {
+  flex: none;
+  width: 96rpx;
+  color: rgba(13, 23, 40, 0.52);
+  font-size: 26rpx;
+  font-weight: 700;
+}
+
+.inline-input {
+  flex: 1;
+  min-width: 0;
+  color: #17251c;
+  font-size: 30rpx;
+  text-align: right;
+}
+
+.picker-inline {
+  flex: 1;
+  min-width: 0;
+  color: #17251c;
+  font-size: 30rpx;
+  text-align: right;
+}
+
+.required-star {
+  color: #d93025;
+}
+
+.picker-btn {
+  flex: none;
+  min-width: 108rpx;
+  height: 64rpx;
+  padding: 0 20rpx;
+  border-radius: 999rpx;
+  background: rgba(55, 120, 219, 0.14);
+  color: #3778db;
+  font-size: 24rpx;
+  font-weight: 800;
+  line-height: 64rpx;
+  text-align: center;
+  box-sizing: border-box;
+}
+
+.colorway-card {
+  padding: 24rpx;
+  border-radius: 28rpx;
+  background: rgba(255, 255, 255, 0.55);
+  box-sizing: border-box;
+  box-shadow: inset 0 0 0 1rpx rgba(255, 255, 255, 0.8);
+  backdrop-filter: blur(20px);
+}
+
+.colorway-title {
+  display: block;
+  color: rgba(13, 23, 40, 0.52);
+  font-size: 26rpx;
+  font-weight: 700;
+}
+
+.colorway-chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 14rpx;
+  margin-top: 18rpx;
+}
+
+.colorway-chip {
+  display: flex;
+  align-items: center;
+  gap: 10rpx;
+  max-width: 100%;
+  height: 56rpx;
+  padding: 0 8rpx 0 22rpx;
+  border-radius: 999rpx;
+  background: rgba(55, 120, 219, 0.12);
+  color: #1f3d6d;
+  font-size: 24rpx;
+  font-weight: 700;
+  box-sizing: border-box;
+}
+
+.chip-text {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.chip-remove {
+  flex: none;
+  width: 44rpx;
+  height: 44rpx;
+  border-radius: 50%;
+  background: rgba(55, 120, 219, 0.2);
+  color: #3778db;
+  font-size: 30rpx;
+  line-height: 40rpx;
+  text-align: center;
+}
+
+.colorway-preview {
+  margin-top: 16rpx;
+  color: #1f3d6d;
+  font-size: 24rpx;
+  font-weight: 800;
+}
+
+.colorway-input-row {
+  display: flex;
+  align-items: center;
+  gap: 16rpx;
+  margin-top: 18rpx;
+}
+
+.colorway-input {
+  flex: 1;
+  min-width: 0;
+  height: 72rpx;
+  padding: 0 22rpx;
+  border-radius: 999rpx;
+  background: rgba(13, 23, 40, 0.06);
+  color: #17251c;
+  font-size: 28rpx;
+  box-sizing: border-box;
+}
+
+.colorway-add {
+  flex: none;
+  width: 108rpx;
+  height: 72rpx;
+  border-radius: 999rpx;
+  background: #3778db;
+  color: #fff;
+  font-size: 26rpx;
+  font-weight: 800;
+  line-height: 72rpx;
+  text-align: center;
+}
+
+.colorway-mask {
+  position: fixed;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  left: 0;
+  z-index: 20;
+  background: rgba(5, 7, 12, 0.4);
+}
+
+.colorway-sheet {
+  position: fixed;
+  right: 0;
+  bottom: 0;
+  left: 0;
+  z-index: 21;
+  display: flex;
+  flex-direction: column;
+  max-height: 70vh;
+  border-radius: 32rpx 32rpx 0 0;
+  background: #fbf8f3;
+  box-shadow: 0 -12rpx 40rpx rgba(13, 23, 40, 0.18);
+  box-sizing: border-box;
+}
+
+.sheet-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex: none;
+  padding: 30rpx 32rpx 18rpx;
+}
+
+.sheet-title {
+  color: #05070c;
+  font-size: 34rpx;
+  font-weight: 900;
+}
+
+.sheet-count {
+  color: #3778db;
+  font-size: 26rpx;
+  font-weight: 800;
+}
+
+.sheet-scroll {
+  flex: 1;
+  min-height: 0;
+  max-height: 52vh;
+  padding: 0 32rpx;
+  box-sizing: border-box;
+}
+
+.sheet-empty {
+  padding: 60rpx 0;
+  color: rgba(13, 23, 40, 0.4);
+  font-size: 26rpx;
+  text-align: center;
+}
+
+.sheet-grid {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 16rpx;
+  padding-bottom: 24rpx;
+}
+
+.sheet-chip {
+  max-width: 100%;
+  height: 64rpx;
+  padding: 0 24rpx;
+  border-radius: 999rpx;
+  background: rgba(13, 23, 40, 0.06);
+  color: rgba(13, 23, 40, 0.68);
+  font-size: 24rpx;
+  font-weight: 700;
+  line-height: 64rpx;
+  box-sizing: border-box;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.sheet-chip.picked {
+  background: rgba(55, 120, 219, 0.16);
+  color: #3778db;
+  box-shadow: inset 0 0 0 2rpx rgba(55, 120, 219, 0.5);
+}
+
+.sheet-list {
+  padding-bottom: 24rpx;
+}
+
+.sheet-row {
+  height: 92rpx;
+  padding: 0 8rpx;
+  border-radius: 20rpx;
+  color: rgba(13, 23, 40, 0.82);
+  font-size: 30rpx;
+  font-weight: 700;
+  line-height: 92rpx;
+  box-sizing: border-box;
+}
+
+.sheet-row.picked {
+  background: rgba(55, 120, 219, 0.14);
+  color: #3778db;
+  font-weight: 900;
+}
+
+.sheet-custom-row {
+  display: flex;
+  align-items: center;
+  gap: 16rpx;
+  flex: none;
+  padding: 18rpx 32rpx 4rpx;
+}
+
+.sheet-custom-input {
+  flex: 1;
+  min-width: 0;
+  height: 72rpx;
+  padding: 0 22rpx;
+  border-radius: 999rpx;
+  background: rgba(13, 23, 40, 0.06);
+  color: #17251c;
+  font-size: 28rpx;
+  box-sizing: border-box;
+}
+
+.sheet-custom-add {
+  flex: none;
+  width: 108rpx;
+  height: 72rpx;
+  border-radius: 999rpx;
+  background: #3778db;
+  color: #ffffff;
+  font-size: 26rpx;
+  font-weight: 800;
+  line-height: 72rpx;
+  text-align: center;
+}
+
+.sheet-actions {
+  display: flex;
+  gap: 20rpx;
+  flex: none;
+  padding: 20rpx 32rpx calc(28rpx + env(safe-area-inset-bottom));
+  border-top: 1rpx solid rgba(13, 23, 40, 0.06);
+}
+
+.sheet-cancel {
+  flex: 1;
+  height: 88rpx;
+  border-radius: 44rpx;
+  background: rgba(13, 23, 40, 0.06);
+  color: rgba(13, 23, 40, 0.68);
+  font-size: 30rpx;
+  font-weight: 700;
+  line-height: 88rpx;
+  text-align: center;
+}
+
+.sheet-confirm {
+  flex: 1;
+  height: 88rpx;
+  border-radius: 44rpx;
+  background: #3778db;
+  color: #ffffff;
+  font-size: 30rpx;
+  font-weight: 700;
+  line-height: 88rpx;
+  text-align: center;
+  box-shadow: 0 8rpx 24rpx rgba(55, 120, 219, 0.3);
+}
+
+.image-upload-card {
+  padding: 24rpx;
+  border-radius: 28rpx;
+  background: rgba(255, 255, 255, 0.55);
+  box-sizing: border-box;
+  box-shadow: inset 0 0 0 1rpx rgba(255, 255, 255, 0.8);
+  backdrop-filter: blur(20px);
+}
+
+.image-label {
+  display: block;
+  margin-bottom: 18rpx;
+  color: rgba(13, 23, 40, 0.52);
+  font-size: 26rpx;
+  font-weight: 700;
+}
+
+.image-picker {
+  width: 100%;
+  height: 320rpx;
+  border: 2rpx dashed rgba(13, 23, 40, 0.18);
+  border-radius: 20rpx;
+  background: rgba(13, 23, 40, 0.05);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+  box-sizing: border-box;
+}
+
+.image-picker.has-image {
+  border-style: solid;
+}
+
+.image-preview {
+  width: 100%;
+  height: 100%;
+}
+
+.image-placeholder {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 10rpx;
+  color: rgba(13, 23, 40, 0.45);
+}
+
+.image-plus {
+  font-size: 64rpx;
+  font-weight: 300;
+  line-height: 1;
+}
+
+.image-hint {
+  font-size: 24rpx;
+}
+
+.image-remove {
+  margin-top: 16rpx;
+  color: #d93025;
+  font-size: 26rpx;
+  font-weight: 700;
+  text-align: center;
+}
+
+.bottom-action-area {
+  flex-shrink: 0;
+  padding: 24rpx 28rpx calc(56rpx + env(safe-area-inset-bottom));
+  background: linear-gradient(180deg, rgba(238, 214, 202, 0) 0%, rgba(238, 214, 202, 0.95) 100%);
+  box-sizing: border-box;
+}
+
+.submit-button {
+  width: 100%;
+  height: 96rpx;
+  border-radius: 48rpx;
+  background: #3778db;
+  color: #fff;
+  font-size: 32rpx;
+  font-weight: 700;
+  line-height: 96rpx;
+  box-shadow: 0 8rpx 24rpx rgba(55, 120, 219, 0.3);
+}

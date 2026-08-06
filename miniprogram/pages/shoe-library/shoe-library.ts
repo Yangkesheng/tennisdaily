@@ -1,4 +1,5 @@
 import type { ShoeBrand, ShoeLibraryItem, ShoeSeries } from '../../models/shoe'
+import { getAdminPermissionsFromApi } from '../../services/auth-service'
 import { getShoeLibraryStatsFromApi, listShoeLibraryItemsFromApi, listShoeSeriesFromApi, mapShoeBrands } from '../../services/shoe-api-service'
 
 interface ShoeLibraryItemView extends ShoeLibraryItem {}
@@ -23,6 +24,7 @@ interface ShoeLibraryData {
   loadingItems: boolean
   activeRequestKey: string
   showBrands: boolean
+  isAdmin: boolean
 }
 
 const genderOptions = [
@@ -59,13 +61,87 @@ Component({
     loadingItems: false,
     activeRequestKey: '',
     showBrands: false,
+    isAdmin: false,
   } as ShoeLibraryData,
   lifetimes: {
     attached() {
       this.loadLibrary()
+      this.loadAdminStatus()
+    },
+  },
+  pageLifetimes: {
+    show() {
+      this.refreshAfterReturn()
     },
   },
   methods: {
+    async loadAdminStatus() {
+      try {
+        const permissions = await getAdminPermissionsFromApi()
+        this.setData({
+          isAdmin: permissions.isAdmin,
+        })
+      } catch (error) {
+        this.setData({
+          isAdmin: false,
+        })
+      }
+    },
+    async refreshAfterReturn() {
+      if (!this.data.brands.length) {
+        return
+      }
+
+      // 管理员新增鞋款返回后：刷新品牌下拉，并清空缓存重新拉取当前品牌条目。
+      try {
+        const stats = await getShoeLibraryStatsFromApi()
+        const brands = mapShoeBrands(stats)
+        const currentBrandId = this.data.brands[this.data.activeBrandIndex]?.id || 0
+        let activeBrandIndex = 0
+        if (currentBrandId) {
+          const index = brands.findIndex((item) => item.id === currentBrandId)
+          if (index >= 0) {
+            activeBrandIndex = index
+          }
+        }
+        this.setData({
+          brands,
+          activeBrandIndex,
+        })
+      } catch (error) {
+        // 品牌列表刷新失败不阻塞，当前品牌条目仍继续刷新。
+      }
+
+      for (const key of Object.keys(seriesCache)) {
+        delete seriesCache[key]
+      }
+      for (const key of Object.keys(itemCache)) {
+        delete itemCache[key]
+      }
+
+      const brand = this.data.brands[this.data.activeBrandIndex]
+      const series = this.data.series[this.data.activeSeriesIndex]
+      if (brand) {
+        this.loadBrandLibrary(brand.id, series ? series.id : 0, this.data.activeGender)
+      }
+    },
+    goAdminEdit() {
+      const brand = this.data.brands[this.data.activeBrandIndex]
+      const series = this.data.series[this.data.activeSeriesIndex]
+      const params = [
+        brand ? `brandId=${brand.id}` : '',
+        brand ? `brand=${encode(brand.name)}` : '',
+        series ? `seriesId=${series.id}` : '',
+        series ? `series=${encode(series.name)}` : '',
+        `gender=${this.data.activeGender}`,
+      ]
+        .filter(Boolean)
+        .join('&')
+
+      wx.navigateTo({
+        url: `/pages/admin-shoe-edit/admin-shoe-edit${params ? `?${params}` : ''}`,
+      })
+    },
     async loadLibrary() {
       if (this.data.loadingBrands) {
         return
@@ -241,7 +317,6 @@ Component({
           `&brand=${encode(item.brand)}` +
           `&model=${encode(item.model)}` +
           `&colorway=${encode(item.colorway)}` +
-          `&price=${item.price}` +
           `&imageUrl=${encode(item.imageUrl)}`,
       })
     },

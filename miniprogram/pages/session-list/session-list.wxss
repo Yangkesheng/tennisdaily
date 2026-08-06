@@ -184,6 +184,11 @@
   font-weight: 700;
 }
 
+.session-start-time {
+  font-size: 32rpx;
+  font-weight: 700;
+}
+
 .session-type {
   padding: 6rpx 14rpx;
   border-radius: 999rpx;

@@ -35,9 +35,10 @@
       placeholder="请输入昵称"
       maxlength="20"
       focus="{{nicknameInputFocus}}"
+      bindfocus="onNicknameFocus"
       bindinput="onNicknameInput"
-      bindconfirm="onNicknameInput"
-      bindblur="onNicknameInput"
+      bindblur="syncNicknameValue"
+      bindconfirm="syncNicknameValue"
     />
     <button class="save-button" bindtap="saveNickname" loading="{{isSavingNickname}}" disabled="{{isSavingNickname}}">保存昵称</button>
   </view>

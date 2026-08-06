@@ -8,7 +8,7 @@
         data-id="{{item.id}}"
         bindtouchstart="onTouchStart"
         bindtouchend="onTouchEnd"
-        bindtap="goEdit"
+        bindtap="goDetail"
       >
         <text wx:if="{{item.statusLabel}}" class="status-badge {{item.statusClass}}">{{item.statusLabel}}</text>
         <view class="shoe-mark">

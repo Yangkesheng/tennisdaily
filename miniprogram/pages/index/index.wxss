@@ -144,11 +144,13 @@
   opacity: 0.62;
 }
 
-.primary-racket-section {
+.primary-racket-section,
+.primary-shoe-section {
   margin-top: 24rpx;
 }
 
-.primary-racket-tip {
+.primary-racket-tip,
+.primary-shoe-tip {
   margin-top: 24rpx;
   min-height: 136rpx;
   padding: 28rpx;
@@ -161,7 +163,8 @@
   gap: 18rpx;
 }
 
-.primary-racket-tip:active {
+.primary-racket-tip:active,
+.primary-shoe-tip:active {
   opacity: 0.78;
 }
 
@@ -214,11 +217,13 @@
   font-weight: 900;
 }
 
-.primary-racket-section:active {
+.primary-racket-section:active,
+.primary-shoe-section:active {
   opacity: 0.78;
 }
 
-.racket-card {
+.racket-card,
+.shoe-card {
   position: relative;
   width: 100%;
   display: flex;
@@ -232,7 +237,8 @@
   box-sizing: border-box;
 }
 
-.racket-mark {
+.racket-mark,
+.shoe-mark {
   flex: none;
   width: 208rpx;
   height: 256rpx;
@@ -241,13 +247,15 @@
   justify-content: center;
 }
 
-.racket-image {
+.racket-image,
+.shoe-image {
   width: 100%;
   height: 100%;
   border-radius: 32rpx;
 }
 
-.racket-mark text {
+.racket-mark text,
+.shoe-mark text {
   max-width: 164rpx;
   color: rgba(13, 23, 40, 0.62);
   font-size: 28rpx;
@@ -257,7 +265,8 @@
   text-overflow: ellipsis;
 }
 
-.racket-content {
+.racket-content,
+.shoe-content {
   flex: 1;
   min-width: 0;
   display: flex;
@@ -265,7 +274,8 @@
   justify-content: flex-start;
 }
 
-.racket-status-row {
+.racket-status-row,
+.shoe-status-row {
   display: flex;
   align-items: center;
   justify-content: space-between;
@@ -273,7 +283,8 @@
   min-width: 0;
 }
 
-.racket-code {
+.racket-code,
+.shoe-code {
   flex: 1;
   min-width: 0;
   color: #111827;
@@ -303,13 +314,15 @@
   background: rgba(55, 120, 219, 0.76);
 }
 
-.racket-metric-grid {
+.racket-metric-grid,
+.shoe-metric-grid {
   display: flex;
   gap: 10rpx;
   margin-top: 14rpx;
 }
 
-.racket-metric {
+.racket-metric,
+.shoe-metric {
   flex: 1;
   min-width: 0;
   padding: 10rpx 12rpx 8rpx;
@@ -317,7 +330,8 @@
   background: rgba(13, 23, 40, 0.03);
 }
 
-.racket-metric-value {
+.racket-metric-value,
+.shoe-metric-value {
   display: block;
   color: #26313f;
   font-size: 34rpx;
@@ -325,7 +339,8 @@
   line-height: 1;
 }
 
-.racket-metric-unit {
+.racket-metric-unit,
+.shoe-metric-unit {
   display: inline-block;
   margin-left: 4rpx;
   font-size: 20rpx;
@@ -333,7 +348,8 @@
   line-height: 1;
 }
 
-.racket-metric-label {
+.racket-metric-label,
+.shoe-metric-label {
   display: block;
   margin-top: 4rpx;
   color: rgba(13, 23, 40, 0.48);
@@ -459,6 +475,127 @@
 
 .empty-stringing-line {
   display: block;
+  color: rgba(13, 23, 40, 0.42);
+  font-size: 23rpx;
+  font-weight: 800;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.wear-panel {
+  margin-top: 14rpx;
+  padding: 12rpx 14rpx 11rpx;
+  border-radius: 16rpx;
+  background: rgba(80, 203, 112, 0.1);
+  box-sizing: border-box;
+}
+
+.wear-spec {
+  display: block;
+  color: rgba(13, 23, 40, 0.78);
+  font-size: 23rpx;
+  font-weight: 900;
+  line-height: 1.12;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.wear-text {
+  display: block;
+  margin-top: 7rpx;
+  font-size: 20rpx;
+  font-weight: 900;
+  line-height: 1.15;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.wear-segments {
+  display: flex;
+  gap: 6rpx;
+  margin-top: 10rpx;
+}
+
+.wear-segment {
+  flex: 1;
+  height: 12rpx;
+  border-radius: 4rpx;
+  background: rgba(13, 23, 40, 0.08);
+}
+
+.wear-segment.on {
+  background: rgba(31, 122, 77, 0.8);
+}
+
+.wear-panel.wear-fresh {
+  background: rgba(80, 203, 112, 0.1);
+}
+
+.wear-panel.wear-fresh .wear-text {
+  color: rgba(31, 122, 77, 0.92);
+}
+
+.wear-panel.wear-good {
+  background: rgba(45, 212, 191, 0.12);
+}
+
+.wear-panel.wear-good .wear-text {
+  color: rgba(13, 148, 136, 0.94);
+}
+
+.wear-panel.wear-good .wear-segment.on {
+  background: rgba(13, 148, 136, 0.85);
+}
+
+.wear-panel.wear-worn {
+  background: rgba(251, 191, 36, 0.12);
+}
+
+.wear-panel.wear-worn .wear-text {
+  color: rgba(180, 83, 9, 0.94);
+}
+
+.wear-panel.wear-worn .wear-segment.on {
+  background: rgba(217, 119, 6, 0.85);
+}
+
+.wear-panel.wear-tired {
+  background: rgba(251, 146, 60, 0.14);
+}
+
+.wear-panel.wear-tired .wear-text {
+  color: rgba(194, 65, 12, 0.94);
+}
+
+.wear-panel.wear-tired .wear-segment.on {
+  background: rgba(234, 88, 12, 0.88);
+}
+
+.wear-panel.wear-dead,
+.wear-panel.wear-expired {
+  background: rgba(248, 113, 113, 0.12);
+}
+
+.wear-panel.wear-dead .wear-text,
+.wear-panel.wear-expired .wear-text {
+  color: rgba(185, 28, 28, 0.94);
+}
+
+.wear-panel.wear-dead .wear-segment.on,
+.wear-panel.wear-expired .wear-segment.on {
+  background: rgba(220, 38, 38, 0.88);
+}
+
+.empty-wear-panel {
+  background: rgba(13, 23, 40, 0.04);
+}
+
+.empty-wear-line {
+  display: block;
+  margin-top: 7rpx;
   color: rgba(13, 23, 40, 0.42);
   font-size: 23rpx;
   font-weight: 800;

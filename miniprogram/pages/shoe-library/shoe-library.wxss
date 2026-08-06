@@ -95,6 +95,11 @@
   color: #3778db;
 }
 
+.admin-option {
+  margin-bottom: 18rpx;
+  color: #b25e0b;
+}
+
 .product-panel {
   display: flex;
   flex-direction: column;
