@@ -17,12 +17,18 @@
         </view>
         <view class="shoe-content">
           <view class="shoe-title-row">
+            <text wx:if="{{item.brand}}" class="brand-tag">{{item.brand}}</text>
             <text class="shoe-title">{{item.name}}</text>
           </view>
-          <text class="meta-line">{{item.metaText}}</text>
-          <view class="purchase-line">
-            <text>{{item.purchaseDate || '未填写购入日期'}}</text>
-            <text>¥{{item.purchasePrice}}</text>
+          <view class="usage-grid">
+            <view class="usage-cell">
+              <text class="usage-value">{{item.usageCount}}</text>
+              <text class="usage-label">累计次数</text>
+            </view>
+            <view class="usage-cell">
+              <text class="usage-value">{{item.usageHours}}h</text>
+              <text class="usage-label">累计时间</text>
+            </view>
           </view>
         </view>
       </view>

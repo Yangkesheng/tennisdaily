@@ -26,7 +26,6 @@
         {{item.name}} ({{item.count}})
       </view>
       <view wx:if="{{isAdmin}}" class="brand-option admin-option" bindtap="goAdminEdit">新增鞋款</view>
-      <view class="brand-option manual-option" bindtap="manualInput">手动输入</view>
     </scroll-view>
   </view>
   <view class="library-body">

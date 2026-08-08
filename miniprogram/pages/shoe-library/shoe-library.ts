@@ -32,6 +32,7 @@ const genderOptions = [
   { value: 2, label: '女款' },
 ]
 const genderLabels = genderOptions.map((item) => item.label)
+const GENDER_STORAGE_KEY = 'shoeLibraryGender'
 
 const encode = (value: string | number) => {
   return encodeURIComponent(`${value}`)
@@ -65,6 +66,14 @@ Component({
   } as ShoeLibraryData,
   lifetimes: {
     attached() {
+      const cachedGender = Number(wx.getStorageSync(GENDER_STORAGE_KEY)) || 0
+      const cachedGenderIndex = genderOptions.findIndex((item) => item.value === cachedGender)
+      if (cachedGenderIndex >= 0) {
+        this.setData({
+          activeGender: cachedGender,
+          activeGenderIndex: cachedGenderIndex,
+        })
+      }
       this.loadLibrary()
       this.loadAdminStatus()
     },
@@ -200,7 +209,9 @@ Component({
             seriesCounts.set(`${genderKey}-${statsItem.seriesId}`, statsItem.count)
           }
         }
-        const series = rawSeries.map((item) => ({ ...item, count: seriesCounts.get(`${item.gender}-${item.id}`) || 0 }))
+        const series = rawSeries
+          .map((item) => ({ ...item, count: seriesCounts.get(`${item.gender}-${item.id}`) || 0 }))
+          .sort((a, b) => b.count - a.count)
 
         const targetSeriesId = seriesId || series[0]?.id || 0
         const itemCacheKey = `${brandId}-${gender}-${targetSeriesId}`
@@ -287,6 +298,7 @@ Component({
         visibleItems: [],
       })
 
+      wx.setStorageSync(GENDER_STORAGE_KEY, gender)
       this.loadBrandLibrary(brand.id, 0, gender)
     },
     selectSeries(event: WechatMiniprogram.TouchEvent) {
@@ -318,11 +330,6 @@ Component({
           `&model=${encode(item.model)}` +
           `&colorway=${encode(item.colorway)}` +
           `&imageUrl=${encode(item.imageUrl)}`,
-      })
-    },
-    manualInput() {
-      wx.navigateTo({
-        url: '/pages/shoe-edit/shoe-edit',
       })
     },
     onShareAppMessage() {

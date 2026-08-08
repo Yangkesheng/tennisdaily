@@ -123,7 +123,7 @@ export interface CreateShoeSeriesPayload {
 
 export interface CreateShoeLibraryPayload {
   brandId: number
-  seriesId: number
+  seriesName: string
   model: string
   gender: number
   colorway: string

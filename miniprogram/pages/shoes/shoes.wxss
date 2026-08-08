@@ -106,6 +106,19 @@
   white-space: nowrap;
 }
 
+.brand-tag {
+  flex-shrink: 0;
+  height: 48rpx;
+  padding: 0 20rpx;
+  border-radius: 999rpx;
+  background: rgba(55, 120, 219, 0.12);
+  color: #3778db;
+  font-size: 34rpx;
+  font-weight: 800;
+  line-height: 48rpx;
+  box-sizing: border-box;
+}
+
 .status-badge {
   position: absolute;
   top: 18rpx;
@@ -127,32 +140,34 @@
   background: rgba(13, 23, 40, 0.34);
 }
 
-.meta-line {
+.usage-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 12rpx;
+  margin-top: 30rpx;
+}
+
+.usage-cell {
+  min-width: 0;
+  padding: 13rpx 14rpx;
+  border-radius: 20rpx;
+  background: rgba(245, 239, 230, 0.72);
+}
+
+.usage-value {
   display: block;
-  margin-top: 12rpx;
-  color: rgba(13, 23, 40, 0.56);
-  font-size: 24rpx;
-  font-weight: 800;
-  line-height: 1.25;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
-}
-
-.purchase-line {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 16rpx;
-  margin-top: 20rpx;
-  color: rgba(13, 23, 40, 0.42);
-  font-size: 22rpx;
-  font-weight: 800;
-}
-
-.purchase-line text:last-child {
   color: #05070c;
-  font-size: 24rpx;
+  font-size: 30rpx;
+  font-weight: 900;
+  line-height: 1.08;
+}
+
+.usage-label {
+  display: block;
+  margin-top: 5rpx;
+  color: rgba(13, 23, 40, 0.42);
+  font-size: 20rpx;
+  font-weight: 800;
 }
 
 .empty-equipment {

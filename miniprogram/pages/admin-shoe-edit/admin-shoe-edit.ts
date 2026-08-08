@@ -1,6 +1,6 @@
 import type { CreateShoeLibraryPayload, ShoeBrand, ShoeSeries } from '../../models/shoe'
 import { deleteShoeImageFromCloudStorage, prepareShoeImageForUpload, uploadShoeImageToCloudStorage } from '../../services/shoe-image-service'
-import { createShoeBrandFromApi, createShoeLibraryItemsFromApi, createShoeSeriesFromApi, getShoeLibraryStatsFromApi, listShoeSeriesFromApi, mapShoeBrands } from '../../services/shoe-api-service'
+import { createShoeBrandFromApi, createShoeLibraryItemsFromApi, getShoeLibraryStatsFromApi, listShoeSeriesFromApi, mapShoeBrands } from '../../services/shoe-api-service'
 
 interface AdminShoeEditData {
   brands: ShoeBrand[]
@@ -550,30 +550,9 @@ Component({
           })
         }
 
-        let seriesId = 0
-        const seriesIndex = this.data.series.findIndex((item) => item.name === seriesName && item.gender === gender)
-        if (seriesIndex >= 0) {
-          seriesId = this.data.series[seriesIndex].id
-        } else {
-          const series = await createShoeSeriesFromApi({ brandId, gender, name: seriesName })
-          seriesId = series.id
-          const newSeries: ShoeSeries = {
-            id: series.id,
-            brandId,
-            gender,
-            name: series.name,
-          }
-          const seriesList = this.data.series.concat(newSeries)
-          this.setData({
-            series: seriesList,
-            activeSeriesIndex: seriesList.length - 1,
-            seriesName: series.name,
-          })
-        }
-
         const payload: CreateShoeLibraryPayload = {
           brandId,
-          seriesId,
+          seriesName,
           model,
           gender,
           colorway: this.data.colorways.join('/'),

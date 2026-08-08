@@ -167,9 +167,9 @@ Component({
         'draft.model': event.detail.value,
       })
     },
-    onColorwayInput(event: InputEvent) {
+    onSizeInput(event: InputEvent) {
       this.setData({
-        'draft.colorway': event.detail.value,
+        'draft.size': event.detail.value,
       })
     },
     onPurchaseDateChange(event: PickerChangeEvent) {

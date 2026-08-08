@@ -4,7 +4,6 @@ import { deleteShoeFromApi, listShoesFromApi } from '../../services/shoe-api-ser
 interface ShoeView extends Shoe {
   statusLabel: string
   statusClass: string
-  metaText: string
 }
 
 interface ShoesData {
@@ -16,18 +15,11 @@ interface ShoesData {
   isSwipeAction: boolean
 }
 
-const getMetaText = (shoe: Shoe) => {
-  const parts = [shoe.size, shoe.colorway].filter(Boolean)
-
-  return parts.length ? parts.join(' · ') : shoe.model || shoe.brand
-}
-
 const createShoeView = (shoe: Shoe): ShoeView => {
   return {
     ...shoe,
     statusLabel: shoe.status === 1 ? '主力' : shoe.status === 3 ? '退役' : '在用',
     statusClass: shoe.status === 1 ? 'primary' : shoe.status === 3 ? 'retired' : 'active',
-    metaText: getMetaText(shoe),
   }
 }
 

@@ -29,8 +29,8 @@
           <input value="{{draft.model}}" placeholder="Vapor 12" bindinput="onModelInput" />
         </view>
         <view class="input-card">
-          <text>配色</text>
-          <input value="{{draft.colorway}}" placeholder="White/Orewood Brown" bindinput="onColorwayInput" />
+          <text>鞋码</text>
+          <input value="{{draft.size}}" placeholder="42 / 42.5" bindinput="onSizeInput" />
         </view>
         <picker mode="date" value="{{draft.purchaseDate}}" bindchange="onPurchaseDateChange">
           <view class="input-card">
