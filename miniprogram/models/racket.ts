@@ -93,6 +93,23 @@ export interface RacketLibraryItem {
   imageUrl: string
 }
 
+export interface CreateRacketLibraryPayload {
+  brandName: string
+  seriesName: string
+  model: string
+  releaseYear?: number
+  weight?: number
+  headSize?: number
+  stringPattern?: string
+  fileId?: string
+  imageUrl?: string
+}
+
+export interface CreateRacketLibraryResult {
+  created: number
+  items: RacketLibraryItem[]
+}
+
 export interface RacketLibraryGroup {
   brandId: number
   brand: string

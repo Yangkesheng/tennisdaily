@@ -90,9 +90,9 @@
   color: #ffffff;
 }
 
-.manual-option {
+.admin-option {
   margin-bottom: 18rpx;
-  color: #3778db;
+  color: #b25e0b;
 }
 
 .product-panel {

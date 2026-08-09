@@ -1,0 +1,87 @@
+<navigation-bar title="新增球拍" back="{{true}}" color="#05070c" background="transparent"></navigation-bar>
+<view class="page admin-racket-edit-page">
+  <scroll-view class="form-scroll" scroll-y>
+    <view class="form-content">
+      <view class="edit-hero">
+        <text class="edit-title">球拍库</text>
+      </view>
+
+      <view class="field-grid">
+        <view class="input-card">
+          <text>品牌<text class="required-star">*</text></text>
+          <input class="inline-input" value="{{brandName}}" placeholder="选择或输入品牌" bindinput="onBrandInput" />
+          <picker range="{{brandNames}}" value="{{activeBrandIndex}}" bindchange="onBrandChange" disabled="{{!brandNames.length}}">
+            <view class="picker-btn">选择</view>
+          </picker>
+        </view>
+
+        <view class="input-card">
+          <text>系列<text class="required-star">*</text></text>
+          <input class="inline-input" value="{{seriesName}}" placeholder="选择或输入系列" bindinput="onSeriesInput" />
+          <view class="picker-btn" bindtap="openSeriesPicker">选择</view>
+        </view>
+
+        <view class="input-card">
+          <text>型号</text>
+          <input class="inline-input" value="{{model}}" placeholder="EZONE 100" bindinput="onModelInput" />
+        </view>
+
+        <view class="input-card">
+          <text>年份</text>
+          <input class="inline-input" value="{{releaseYearText}}" type="number" placeholder="2025" bindinput="onReleaseYearInput" />
+        </view>
+        <view class="input-card">
+          <text>重量</text>
+          <input class="inline-input" value="{{weightText}}" type="digit" placeholder="300 g" bindinput="onWeightInput" />
+        </view>
+        <view class="input-card">
+          <text>拍面</text>
+          <input class="inline-input" value="{{headSizeText}}" type="digit" placeholder="100 in²" bindinput="onHeadSizeInput" />
+        </view>
+        <view class="input-card">
+          <text>穿线</text>
+          <input class="inline-input" value="{{stringPattern}}" placeholder="16x19" bindinput="onStringPatternInput" />
+        </view>
+
+        <view class="image-upload-card">
+          <text class="image-label">图片（选填）</text>
+          <view class="image-picker {{imageTempPath ? 'has-image' : ''}}" bindtap="onImageTap">
+            <image wx:if="{{imageTempPath}}" class="image-preview" src="{{imageTempPath}}" mode="aspectFit"></image>
+            <view wx:else class="image-placeholder">
+              <text class="image-plus">{{uploadingImage ? '' : '+'}}</text>
+              <text class="image-hint">{{uploadingImage ? '上传中...' : '上传到球拍库'}}</text>
+            </view>
+          </view>
+          <view wx:if="{{imageTempPath}}" class="image-remove" catchtap="removeImage">移除图片</view>
+        </view>
+      </view>
+    </view>
+  </scroll-view>
+
+  <view wx:if="{{showSeriesPicker}}" class="sheet-mask" bindtap="closeSeriesPicker"></view>
+  <view wx:if="{{showSeriesPicker}}" class="sheet-panel">
+    <view class="sheet-header">
+      <text class="sheet-title">选择系列</text>
+      <text class="sheet-count">{{series.length}} 个</text>
+    </view>
+    <scroll-view class="sheet-scroll" scroll-y>
+      <view wx:if="{{series.length}}" class="sheet-list">
+        <view
+          wx:for="{{series}}"
+          wx:key="id"
+          class="sheet-row {{activeSeriesIndex === index ? 'picked' : ''}}"
+          data-index="{{index}}"
+          bindtap="selectSeriesOption"
+        >{{item.name}}</view>
+      </view>
+      <view wx:else class="sheet-empty">该品牌下暂无系列，可直接输入系列名</view>
+    </scroll-view>
+    <view class="sheet-actions">
+      <view class="sheet-cancel" bindtap="closeSeriesPicker">取消</view>
+    </view>
+  </view>
+
+  <view class="bottom-action-area">
+    <button class="submit-button" loading="{{saving}}" disabled="{{saving}}" bindtap="submitRacket">保存到球拍库</button>
+  </view>
+</view>

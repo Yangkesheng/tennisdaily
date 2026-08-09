@@ -1,38 +1,27 @@
-import type { CreateShoeLibraryPayload, ShoeBrand, ShoeSeries } from '../../models/shoe'
-import { deleteShoeImageFromCloudStorage, prepareShoeImageForUpload, uploadShoeImageToCloudStorage } from '../../services/shoe-image-service'
-import { createShoeBrandFromApi, createShoeLibraryItemsFromApi, getShoeLibraryStatsFromApi, listShoeSeriesFromApi, mapShoeBrands } from '../../services/shoe-api-service'
+import type { CreateRacketLibraryPayload, RacketBrand, RacketSeries } from '../../models/racket'
+import { deleteRacketImageFromCloudStorage, prepareRacketImageForUpload, uploadRacketImageToCloudStorage } from '../../services/racket-image-service'
+import { createRacketLibraryItemsFromApi, getRacketLibraryStatsFromApi, listRacketSeriesFromApi } from '../../services/racket-api-service'
 
-interface AdminShoeEditData {
-  brands: ShoeBrand[]
+interface AdminRacketEditData {
+  brands: RacketBrand[]
   brandNames: string[]
   activeBrandIndex: number
   brandName: string
-  series: ShoeSeries[]
+  series: RacketSeries[]
   activeSeriesIndex: number
   seriesName: string
   seriesNameTouched: boolean
-  genderOptions: { value: number; label: string }[]
-  genderLabels: string[]
-  genderIndex: number
   model: string
-  colorwayInput: string
-  colorways: string[]
-  colorwayPreview: string
-  showColorwayPicker: boolean
-  colorwayOptions: string[]
-  pickedColorways: string[]
-  pickedColorwayMap: Record<string, boolean>
-  showSeriesPicker: boolean
   releaseYearText: string
-  priceText: string
-  weight: string
-  width: string
-  surface: string
+  weightText: string
+  headSizeText: string
+  stringPattern: string
   imageFileId: string
   imageTempPath: string
   uploadingImage: boolean
   saving: boolean
   loadingBrands: boolean
+  showSeriesPicker: boolean
   routeBrandId: number
   routeSeriesId: number
 }
@@ -56,49 +45,13 @@ interface ChooseMediaSuccessResult {
   }>
 }
 
-const genderOptions = [
-  { value: 1, label: '男款' },
-  { value: 2, label: '女款' },
-  { value: 3, label: '童款' },
-]
-const genderLabels = genderOptions.map((item) => item.label)
-
-const MAIN_COLORWAYS = [
-  'Black',
-  'White',
-  'Red',
-  'Blue',
-  'Green',
-  'Yellow',
-  'Orange',
-  'Pink',
-  'Purple',
-  'Grey',
-  'Brown',
-  'Navy',
-  'Silver',
-  'Gold',
-]
-
-const formatColorwayName = (value: string) => {
-  return value
-    .trim()
-    .split(/\s+/)
-    .map((word) =>
-      word
-        .split('/')
-        .map((part) => part.charAt(0).toUpperCase() + part.slice(1).toLowerCase())
-        .join('/'),
-    )
-    .join(' ')
-}
-
-const buildColorwayMap = (colorways: string[]): Record<string, boolean> => {
-  const map: Record<string, boolean> = {}
-  for (const colorway of colorways) {
-    map[colorway] = true
-  }
-  return map
+const mapStatsToBrands = (stats: RacketBrand[]): RacketBrand[] => {
+  return stats.map((brand) => ({
+    id: brand.id,
+    name: brand.name,
+    imageUrl: brand.imageUrl || '',
+    count: brand.count || 0,
+  }))
 }
 
 Component({
@@ -111,31 +64,20 @@ Component({
     activeSeriesIndex: -1,
     seriesName: '',
     seriesNameTouched: false,
-    genderOptions,
-    genderLabels,
-    genderIndex: 0,
     model: '',
-    colorwayInput: '',
-    colorways: [],
-    colorwayPreview: '',
-    showColorwayPicker: false,
-    colorwayOptions: [],
-    pickedColorways: [],
-    pickedColorwayMap: {},
-    showSeriesPicker: false,
     releaseYearText: '',
-    priceText: '',
-    weight: '',
-    width: '',
-    surface: '',
+    weightText: '',
+    headSizeText: '',
+    stringPattern: '',
     imageFileId: '',
     imageTempPath: '',
     uploadingImage: false,
     saving: false,
     loadingBrands: false,
+    showSeriesPicker: false,
     routeBrandId: 0,
     routeSeriesId: 0,
-  } as AdminShoeEditData,
+  } as AdminRacketEditData,
   pageLifetimes: {
     show() {
       this.loadRoute()
@@ -148,19 +90,15 @@ Component({
         options?: {
           brandId?: string
           seriesId?: string
-          gender?: string
         }
       }
       const options = currentPage.options || {}
       const brandId = Number(options.brandId) || 0
       const seriesId = Number(options.seriesId) || 0
-      const gender = Number(options.gender) || 0
-      const genderIndex = genderOptions.findIndex((item) => item.value === gender)
 
       this.setData({
         routeBrandId: brandId,
         routeSeriesId: seriesId,
-        genderIndex: genderIndex >= 0 ? genderIndex : 0,
       })
 
       this.loadBrands()
@@ -175,8 +113,8 @@ Component({
       })
 
       try {
-        const stats = await getShoeLibraryStatsFromApi()
-        const brands = mapShoeBrands(stats)
+        const stats = await getRacketLibraryStatsFromApi()
+        const brands = mapStatsToBrands(stats)
         let activeBrandIndex = 0
         if (this.data.routeBrandId > 0) {
           const index = brands.findIndex((item) => item.id === this.data.routeBrandId)
@@ -215,8 +153,7 @@ Component({
       }
 
       try {
-        const gender = genderOptions[this.data.genderIndex].value
-        const series = await listShoeSeriesFromApi(brand.id, gender)
+        const series = await listRacketSeriesFromApi(brand.id)
         let activeSeriesIndex = -1
         if (this.data.routeSeriesId > 0) {
           const index = series.findIndex((item) => item.id === this.data.routeSeriesId)
@@ -263,103 +200,29 @@ Component({
         seriesNameTouched: true,
       })
     },
-    onGenderChange(event: PickerChangeEvent) {
-      const index = Number(event.detail.value)
-      if (index === this.data.genderIndex) {
-        return
-      }
-      this.setData({
-        genderIndex: index,
-        series: [],
-        activeSeriesIndex: -1,
-        seriesName: '',
-        seriesNameTouched: false,
-      })
-      this.loadSeries()
-    },
     onModelInput(event: InputEvent) {
       this.setData({
         model: event.detail.value,
       })
     },
-    onColorwayInput(event: InputEvent) {
+    onReleaseYearInput(event: InputEvent) {
       this.setData({
-        colorwayInput: event.detail.value,
+        releaseYearText: event.detail.value,
       })
     },
-    addColorway() {
-      const colorway = formatColorwayName(this.data.colorwayInput)
-      if (!colorway) {
-        return
-      }
-      if (this.data.colorways.some((item) => item.toLowerCase() === colorway.toLowerCase())) {
-        wx.showToast({
-          title: '该配色已添加',
-          icon: 'none',
-        })
-        return
-      }
-      const colorways = this.data.colorways.concat(colorway)
+    onWeightInput(event: InputEvent) {
       this.setData({
-        colorways,
-        colorwayPreview: colorways.join('/'),
-        colorwayInput: '',
+        weightText: event.detail.value,
       })
     },
-    removeColorway(event: WechatMiniprogram.TouchEvent) {
-      const index = Number(event.currentTarget.dataset.index)
-      const colorways = this.data.colorways.filter((_, itemIndex) => itemIndex !== index)
+    onHeadSizeInput(event: InputEvent) {
       this.setData({
-        colorways,
-        colorwayPreview: colorways.join('/'),
+        headSizeText: event.detail.value,
       })
     },
-    openColorwayPicker() {
-      if (typeof wx.hideKeyboard === 'function') {
-        wx.hideKeyboard()
-      }
-      const picked = this.data.colorways.filter((colorway) =>
-        MAIN_COLORWAYS.some((option) => option.toLowerCase() === colorway.toLowerCase()),
-      )
+    onStringPatternInput(event: InputEvent) {
       this.setData({
-        showColorwayPicker: true,
-        colorwayOptions: MAIN_COLORWAYS,
-        pickedColorways: picked,
-        pickedColorwayMap: buildColorwayMap(picked),
-      })
-    },
-    toggleColorwayOption(event: WechatMiniprogram.TouchEvent) {
-      const colorway = event.currentTarget.dataset.colorway as string
-      const picked = this.data.pickedColorways.includes(colorway)
-        ? this.data.pickedColorways.filter((item) => item !== colorway)
-        : this.data.pickedColorways.concat(colorway)
-      this.setData({
-        pickedColorways: picked,
-        pickedColorwayMap: buildColorwayMap(picked),
-      })
-    },
-    closeColorwayPicker() {
-      this.setData({
-        showColorwayPicker: false,
-        colorwayOptions: [],
-        pickedColorways: [],
-        pickedColorwayMap: {},
-      })
-    },
-    confirmColorwayPicker() {
-      const colorways = this.data.colorways.slice()
-      for (const colorway of this.data.pickedColorways) {
-        if (!colorways.some((item) => item.toLowerCase() === colorway.toLowerCase())) {
-          colorways.push(colorway)
-        }
-      }
-      this.setData({
-        colorways,
-        colorwayPreview: colorways.join('/'),
-        showColorwayPicker: false,
-        colorwayOptions: [],
-        pickedColorways: [],
-        pickedColorwayMap: {},
+        stringPattern: event.detail.value,
       })
     },
     async openSeriesPicker() {
@@ -411,31 +274,6 @@ Component({
         showSeriesPicker: false,
       })
     },
-    onReleaseYearInput(event: InputEvent) {
-      this.setData({
-        releaseYearText: event.detail.value,
-      })
-    },
-    onPriceInput(event: InputEvent) {
-      this.setData({
-        priceText: event.detail.value,
-      })
-    },
-    onWeightInput(event: InputEvent) {
-      this.setData({
-        weight: event.detail.value,
-      })
-    },
-    onWidthInput(event: InputEvent) {
-      this.setData({
-        width: event.detail.value,
-      })
-    },
-    onSurfaceInput(event: InputEvent) {
-      this.setData({
-        surface: event.detail.value,
-      })
-    },
     async onImageTap() {
       if (this.data.uploadingImage) {
         return
@@ -460,13 +298,12 @@ Component({
           })
 
           try {
-            const filePath = await prepareShoeImageForUpload(file.tempFilePath, file.size)
-            const fileID = await uploadShoeImageToCloudStorage(
+            const filePath = await prepareRacketImageForUpload(file.tempFilePath, file.size)
+            const fileID = await uploadRacketImageToCloudStorage(
               filePath,
               this.data.brandName,
               this.data.seriesName,
               this.data.model.trim(),
-              this.data.colorways.join('/'),
             )
             this.setData({
               imageFileId: fileID,
@@ -474,8 +311,8 @@ Component({
             })
 
             if (previousFileID && previousFileID !== fileID) {
-              deleteShoeImageFromCloudStorage(previousFileID).catch((error) => {
-                console.error('delete shoe image failed', error)
+              deleteRacketImageFromCloudStorage(previousFileID).catch((error) => {
+                console.error('delete racket image failed', error)
               })
             }
           } catch (error) {
@@ -498,17 +335,16 @@ Component({
         imageTempPath: '',
       })
       if (fileID) {
-        deleteShoeImageFromCloudStorage(fileID).catch((error) => {
-          console.error('delete shoe image failed', error)
+        deleteRacketImageFromCloudStorage(fileID).catch((error) => {
+          console.error('delete racket image failed', error)
         })
       }
     },
-    async submitShoe() {
+    async submitRacket() {
       if (this.data.saving) {
         return
       }
 
-      const gender = genderOptions[this.data.genderIndex].value
       const model = this.data.model.trim()
       const brandName = this.data.brandName.trim()
       const seriesName = this.data.seriesName.trim()
@@ -525,69 +361,37 @@ Component({
         wx.showToast({ title: '请填写型号', icon: 'none' })
         return
       }
-      if (!this.data.colorways.length) {
-        wx.showToast({ title: '请至少添加一个配色', icon: 'none' })
-        return
-      }
 
       this.setData({
         saving: true,
       })
 
       try {
-        let brandId = 0
-        const brandIndex = this.data.brands.findIndex((item) => item.name === brandName)
-        if (brandIndex >= 0) {
-          brandId = this.data.brands[brandIndex].id
-        } else {
-          const brand = await createShoeBrandFromApi({ name: brandName })
-          brandId = brand.id
-          const newBrand: ShoeBrand = {
-            id: brand.id,
-            name: brand.name,
-            imageUrl: '',
-            count: 0,
-            series: {},
-          }
-          const brands = this.data.brands.concat(newBrand)
-          this.setData({
-            brands,
-            brandNames: brands.map((item) => item.name),
-            activeBrandIndex: brands.length - 1,
-            brandName: brand.name,
-          })
-        }
-
-        const payload: CreateShoeLibraryPayload = {
-          brandId,
+        const payload: CreateRacketLibraryPayload = {
+          brandName,
           seriesName,
           model,
-          gender,
-          colorway: this.data.colorways.join('/'),
         }
         if (this.data.releaseYearText.trim()) {
           payload.releaseYear = Number(this.data.releaseYearText) || 0
         }
-        if (this.data.priceText.trim()) {
-          payload.price = Number(this.data.priceText) || 0
+        if (this.data.weightText.trim()) {
+          payload.weight = Number(this.data.weightText) || 0
         }
-        if (this.data.weight.trim()) {
-          payload.weight = this.data.weight.trim()
+        if (this.data.headSizeText.trim()) {
+          payload.headSize = Number(this.data.headSizeText) || 0
         }
-        if (this.data.width.trim()) {
-          payload.width = this.data.width.trim()
-        }
-        if (this.data.surface.trim()) {
-          payload.surface = this.data.surface.trim()
+        if (this.data.stringPattern.trim()) {
+          payload.stringPattern = this.data.stringPattern.trim()
         }
         if (this.data.imageFileId) {
           payload.fileId = this.data.imageFileId
         }
 
-        await createShoeLibraryItemsFromApi(payload)
+        await createRacketLibraryItemsFromApi(payload)
 
         wx.showToast({
-          title: '已添加到球鞋库',
+          title: '已添加到球拍库',
           icon: 'success',
           complete: () => {
             wx.navigateBack()

@@ -15,6 +15,7 @@
     "pages/shoe-library/shoe-library",
     "pages/shoe-edit/shoe-edit",
     "pages/admin-shoe-edit/admin-shoe-edit",
+    "pages/admin-racket-edit/admin-racket-edit",
     "pages/session-edit/session-edit",
     "pages/session-list/session-list",
     "pages/privacy/privacy",

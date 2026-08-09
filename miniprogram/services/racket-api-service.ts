@@ -1,4 +1,4 @@
-import type { Racket, RacketDraft, RacketLibraryGroup, RacketLibraryItem, RacketLibraryStatsBrand, StringHealth, StringingRecord } from '../models/racket'
+import type { CreateRacketLibraryPayload, CreateRacketLibraryResult, Racket, RacketDraft, RacketLibraryGroup, RacketLibraryItem, RacketLibraryStatsBrand, RacketSeries, StringHealth, StringingRecord } from '../models/racket'
 import { ensureLogin } from './auth-service'
 import { request } from './request'
 
@@ -83,6 +83,12 @@ interface ApiRacketLibraryStatsBrand {
   brand: string
   count: number
   series: ApiRacketLibraryStatsSeries[]
+}
+
+interface ApiRacketSeries {
+  id: number
+  brandId: number
+  name: string
 }
 
 export interface ApiRacketLibraryItem {
@@ -296,6 +302,36 @@ export const listRacketLibraryItemsFromApi = async (brandId: number, seriesId?: 
   const groups = await listRacketLibraryFromApi(brandId, seriesId)
 
   return groups.reduce<RacketLibraryItem[]>((items, group) => items.concat(group.items), [])
+}
+
+export const listRacketSeriesFromApi = async (brandId?: number): Promise<RacketSeries[]> => {
+  await ensureLogin()
+  const params = [
+    brandId ? `brandId=${brandId}` : '',
+  ].filter(Boolean)
+  const series = await request<ApiRacketSeries[]>({
+    url: `/api/racket-series${params.length ? `?${params.join('&')}` : ''}`,
+  })
+
+  return series.map((item) => ({
+    id: item.id,
+    brandId: item.brandId,
+    name: item.name,
+  }))
+}
+
+export const createRacketLibraryItemsFromApi = async (payload: CreateRacketLibraryPayload): Promise<CreateRacketLibraryResult> => {
+  await ensureLogin()
+  const result = await request<{ created: number; items: ApiRacketLibraryItem[] }>({
+    url: '/api/admin/racket-library',
+    method: 'POST',
+    data: payload,
+  })
+
+  return {
+    created: result.created,
+    items: result.items.map((item) => mapApiLibraryItem(item)),
+  }
 }
 
 export const getRacketDetailFromApi = async (id: number): Promise<{ racket: Racket; stringingRecords: StringingRecord[] }> => {

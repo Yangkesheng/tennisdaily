@@ -17,7 +17,7 @@
       >
         {{item.name}} ({{item.count}})
       </view>
-      <view class="brand-option manual-option" bindtap="manualInput">手动输入</view>
+      <view wx:if="{{isAdmin}}" class="brand-option admin-option" bindtap="goAdminEdit">新增球拍</view>
     </scroll-view>
   </view>
   <view class="library-body">

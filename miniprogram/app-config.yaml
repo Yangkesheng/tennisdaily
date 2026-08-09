@@ -5,6 +5,7 @@ api:
   cloudService: cprod
   cloudStorageBucket: 7072-prod-d6gkg1meqce4aaa7e-1440725645
   cloudAvatarFolder: avatar
+  cloudRacketFolder: racket_library
   cloudShoeFolder: shoes_library
 
 

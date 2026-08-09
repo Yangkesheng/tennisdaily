@@ -1,4 +1,5 @@
 import type { RacketBrand, RacketLibraryItem, RacketLibraryStatsBrand, RacketSeries } from '../../models/racket'
+import { getAdminPermissionsFromApi } from '../../services/auth-service'
 import { getRacketLibraryStatsFromApi, listRacketLibraryItemsFromApi } from '../../services/racket-api-service'
 
 interface RacketLibraryData {
@@ -11,6 +12,7 @@ interface RacketLibraryData {
   loadingItems: boolean
   activeRequestKey: string
   showBrands: boolean
+  isAdmin: boolean
 }
 
 const encode = (value: string | number) => {
@@ -50,13 +52,84 @@ Component({
     loadingItems: false,
     activeRequestKey: '',
     showBrands: false,
+    isAdmin: false,
   } as RacketLibraryData,
   lifetimes: {
     attached() {
       this.loadLibrary()
+      this.loadAdminStatus()
+    },
+  },
+  pageLifetimes: {
+    show() {
+      this.refreshAfterReturn()
     },
   },
   methods: {
+    async loadAdminStatus() {
+      try {
+        const permissions = await getAdminPermissionsFromApi()
+        this.setData({
+          isAdmin: permissions.isAdmin,
+        })
+      } catch (error) {
+        this.setData({
+          isAdmin: false,
+        })
+      }
+    },
+    async refreshAfterReturn() {
+      if (!this.data.brands.length) {
+        return
+      }
+
+      // 管理员新增球拍返回后：刷新品牌下拉，并清空缓存重新拉取当前品牌条目。
+      try {
+        const stats = await getRacketLibraryStatsFromApi()
+        const brands = mapStatsToBrands(stats)
+        const currentBrandId = this.data.brands[this.data.activeBrandIndex]?.id || 0
+        let activeBrandIndex = 0
+        if (currentBrandId) {
+          const index = brands.findIndex((item) => item.id === currentBrandId)
+          if (index >= 0) {
+            activeBrandIndex = index
+          }
+        }
+        this.setData({
+          brands,
+          activeBrandIndex,
+        })
+      } catch (error) {
+        // 品牌列表刷新失败不阻塞，当前品牌条目仍继续刷新。
+      }
+
+      for (const key of Object.keys(seriesCache)) {
+        delete seriesCache[Number(key)]
+      }
+      for (const key of Object.keys(itemCache)) {
+        delete itemCache[key]
+      }
+
+      const brand = this.data.brands[this.data.activeBrandIndex]
+      const series = this.data.series[this.data.activeSeriesIndex]
+      if (brand) {
+        this.loadBrandLibrary(brand.id, series ? series.id : getFirstSeriesId(brand.id))
+      }
+    },
+    goAdminEdit() {
+      const brand = this.data.brands[this.data.activeBrandIndex]
+      const series = this.data.series[this.data.activeSeriesIndex]
+      const params = [
+        brand ? `brandId=${brand.id}` : '',
+        series ? `seriesId=${series.id}` : '',
+      ]
+        .filter(Boolean)
+        .join('&')
+
+      wx.navigateTo({
+        url: `/pages/admin-racket-edit/admin-racket-edit${params ? `?${params}` : ''}`,
+      })
+    },
     async loadLibrary() {
       if (this.data.loadingBrands) {
         return
@@ -208,11 +281,6 @@ Component({
           `&imageUrl=${encode(item.imageUrl)}` +
           `&weight=${item.weight}` +
           `&headSize=${item.headSize}`,
-      })
-    },
-    manualInput() {
-      wx.navigateTo({
-        url: '/pages/racket-edit/racket-edit',
       })
     },
     onShareAppMessage() {
