@@ -32,13 +32,13 @@
       </view>
       <view class="stat-card">
         <text class="stat-value">{{wearScoreText}}</text>
-        <text class="stat-label">磨损度</text>
+        <text class="stat-label">健康度</text>
       </view>
     </view>
 
     <view class="section-card">
       <view class="section-header">
-        <text class="section-title">磨损度</text>
+        <text class="section-title">健康度</text>
       </view>
       <view wx:if="{{shoe.wear}}" class="wear-panel wear-{{shoe.wear.state}}">
         <text class="wear-text">{{shoe.wear.display}}</text>
@@ -51,7 +51,7 @@
         </view>
         <view class="wear-foot">
           <text>剩余 {{shoe.wear.remainingHours}}h</text>
-          <text>得分 {{wearScoreText}}</text>
+          <text>{{wearScoreText}}</text>
         </view>
       </view>
       <view wx:else class="empty-text">暂无磨损数据</view>

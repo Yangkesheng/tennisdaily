@@ -155,8 +155,9 @@ const getShoeSpecText = (shoe: Shoe) => {
   if (shoe.size) {
     parts.push(`尺码 ${shoe.size}`)
   }
-  if (shoe.colorway) {
-    parts.push(shoe.colorway)
+  const wearScore = shoe.wear?.score
+  if (typeof wearScore === 'number' && !Number.isNaN(wearScore)) {
+    parts.push(`健康度 ${Math.round(wearScore)}%`)
   }
 
   return parts.join(' · ')
