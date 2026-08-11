@@ -21,6 +21,7 @@ const encode = (value: string | number) => {
 
 const seriesCache: Record<number, RacketSeries[]> = {}
 const itemCache: Record<string, RacketLibraryItem[]> = {}
+let skipRefreshOnReturn = false
 
 const mapStatsToBrands = (stats: RacketLibraryStatsBrand[]): RacketBrand[] => {
   return stats.map((brand) => ({
@@ -62,12 +63,10 @@ Component({
   },
   pageLifetimes: {
     show() {
-      const pages = getCurrentPages()
-      const previousRoute = pages[pages.length - 2]?.route || ''
-
       // 从“新增球拍”页返回时，球拍库数据没有变化，不重新请求刷新，
       // 避免系列展示因刷新被清空。
-      if (previousRoute === 'pages/racket-edit/racket-edit') {
+      if (skipRefreshOnReturn) {
+        skipRefreshOnReturn = false
         return
       }
 
@@ -280,6 +279,7 @@ Component({
         return
       }
 
+      skipRefreshOnReturn = true
       wx.navigateTo({
         url:
           `/pages/racket-edit/racket-edit?libraryId=${item.id}` +
@@ -288,6 +288,9 @@ Component({
           `&imageUrl=${encode(item.imageUrl)}` +
           `&weight=${item.weight}` +
           `&headSize=${item.headSize}`,
+        fail: () => {
+          skipRefreshOnReturn = false
+        },
       })
     },
     onShareAppMessage() {
