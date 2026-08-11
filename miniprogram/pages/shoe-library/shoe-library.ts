@@ -46,6 +46,7 @@ const createItemView = (item: ShoeLibraryItem): ShoeLibraryItemView => {
 
 const seriesCache: Record<string, ShoeSeries[]> = {}
 const itemCache: Record<string, ShoeLibraryItemView[]> = {}
+let skipRefreshOnReturn = false
 
 Component({
   data: {
@@ -80,6 +81,13 @@ Component({
   },
   pageLifetimes: {
     show() {
+      // 从“新增球鞋”页返回时，球鞋库数据没有变化，不重新请求刷新，
+      // 避免页面被刷新。
+      if (skipRefreshOnReturn) {
+        skipRefreshOnReturn = false
+        return
+      }
+
       this.refreshAfterReturn()
     },
   },
@@ -323,6 +331,7 @@ Component({
         return
       }
 
+      skipRefreshOnReturn = true
       wx.navigateTo({
         url:
           `/pages/shoe-edit/shoe-edit?libraryId=${item.id}` +
@@ -330,6 +339,9 @@ Component({
           `&model=${encode(item.model)}` +
           `&colorway=${encode(item.colorway)}` +
           `&imageUrl=${encode(item.imageUrl)}`,
+        fail: () => {
+          skipRefreshOnReturn = false
+        },
       })
     },
     onShareAppMessage() {
