@@ -75,6 +75,11 @@ Component({
         url: '/pages/user-profile/user-profile',
       })
     },
+    goFeedback() {
+      wx.navigateTo({
+        url: '/pages/feedback/feedback',
+      })
+    },
     onShareAppMessage() {
       return {
         title: '我的网球装备',

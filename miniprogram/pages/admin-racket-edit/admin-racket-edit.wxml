@@ -1,4 +1,4 @@
-<navigation-bar title="新增球拍" back="{{true}}" color="#05070c" background="transparent"></navigation-bar>
+<navigation-bar title="球拍库新增球拍" back="{{true}}" color="#05070c" background="transparent"></navigation-bar>
 <view class="page admin-racket-edit-page">
   <scroll-view class="form-scroll" scroll-y>
     <view class="form-content">
@@ -22,25 +22,33 @@
         </view>
 
         <view class="input-card">
-          <text>型号</text>
+          <text>型号<text class="required-star">*</text></text>
           <input class="inline-input" value="{{model}}" placeholder="EZONE 100" bindinput="onModelInput" />
         </view>
 
         <view class="input-card">
-          <text>年份</text>
-          <input class="inline-input" value="{{releaseYearText}}" type="number" placeholder="2025" bindinput="onReleaseYearInput" />
+          <text>上市年份<text class="required-star">*</text></text>
+          <picker range="{{releaseYearOptions}}" value="{{releaseYearIndex}}" bindchange="onReleaseYearChange">
+            <view class="picker-inline {{releaseYearIndex <= 0 ? 'picker-placeholder' : ''}}">{{releaseYearOptions[releaseYearIndex]}}</view>
+          </picker>
         </view>
         <view class="input-card">
-          <text>重量</text>
-          <input class="inline-input" value="{{weightText}}" type="digit" placeholder="300 g" bindinput="onWeightInput" />
+          <text>重量<text class="required-star">*</text></text>
+          <picker range="{{weightOptions}}" value="{{weightIndex}}" bindchange="onWeightChange">
+            <view class="picker-inline {{weightIndex <= 0 ? 'picker-placeholder' : ''}}">{{weightOptions[weightIndex]}}</view>
+          </picker>
         </view>
         <view class="input-card">
-          <text>拍面</text>
-          <input class="inline-input" value="{{headSizeText}}" type="digit" placeholder="100 in²" bindinput="onHeadSizeInput" />
+          <text>拍面<text class="required-star">*</text></text>
+          <picker range="{{headSizeOptions}}" value="{{headSizeIndex}}" bindchange="onHeadSizeChange">
+            <view class="picker-inline {{headSizeIndex <= 0 ? 'picker-placeholder' : ''}}">{{headSizeOptions[headSizeIndex]}}</view>
+          </picker>
         </view>
         <view class="input-card">
-          <text>穿线</text>
-          <input class="inline-input" value="{{stringPattern}}" placeholder="16x19" bindinput="onStringPatternInput" />
+          <text>穿线<text class="required-star">*</text></text>
+          <picker range="{{stringPatternOptions}}" value="{{stringPatternIndex}}" bindchange="onStringPatternChange">
+            <view class="picker-inline {{stringPatternIndex <= 0 ? 'picker-placeholder' : ''}}">{{stringPatternOptions[stringPatternIndex]}}</view>
+          </picker>
         </view>
 
         <view class="image-upload-card">

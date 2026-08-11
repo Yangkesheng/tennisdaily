@@ -157,3 +157,45 @@
   font-size: 26rpx;
   font-weight: 900;
 }
+
+.menu-card {
+  margin-top: 22rpx;
+  padding: 30rpx 34rpx;
+  border-radius: 34rpx;
+  background: rgba(255, 255, 255, 0.55);
+  backdrop-filter: blur(20px);
+  box-shadow: inset 0 0 0 1rpx rgba(255, 255, 255, 0.8);
+  box-sizing: border-box;
+}
+
+.menu-card:active {
+  opacity: 0.78;
+}
+
+.menu-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 20rpx;
+}
+
+.menu-label {
+  color: #05070c;
+  font-size: 30rpx;
+  font-weight: 900;
+}
+
+.menu-arrow {
+  color: rgba(13, 23, 40, 0.42);
+  font-size: 40rpx;
+  font-weight: 700;
+  line-height: 1;
+}
+
+.menu-tip {
+  display: block;
+  margin-top: 12rpx;
+  color: rgba(13, 23, 40, 0.52);
+  font-size: 24rpx;
+  font-weight: 600;
+}

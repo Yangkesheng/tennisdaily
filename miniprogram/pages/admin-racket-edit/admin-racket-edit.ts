@@ -12,10 +12,18 @@ interface AdminRacketEditData {
   seriesName: string
   seriesNameTouched: boolean
   model: string
-  releaseYearText: string
-  weightText: string
-  headSizeText: string
-  stringPattern: string
+  releaseYearOptions: string[]
+  releaseYearValues: number[]
+  releaseYearIndex: number
+  weightOptions: string[]
+  weightValues: number[]
+  weightIndex: number
+  headSizeOptions: string[]
+  headSizeValues: number[]
+  headSizeIndex: number
+  stringPatternOptions: string[]
+  stringPatternValues: string[]
+  stringPatternIndex: number
   imageFileId: string
   imageTempPath: string
   uploadingImage: boolean
@@ -54,6 +62,15 @@ const mapStatsToBrands = (stats: RacketBrand[]): RacketBrand[] => {
   }))
 }
 
+const RELEASE_YEAR_VALUES = [2026, 2025, 2024, 2023, 2022, 2021, 2020, 2019, 2018, 2017, 2016, 2015]
+const RELEASE_YEAR_OPTIONS = ['请选择', ...RELEASE_YEAR_VALUES.map((value) => `${value}`)]
+const WEIGHT_VALUES = [280, 285, 290, 295, 300, 305, 310, 315, 320, 325, 330, 340]
+const WEIGHT_OPTIONS = ['请选择', ...WEIGHT_VALUES.map((value) => `${value} g`)]
+const HEAD_SIZE_VALUES = [95, 97, 98, 100, 102, 104, 105, 107, 110]
+const HEAD_SIZE_OPTIONS = ['请选择', ...HEAD_SIZE_VALUES.map((value) => `${value} in²`)]
+const STRING_PATTERN_VALUES = ['16x19', '16x20', '18x20', '16x18', '18x19', '18x16', '16x16', '14x18', '18x21']
+const STRING_PATTERN_OPTIONS = ['请选择', ...STRING_PATTERN_VALUES]
+
 Component({
   data: {
     brands: [],
@@ -65,10 +82,18 @@ Component({
     seriesName: '',
     seriesNameTouched: false,
     model: '',
-    releaseYearText: '',
-    weightText: '',
-    headSizeText: '',
-    stringPattern: '',
+    releaseYearOptions: RELEASE_YEAR_OPTIONS,
+    releaseYearValues: RELEASE_YEAR_VALUES,
+    releaseYearIndex: 0,
+    weightOptions: WEIGHT_OPTIONS,
+    weightValues: WEIGHT_VALUES,
+    weightIndex: 0,
+    headSizeOptions: HEAD_SIZE_OPTIONS,
+    headSizeValues: HEAD_SIZE_VALUES,
+    headSizeIndex: 0,
+    stringPatternOptions: STRING_PATTERN_OPTIONS,
+    stringPatternValues: STRING_PATTERN_VALUES,
+    stringPatternIndex: 0,
     imageFileId: '',
     imageTempPath: '',
     uploadingImage: false,
@@ -205,24 +230,24 @@ Component({
         model: event.detail.value,
       })
     },
-    onReleaseYearInput(event: InputEvent) {
+    onReleaseYearChange(event: PickerChangeEvent) {
       this.setData({
-        releaseYearText: event.detail.value,
+        releaseYearIndex: Number(event.detail.value),
       })
     },
-    onWeightInput(event: InputEvent) {
+    onWeightChange(event: PickerChangeEvent) {
       this.setData({
-        weightText: event.detail.value,
+        weightIndex: Number(event.detail.value),
       })
     },
-    onHeadSizeInput(event: InputEvent) {
+    onHeadSizeChange(event: PickerChangeEvent) {
       this.setData({
-        headSizeText: event.detail.value,
+        headSizeIndex: Number(event.detail.value),
       })
     },
-    onStringPatternInput(event: InputEvent) {
+    onStringPatternChange(event: PickerChangeEvent) {
       this.setData({
-        stringPattern: event.detail.value,
+        stringPatternIndex: Number(event.detail.value),
       })
     },
     async openSeriesPicker() {
@@ -361,6 +386,22 @@ Component({
         wx.showToast({ title: '请填写型号', icon: 'none' })
         return
       }
+      if (this.data.releaseYearIndex <= 0) {
+        wx.showToast({ title: '请选择上市年份', icon: 'none' })
+        return
+      }
+      if (this.data.weightIndex <= 0) {
+        wx.showToast({ title: '请选择重量', icon: 'none' })
+        return
+      }
+      if (this.data.headSizeIndex <= 0) {
+        wx.showToast({ title: '请选择拍面', icon: 'none' })
+        return
+      }
+      if (this.data.stringPatternIndex <= 0) {
+        wx.showToast({ title: '请选择穿线模式', icon: 'none' })
+        return
+      }
 
       this.setData({
         saving: true,
@@ -371,18 +412,10 @@ Component({
           brandName,
           seriesName,
           model,
-        }
-        if (this.data.releaseYearText.trim()) {
-          payload.releaseYear = Number(this.data.releaseYearText) || 0
-        }
-        if (this.data.weightText.trim()) {
-          payload.weight = Number(this.data.weightText) || 0
-        }
-        if (this.data.headSizeText.trim()) {
-          payload.headSize = Number(this.data.headSizeText) || 0
-        }
-        if (this.data.stringPattern.trim()) {
-          payload.stringPattern = this.data.stringPattern.trim()
+          releaseYear: RELEASE_YEAR_VALUES[this.data.releaseYearIndex - 1],
+          weight: WEIGHT_VALUES[this.data.weightIndex - 1],
+          headSize: HEAD_SIZE_VALUES[this.data.headSizeIndex - 1],
+          stringPattern: STRING_PATTERN_VALUES[this.data.stringPatternIndex - 1],
         }
         if (this.data.imageFileId) {
           payload.fileId = this.data.imageFileId

@@ -19,6 +19,7 @@
     "pages/session-edit/session-edit",
     "pages/session-list/session-list",
     "pages/privacy/privacy",
+    "pages/feedback/feedback",
     "pages/logs/logs"
   ],
   "window": {

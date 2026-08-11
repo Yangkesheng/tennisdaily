@@ -112,6 +112,19 @@
   white-space: nowrap;
 }
 
+.brand-tag {
+  flex-shrink: 0;
+  height: 48rpx;
+  padding: 0 20rpx;
+  border-radius: 999rpx;
+  background: rgba(55, 120, 219, 0.12);
+  color: #3778db;
+  font-size: 34rpx;
+  font-weight: 800;
+  line-height: 48rpx;
+  box-sizing: border-box;
+}
+
 .status-badge {
   position: absolute;
   top: 18rpx;

@@ -52,4 +52,12 @@
     </view>
     <text class="enter-tip">查看球鞋</text>
   </view>
+
+  <view class="menu-card" bindtap="goFeedback">
+    <view class="menu-row">
+      <text class="menu-label">意见反馈</text>
+      <text class="menu-arrow">›</text>
+    </view>
+    <text class="menu-tip">告诉我们你的想法和建议</text>
+  </view>
 </scroll-view>

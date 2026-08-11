@@ -1,0 +1,44 @@
+<navigation-bar title="意见反馈" back="{{true}}" color="#05070c" background="transparent"></navigation-bar>
+<view class="page feedback-page">
+  <scroll-view class="feedback-scroll" scroll-y>
+    <view class="feedback-content">
+      <view class="feedback-hero">
+        <text class="feedback-title">意见反馈</text>
+        <text class="feedback-desc">你的想法和建议会帮助我们做得更好</text>
+      </view>
+
+      <view class="input-card">
+        <text class="input-label">反馈内容</text>
+        <textarea
+          class="content-textarea"
+          value="{{content}}"
+          placeholder="请描述你遇到的问题或建议…"
+          placeholder-class="textarea-placeholder"
+          maxlength="1000"
+          bindinput="onContentInput"
+          bindblur="syncContentValue"
+        />
+        <text class="word-count">{{content.length}}/1000</text>
+      </view>
+
+      <view class="input-card">
+        <text class="input-label">联系方式（选填）</text>
+        <input
+          class="contact-input"
+          type="text"
+          value="{{contact}}"
+          placeholder="微信号、手机号或邮箱"
+          placeholder-class="textarea-placeholder"
+          maxlength="100"
+          bindinput="onContactInput"
+          bindblur="syncContactValue"
+        />
+        <text class="contact-tip">方便我们回复你的反馈</text>
+      </view>
+    </view>
+  </scroll-view>
+
+  <view class="bottom-action-area">
+    <button class="submit-button" loading="{{isSubmitting}}" disabled="{{isSubmitting}}" bindtap="submitFeedback">提交反馈</button>
+  </view>
+</view>

@@ -17,6 +17,7 @@
         </view>
         <view class="racket-content">
           <view class="racket-title-row">
+            <text wx:if="{{item.brand}}" class="brand-tag">{{item.brand}}</text>
             <text class="racket-title">{{item.name}}</text>
           </view>
           <text class="stringing-line">{{item.stringingText}}</text>

@@ -506,3 +506,46 @@ Authorization: Bearer <token>
 
 - 统计口径以后端 `/api/rackets/stats` 为准。
 - 前端不再通过 `GET /api/rackets` 和 `GET /api/rackets/:id` 组合计算我的页面消费统计。
+
+---
+
+## 21. 意见反馈
+
+### 21.1 提交意见反馈
+
+我的页面提供“意见反馈”入口，进入反馈页填写内容后提交：
+
+```http
+POST /api/feedback
+Authorization: Bearer <token>
+```
+
+请求体：
+
+```json
+{
+  "content": "希望支持按周查看统计",
+  "contact": "微信：tennisday"
+}
+```
+
+字段说明：
+
+| 字段 | 类型 | 必填 | 说明 |
+|---|---|---|---|
+| `content` | string | 是 | 反馈内容，最长 1000 字 |
+| `contact` | string | 否 | 联系方式，最长 100 字 |
+
+响应 data：
+
+```json
+{
+  "id": 1,
+  "content": "希望支持按周查看统计",
+  "contact": "微信：tennisday",
+  "status": 0,
+  "createdAt": "2026-08-11T10:00:00+08:00"
+}
+```
+
+前端通过 `miniprogram/services/feedback-api-service.ts` 的 `createFeedbackFromApi` 提交，不直接调用 `wx.request`。

@@ -1,0 +1,123 @@
+.feedback-page {
+  display: flex;
+  flex-direction: column;
+  height: 100vh;
+  box-sizing: border-box;
+  background: linear-gradient(45deg, #f5efe6 0%, #eed6ca 50%, #e2bda9 100%);
+  background-attachment: fixed;
+}
+
+.feedback-scroll {
+  flex: 1;
+  min-height: 0;
+}
+
+.feedback-content {
+  padding: 28rpx 28rpx 40rpx;
+  box-sizing: border-box;
+}
+
+.feedback-hero {
+  padding: 26rpx 0 40rpx;
+}
+
+.feedback-title {
+  display: block;
+  color: #05070c;
+  font-size: 64rpx;
+  font-weight: 800;
+  line-height: 1.12;
+}
+
+.feedback-desc {
+  display: block;
+  margin-top: 14rpx;
+  color: rgba(13, 23, 40, 0.52);
+  font-size: 26rpx;
+  font-weight: 600;
+}
+
+.input-card {
+  margin-bottom: 24rpx;
+  padding: 30rpx;
+  border-radius: 32rpx;
+  background: rgba(255, 255, 255, 0.86);
+  border: 1rpx solid rgba(255, 255, 255, 0.9);
+  box-sizing: border-box;
+}
+
+.input-label {
+  display: block;
+  margin-bottom: 18rpx;
+  color: rgba(13, 23, 40, 0.72);
+  font-size: 26rpx;
+  font-weight: 800;
+}
+
+.content-textarea {
+  width: 100%;
+  min-height: 240rpx;
+  color: #05070c;
+  font-size: 30rpx;
+  line-height: 1.6;
+  box-sizing: border-box;
+}
+
+.contact-input {
+  width: 100%;
+  color: #05070c;
+  font-size: 30rpx;
+  box-sizing: border-box;
+}
+
+.textarea-placeholder {
+  color: rgba(13, 23, 40, 0.32);
+}
+
+.word-count {
+  display: block;
+  margin-top: 12rpx;
+  color: rgba(13, 23, 40, 0.42);
+  font-size: 22rpx;
+  font-weight: 600;
+  text-align: right;
+}
+
+.contact-tip {
+  display: block;
+  margin-top: 12rpx;
+  color: rgba(13, 23, 40, 0.42);
+  font-size: 22rpx;
+  font-weight: 600;
+}
+
+.bottom-action-area {
+  padding: 20rpx 28rpx calc(28rpx + env(safe-area-inset-bottom));
+  box-sizing: border-box;
+}
+
+.submit-button {
+  width: 100%;
+  height: 96rpx;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: 0;
+  border-radius: 32rpx;
+  background: #3778db;
+  color: #fff;
+  font-size: 30rpx;
+  font-weight: 900;
+  line-height: 96rpx;
+  box-shadow: none;
+}
+
+.submit-button::after {
+  border: 0;
+}
+
+.submit-button[disabled] {
+  opacity: 0.6;
+  color: #fff;
+  background: #3778db;
+}

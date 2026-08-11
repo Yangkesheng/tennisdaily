@@ -62,6 +62,15 @@ Component({
   },
   pageLifetimes: {
     show() {
+      const pages = getCurrentPages()
+      const previousRoute = pages[pages.length - 2]?.route || ''
+
+      // 从“新增球拍”页返回时，球拍库数据没有变化，不重新请求刷新，
+      // 避免系列展示因刷新被清空。
+      if (previousRoute === 'pages/racket-edit/racket-edit') {
+        return
+      }
+
       this.refreshAfterReturn()
     },
   },
@@ -87,6 +96,7 @@ Component({
       try {
         const stats = await getRacketLibraryStatsFromApi()
         const brands = mapStatsToBrands(stats)
+        cacheStatsSeries(stats)
         const currentBrandId = this.data.brands[this.data.activeBrandIndex]?.id || 0
         let activeBrandIndex = 0
         if (currentBrandId) {
@@ -103,9 +113,6 @@ Component({
         // 品牌列表刷新失败不阻塞，当前品牌条目仍继续刷新。
       }
 
-      for (const key of Object.keys(seriesCache)) {
-        delete seriesCache[Number(key)]
-      }
       for (const key of Object.keys(itemCache)) {
         delete itemCache[key]
       }

@@ -64,6 +64,18 @@
   text-align: right;
 }
 
+.picker-inline {
+  flex: 1;
+  min-width: 0;
+  color: #17251c;
+  font-size: 30rpx;
+  text-align: right;
+}
+
+.picker-placeholder {
+  color: rgba(13, 23, 40, 0.35);
+}
+
 .required-star {
   color: #d93025;
 }
