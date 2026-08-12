@@ -47,8 +47,6 @@
       value="{{courtDraft}}"
       placeholder="比如：奥森网球场"
       maxlength="20"
-      focus="{{courtInputFocus}}"
-      bindfocus="onCourtFocus"
       bindinput="onCourtInput"
       bindblur="syncCourtValue"
       bindconfirm="syncCourtValue"

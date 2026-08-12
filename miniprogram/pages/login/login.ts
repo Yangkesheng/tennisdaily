@@ -8,7 +8,6 @@ interface LoginData {
   needsNickname: boolean
   nickname: string
   showNicknameTip: boolean
-  nicknameInputFocus: boolean
   showPrivacyDialog: boolean
 }
 
@@ -25,7 +24,6 @@ Component<LoginData, {}, WechatMiniprogram.IAnyObject, { nicknameInputValue: str
     needsNickname: false,
     nickname: '',
     showNicknameTip: false,
-    nicknameInputFocus: false,
     showPrivacyDialog: false,
   } as LoginData,
   pageLifetimes: {
@@ -46,7 +44,6 @@ Component<LoginData, {}, WechatMiniprogram.IAnyObject, { nicknameInputValue: str
             needsNickname: true,
             nickname: '',
             showNicknameTip: true,
-            nicknameInputFocus: true,
           })
           return
         }
@@ -81,7 +78,6 @@ Component<LoginData, {}, WechatMiniprogram.IAnyObject, { nicknameInputValue: str
             needsNickname: true,
             nickname: '',
             showNicknameTip: true,
-            nicknameInputFocus: true,
           })
           wx.showToast({
             title: '请设置昵称',
@@ -106,15 +102,9 @@ Component<LoginData, {}, WechatMiniprogram.IAnyObject, { nicknameInputValue: str
         this.setData({ isLoggingIn: false })
       }
     },
-    onNicknameFocus() {
-      this.setData({
-        showNicknameTip: false,
-        nicknameInputFocus: false,
-      })
-    },
     onNicknameInput(event: NicknameInputEvent) {
-      // 输入过程中不调用 setData，避免输入框重渲染导致 iOS 失焦
       this.nicknameInputValue = event.detail.value
+      this.setData({ nickname: event.detail.value })
     },
     syncNicknameValue(event: NicknameInputEvent) {
       // 失焦/确认时才一次性同步到 data
@@ -158,7 +148,6 @@ Component<LoginData, {}, WechatMiniprogram.IAnyObject, { nicknameInputValue: str
       if (!nickname) {
         this.setData({
           showNicknameTip: true,
-          nicknameInputFocus: true,
         })
         wx.showToast({
           title: '请先授权或输入微信昵称',

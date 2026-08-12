@@ -38,8 +38,6 @@ interface UserProfileData {
   signatureDraft: string
   showNicknameEditor: boolean
   showSignatureEditor: boolean
-  nicknameInputFocus: boolean
-  signatureInputFocus: boolean
   startDateValue: number
   startDateText: string
   startYearOptions: string[]
@@ -101,8 +99,6 @@ Page({
     signatureDraft: '',
     showNicknameEditor: false,
     showSignatureEditor: false,
-    nicknameInputFocus: false,
-    signatureInputFocus: false,
     startDateValue: 0,
     startDateText: '未设置',
     startYearOptions: [],
@@ -172,7 +168,6 @@ Page({
     this.setData({
       nicknameDraft: currentUser.nickname || '',
       showNicknameEditor: true,
-      nicknameInputFocus: true,
     })
   },
   closeNicknameEditor() {
@@ -182,15 +177,12 @@ Page({
 
     this.setData({
       showNicknameEditor: false,
-      nicknameInputFocus: false,
     })
   },
   noop() {},
-  onNicknameFocus() {
-    this.setData({ nicknameInputFocus: false })
-  },
   onNicknameInput(event: NicknameInputEvent) {
     this.nicknameInputValue = event.detail.value
+    this.setData({ nicknameDraft: event.detail.value })
   },
   syncNicknameValue(event: NicknameInputEvent) {
     this.nicknameInputValue = event.detail.value
@@ -239,7 +231,6 @@ Page({
       this.setData({
         nicknameDraft: user.nickname || '',
         showNicknameEditor: false,
-        nicknameInputFocus: false,
         user,
       })
       this.nicknameInputValue = user.nickname || ''
@@ -271,7 +262,6 @@ Page({
     this.setData({
       signatureDraft: this.data.signature,
       showSignatureEditor: true,
-      signatureInputFocus: true,
     })
   },
   closeSignatureEditor() {
@@ -281,14 +271,11 @@ Page({
 
     this.setData({
       showSignatureEditor: false,
-      signatureInputFocus: false,
     })
-  },
-  onSignatureFocus() {
-    this.setData({ signatureInputFocus: false })
   },
   onSignatureInput(event: NicknameInputEvent) {
     this.signatureInputValue = event.detail.value
+    this.setData({ signatureDraft: event.detail.value })
   },
   syncSignatureValue(event: NicknameInputEvent) {
     this.signatureInputValue = event.detail.value
@@ -317,7 +304,6 @@ Page({
       this.setData({
         signature: settings.signature || '',
         showSignatureEditor: false,
-        signatureInputFocus: false,
       })
       this.signatureInputValue = settings.signature || ''
       wx.showToast({

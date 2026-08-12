@@ -31,8 +31,6 @@
         maxlength="20"
         value="{{nickname}}"
         placeholder="请输入昵称"
-        focus="{{nicknameInputFocus}}"
-        bindfocus="onNicknameFocus"
         bindinput="onNicknameInput"
         bindconfirm="syncNicknameValue"
         bindblur="syncNicknameValue"

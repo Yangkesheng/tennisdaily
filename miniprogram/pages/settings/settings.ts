@@ -10,7 +10,6 @@ interface SettingsData {
   defaultDurationText: string
   showCourtEditor: boolean
   courtDraft: string
-  courtInputFocus: boolean
   isSavingCourt: boolean
   showDurationEditor: boolean
   durationDraft: string
@@ -46,7 +45,6 @@ Page({
     defaultDurationText: '未设置（默认 120）',
     showCourtEditor: false,
     courtDraft: '',
-    courtInputFocus: false,
     isSavingCourt: false,
     showDurationEditor: false,
     durationDraft: '',
@@ -91,7 +89,6 @@ Page({
     this.setData({
       courtDraft: this.data.defaultCourtName,
       showCourtEditor: true,
-      courtInputFocus: true,
     })
   },
   closeCourtEditor() {
@@ -101,14 +98,11 @@ Page({
 
     this.setData({
       showCourtEditor: false,
-      courtInputFocus: false,
     })
-  },
-  onCourtFocus() {
-    this.setData({ courtInputFocus: false })
   },
   onCourtInput(event: InputEvent) {
     this.courtInputValue = event.detail.value
+    this.setData({ courtDraft: event.detail.value })
   },
   syncCourtValue(event: InputEvent) {
     this.courtInputValue = event.detail.value
@@ -127,7 +121,6 @@ Page({
       this.setData({
         ...buildView(settings),
         showCourtEditor: false,
-        courtInputFocus: false,
       })
       this.courtInputValue = settings.defaultCourtName || ''
       wx.showToast({
