@@ -115,6 +115,10 @@
   background: rgba(255, 255, 255, 0.42);
 }
 
+.record-row.tappable:active {
+  opacity: 0.72;
+}
+
 .record-icon {
   flex: none;
   width: 64rpx;
@@ -181,6 +185,14 @@
   color: rgba(13, 23, 40, 0.48);
   font-size: 24rpx;
   font-weight: 600;
+}
+
+.record-arrow {
+  flex: none;
+  color: rgba(13, 23, 40, 0.42);
+  font-size: 36rpx;
+  font-weight: 700;
+  line-height: 1;
 }
 
 .summary-grid {

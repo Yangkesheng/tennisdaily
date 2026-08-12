@@ -7,6 +7,7 @@ export interface UserProfile {
   maskedPhone: string
   nickname: string
   avatarUrl: string
+  startPlayingDate?: number | null
   createdAt: string
   updatedAt: string
 }
@@ -97,7 +98,7 @@ export const getAdminPermissionsFromApi = async (): Promise<{ isAdmin: boolean }
   })
 }
 
-export const updateUserProfile = async (profile: Pick<UserProfile, 'nickname' | 'avatarUrl'>): Promise<UserProfile> => {
+export const updateUserProfile = async (profile: Partial<Pick<UserProfile, 'nickname' | 'avatarUrl' | 'startPlayingDate'>>): Promise<UserProfile> => {
   return request<UserProfile>({
     url: '/api/auth/profile',
     method: 'PUT',

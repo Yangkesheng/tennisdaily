@@ -13,6 +13,28 @@
           <text class="info-arrow">›</text>
         </view>
       </view>
+      <view class="info-row" bindtap="openSignatureEditor">
+        <text class="info-label">个性签名</text>
+        <view class="info-value-row">
+          <text class="info-value">{{signature || '未设置'}}</text>
+          <text class="info-arrow">›</text>
+        </view>
+      </view>
+      <picker
+        mode="multiSelector"
+        range="{{[startYearOptions, startMonthOptions]}}"
+        value="{{[startYearIndex, startMonthIndex]}}"
+        bindcolumnchange="onStartDateColumnChange"
+        bindchange="onStartDateChange"
+      >
+        <view class="info-row">
+          <text class="info-label">开始打球</text>
+          <view class="info-value-row">
+            <text class="info-value">{{startDateText}}</text>
+            <text class="info-arrow">›</text>
+          </view>
+        </view>
+      </picker>
     </view>
   </view>
 </scroll-view>
@@ -41,5 +63,28 @@
       bindconfirm="syncNicknameValue"
     />
     <button class="save-button" bindtap="saveNickname" loading="{{isSavingNickname}}" disabled="{{isSavingNickname}}">保存昵称</button>
+  </view>
+</view>
+
+<view wx:if="{{showSignatureEditor}}" class="nickname-popup-mask" bindtap="closeSignatureEditor">
+  <view class="nickname-popup" catchtap="noop">
+    <view class="nickname-popup-header">
+      <text class="nickname-popup-title">修改个性签名</text>
+      <text class="nickname-popup-close" bindtap="closeSignatureEditor">×</text>
+    </view>
+    <text class="nickname-popup-desc">一句话介绍自己，最多 30 字。</text>
+    <input
+      class="nickname-popup-input"
+      type="text"
+      value="{{signatureDraft}}"
+      placeholder="比如：底线抽球爱好者"
+      maxlength="30"
+      focus="{{signatureInputFocus}}"
+      bindfocus="onSignatureFocus"
+      bindinput="onSignatureInput"
+      bindblur="syncSignatureValue"
+      bindconfirm="syncSignatureValue"
+    />
+    <button class="save-button" bindtap="saveSignature" loading="{{isSavingSignature}}" disabled="{{isSavingSignature}}">保存签名</button>
   </view>
 </view>

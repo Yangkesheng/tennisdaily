@@ -153,6 +153,7 @@ export interface SessionPageParams {
   page: number
   pageSize: number
   date?: string
+  matchRank?: number
 }
 
 export interface SessionStats {

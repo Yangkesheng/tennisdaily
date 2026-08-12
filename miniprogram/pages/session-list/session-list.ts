@@ -37,6 +37,7 @@ interface SessionListData {
   titleText: string
   routeDateFilter: string
   routeRangeFilter: string
+  routeMatchRankFilter: string
   page: number
   pageSize: number
   pageSizeInput: string
@@ -180,6 +181,7 @@ Page({
     titleText: '记录',
     routeDateFilter: '',
     routeRangeFilter: '',
+    routeMatchRankFilter: '',
     page: 1,
     pageSize: DEFAULT_PAGE_SIZE,
     pageSizeInput: `${DEFAULT_PAGE_SIZE}`,
@@ -195,12 +197,13 @@ Page({
     visibleFields: [],
     displayFieldOptions: [],
   } as SessionListData,
-  onLoad(options: { date?: string; range?: string }) {
+  onLoad(options: { date?: string; range?: string; matchRank?: string }) {
     const visibleFields = loadVisibleDisplayFields()
 
     this.setData({
       routeDateFilter: options.date || '',
       routeRangeFilter: options.range || '',
+      routeMatchRankFilter: options.matchRank || '',
       page: 1,
       visibleFields,
       displayFieldOptions: buildDisplayFieldOptions(visibleFields),
@@ -212,31 +215,44 @@ Page({
   onShareAppMessage() {
     const dateFilter = this.data.routeDateFilter
     const rangeFilter = this.data.routeRangeFilter
-    const query = [dateFilter ? `date=${dateFilter}` : '', rangeFilter ? `range=${rangeFilter}` : '']
+    const matchRankFilter = this.data.routeMatchRankFilter
+    const query = [dateFilter ? `date=${dateFilter}` : '', rangeFilter ? `range=${rangeFilter}` : '', matchRankFilter ? `matchRank=${matchRankFilter}` : '']
       .filter(Boolean)
       .join('&')
+    const matchTitle = matchRankFilter === '1' ? '冠军记录' : matchRankFilter === '2' ? '亚军记录' : ''
 
     return {
-      title: dateFilter ? `${dateFilter} 的打球记录` : rangeFilter === 'recent' ? '最近打球记录' : '我的打球记录',
+      title: dateFilter ? `${dateFilter} 的打球记录` : matchTitle || (rangeFilter === 'recent' ? '最近打球记录' : '我的打球记录'),
       path: query ? `/pages/session-list/session-list?${query}` : '/pages/session-list/session-list',
     }
   },
   onShareTimeline() {
     const dateFilter = this.data.routeDateFilter
     const rangeFilter = this.data.routeRangeFilter
-    const query = [dateFilter ? `date=${dateFilter}` : '', rangeFilter ? `range=${rangeFilter}` : '']
+    const matchRankFilter = this.data.routeMatchRankFilter
+    const query = [dateFilter ? `date=${dateFilter}` : '', rangeFilter ? `range=${rangeFilter}` : '', matchRankFilter ? `matchRank=${matchRankFilter}` : '']
       .filter(Boolean)
       .join('&')
+    const matchTitle = matchRankFilter === '1' ? '冠军记录' : matchRankFilter === '2' ? '亚军记录' : ''
 
     return {
-      title: dateFilter ? `${dateFilter} 的打球记录` : rangeFilter === 'recent' ? '最近打球记录' : '我的打球记录',
+      title: dateFilter ? `${dateFilter} 的打球记录` : matchTitle || (rangeFilter === 'recent' ? '最近打球记录' : '我的打球记录'),
       query,
     }
   },
   async refreshSessions() {
       const dateFilter = this.data.routeDateFilter
       const rangeFilter = this.data.routeRangeFilter
-      const titleText = dateFilter ? dateFilter : rangeFilter === 'recent' ? '最近记录' : '记录'
+      const matchRankFilter = this.data.routeMatchRankFilter
+      const titleText = dateFilter
+        ? dateFilter
+        : matchRankFilter === '1'
+          ? '冠军记录'
+          : matchRankFilter === '2'
+            ? '亚军记录'
+            : rangeFilter === 'recent'
+              ? '最近记录'
+              : '记录'
 
       try {
         if (dateFilter) {
@@ -259,6 +275,7 @@ Page({
         const result = await listSessionsPageFromApi({
           page: this.data.page,
           pageSize: this.data.pageSize,
+          ...(matchRankFilter ? { matchRank: Number(matchRankFilter) } : {}),
         })
 
         this.setData({

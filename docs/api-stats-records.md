@@ -93,6 +93,8 @@ Authorization: Bearer <token>
     "totalCost": 5800,
     "currentStreakDays": 4,
     "longestStreakDays": 18,
+    "longestStreakStartDate": "2026-05-20",
+    "longestStreakEndDate": "2026-06-06",
     "longestSessionMinutes": 240,
     "longestSessionDate": "2026-06-13 19:30",
     "bestMonthYear": 2026,
@@ -122,6 +124,8 @@ Authorization: Bearer <token>
 | totalCost | number | 累计总花费（打球 + 球拍 + 穿线 + 球鞋） |
 | currentStreakDays | number | 当前连续打球天数；无记录或已断为 0 |
 | longestStreakDays | number | 历史最长连续打球天数；无记录为 0 |
+| longestStreakStartDate | string | 历史最长连续段起始日期 `YYYY-MM-DD`；无记录为空字符串 |
+| longestStreakEndDate | string | 历史最长连续段结束日期 `YYYY-MM-DD`；无记录为空字符串 |
 | longestSessionMinutes | number | 最长单次打球时长，单位分钟；无记录为 0 |
 | longestSessionDate | string | 最长单次发生时间 `YYYY-MM-DD HH:mm`；无记录为空字符串 |
 | bestMonthYear | number | 单月最高时长所在年份；无记录为 0 |
@@ -173,6 +177,8 @@ totalCost = 打球消费 + 球拍购买费用 + 穿线费用 + 球鞋购买费�
 
 - 全部历史记录中，连续有打球记录的最长天数
 - 同一天多次打球按一天计
+- 同时返回该连续段的起止日期（`longestStreakStartDate` / `longestStreakEndDate`）
+- 多段并列时，取较早达成的一段
 
 ### 8.5 最长单次
 

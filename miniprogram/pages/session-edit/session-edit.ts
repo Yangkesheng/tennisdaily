@@ -8,9 +8,11 @@ import {
 } from '../../models/session'
 import type { Racket } from '../../models/racket'
 import type { Shoe } from '../../models/shoe'
+import type { UserSettings } from '../../models/user-settings'
 import { getSessionConfigFromApi } from '../../services/session-config-service'
 import { listMyRacketsFromApi } from '../../services/racket-api-service'
 import { listShoesFromApi } from '../../services/shoe-api-service'
+import { getUserSettingsFromApi } from '../../services/user-settings-service'
 import {
   createDefaultSessionDraft,
   createSessionStartText,
@@ -52,6 +54,7 @@ interface SessionEditData {
   selectableShoes: Shoe[]
   shoeNames: string[]
   shoePickerIndex: number
+  userSettings: UserSettings | null
 }
 
 interface InputEvent {
@@ -84,6 +87,21 @@ const getRacketPickerNames = (rackets: Racket[], selectedRacketId: number) => {
 
 const getPrimaryRacket = (rackets: Racket[]) => {
   return rackets.find((racket) => racket.status === 1) || null
+}
+
+const applyUserSettingsToDraft = (draft: SessionDraft, settings: UserSettings | null): SessionDraft => {
+  if (!settings) {
+    return draft
+  }
+
+  const next = { ...draft }
+  if (settings.defaultCourtName) {
+    next.courtName = settings.defaultCourtName
+  }
+  if (settings.defaultDurationMinutes > 0) {
+    next.durationMinutes = settings.defaultDurationMinutes
+  }
+  return next
 }
 
 const getShoeDisplayName = (shoe: Shoe) => {
@@ -202,9 +220,13 @@ Page({
     selectableShoes: [],
     shoeNames: [],
     shoePickerIndex: -1,
+    userSettings: null,
   } as SessionEditData,
   async onLoad(options: { id?: string; date?: string }) {
-    await this.loadSessionConfig()
+    await Promise.all([
+      this.loadSessionConfig(),
+      this.loadUserSettings(),
+    ])
     this.loadRouteSession(options)
   },
   onShow() {
@@ -232,6 +254,16 @@ Page({
         title: error instanceof Error ? error.message : '类型配置加载失败',
         icon: 'none',
       })
+    }
+  },
+  async loadUserSettings() {
+    try {
+      const settings = await getUserSettingsFromApi()
+      this.setData({
+        userSettings: settings,
+      })
+    } catch {
+      // 默认配置加载失败不影响新增记录，保持默认值
     }
   },
   async loadSelectableRackets() {
@@ -302,18 +334,19 @@ Page({
     if (!options.id && options.date) {
       const draft = createDefaultSessionDraft()
       const startTime = getCurrentTimeText()
-      const configuredDraft = applyConfigToDraft({
+      const configuredDraft = applyUserSettingsToDraft(applyConfigToDraft({
         ...draft,
         date: createSessionStartText(options.date, startTime),
-      }, this.data.categoryOptions, this.data.subCategoryOptionsMap)
+      }, this.data.categoryOptions, this.data.subCategoryOptionsMap), this.data.userSettings)
+      const durationMinutes = configuredDraft.durationMinutes
 
       this.setData({
         draft: configuredDraft,
         startDate: options.date,
         ...createTimeState(startTime),
         costInput: '',
-        customDuration: '',
-        isCustomDuration: false,
+        customDuration: durationMinutes === 60 || durationMinutes === 120 || durationMinutes === 180 ? '' : formatDurationHours(durationMinutes),
+        isCustomDuration: durationMinutes !== 60 && durationMinutes !== 120 && durationMinutes !== 180,
         ...createTypeState(configuredDraft, this.data.subCategoryOptionsMap),
         isPageReady: true,
         ratingText: this.data.ratingTexts[configuredDraft.rating - 1],
@@ -325,15 +358,16 @@ Page({
     }
 
     if (!options.id) {
-      const draft = applyConfigToDraft(createDefaultSessionDraft(), this.data.categoryOptions, this.data.subCategoryOptionsMap)
+      const draft = applyUserSettingsToDraft(applyConfigToDraft(createDefaultSessionDraft(), this.data.categoryOptions, this.data.subCategoryOptionsMap), this.data.userSettings)
+      const durationMinutes = draft.durationMinutes
 
       this.setData({
         draft,
         startDate: getSessionDateText(draft.date),
         ...createTimeState(getSessionTimeText(draft.date)),
         costInput: '',
-        customDuration: '',
-        isCustomDuration: false,
+        customDuration: durationMinutes === 60 || durationMinutes === 120 || durationMinutes === 180 ? '' : formatDurationHours(durationMinutes),
+        isCustomDuration: durationMinutes !== 60 && durationMinutes !== 120 && durationMinutes !== 180,
         ...createTypeState(draft, this.data.subCategoryOptionsMap),
         isPageReady: true,
         ratingText: this.data.ratingTexts[draft.rating - 1],

@@ -8,9 +8,16 @@
     <view class="profile-title">
       <text class="brand">{{user.nickname || '我的'}}</text>
     </view>
-    <view wx:if="{{streakVisible}}" class="streak-badge">
-      <text class="streak-flame">🔥</text>
-      <text class="streak-text">已连续打球 {{streakDays}} 天</text>
+    <text wx:if="{{signature}}" class="profile-signature">{{signature}}</text>
+    <view class="badges-row">
+      <view wx:if="{{streakVisible}}" class="streak-badge">
+        <text class="streak-flame">🔥</text>
+        <text class="streak-text">已连续打球 {{streakDays}} 天</text>
+      </view>
+      <view wx:if="{{playingYearsText}}" class="age-badge">
+        <text class="age-icon">🎾</text>
+        <text class="age-text">球龄 {{playingYearsText}}</text>
+      </view>
     </view>
   </view>
 
@@ -114,6 +121,13 @@
       <text class="menu-icon privacy">🛡️</text>
       <view class="menu-copy">
         <text class="menu-label">隐私政策</text>
+      </view>
+      <text class="menu-arrow">›</text>
+    </view>
+    <view class="menu-row" bindtap="goSettings">
+      <text class="menu-icon settings">⚙️</text>
+      <view class="menu-copy">
+        <text class="menu-label">设置</text>
       </view>
       <text class="menu-arrow">›</text>
     </view>

@@ -147,6 +147,10 @@ export const listSessionsPageRemote = async (params: SessionPageParams): Promise
     queryItems.push(`date=${encodeURIComponent(params.date)}`)
   }
 
+  if (params.matchRank) {
+    queryItems.push(`matchRank=${params.matchRank}`)
+  }
+
   const result = await request<ApiSessionPageResult>({
     url: `/api/sessions?${queryItems.join('&')}`,
   })

@@ -1,6 +1,7 @@
 import type { PersonalRecords } from '../../models/records'
 import { requireLoginPage } from '../../services/auth-service'
 import { getPersonalRecordsFromApi } from '../../services/records-api-service'
+import { setCalendarJump } from '../../utils/calendar-nav'
 
 interface RecordsData {
   loading: boolean
@@ -10,6 +11,11 @@ interface RecordsData {
   totalCount: number
   totalHoursText: string
   totalCostText: string
+  bestMonthYear: number
+  bestMonthMonth: number
+  bestMonthCostYear: number
+  bestMonthCostMonth: number
+  streakEndDate: string
   maxSessionsText: string
   maxSessionsDetail: string
   longestStreakText: string
@@ -21,6 +27,18 @@ interface RecordsData {
   longestSessionDetail: string
   bestMonthText: string
   bestMonthDetail: string
+}
+
+interface RecordTapEvent {
+  currentTarget: {
+    dataset: {
+      type?: string
+      date?: string
+      year?: number
+      month?: number
+      end?: string
+    }
+  }
 }
 
 const dateOnly = (value: string) => {
@@ -43,6 +61,11 @@ const emptyData = (): RecordsData => ({
   totalCount: 0,
   totalHoursText: '0.0',
   totalCostText: '0',
+  bestMonthYear: 0,
+  bestMonthMonth: 0,
+  bestMonthCostYear: 0,
+  bestMonthCostMonth: 0,
+  streakEndDate: '',
   maxSessionsText: '暂无',
   maxSessionsDetail: '',
   longestStreakText: '暂无',
@@ -68,6 +91,11 @@ const buildView = (records: PersonalRecords): Omit<RecordsData, 'loading' | 'loa
     totalCount: records.totalCount,
     totalHoursText: (records.totalMinutes / 60).toFixed(1),
     totalCostText: formatMoneyText(records.totalCost),
+    bestMonthYear: records.bestMonthYear,
+    bestMonthMonth: records.bestMonthMonth,
+    bestMonthCostYear: records.bestMonthCostYear,
+    bestMonthCostMonth: records.bestMonthCostMonth,
+    streakEndDate: records.longestStreakEndDate,
     maxSessionsText: records.maxSessionsPerDay > 0 ? `${records.maxSessionsPerDay} 场` : '暂无',
     maxSessionsDetail: maxSessionsDate,
     longestStreakText: records.longestStreakDays > 0 ? `${records.longestStreakDays} 天` : '暂无',
@@ -122,6 +150,62 @@ Page({
   toggleExpenseVisible() {
     this.setData({
       isExpenseVisible: !this.data.isExpenseVisible,
+    })
+  },
+  onRecordTap(event: RecordTapEvent) {
+    const { type, date, year, month, end } = event.currentTarget.dataset
+
+    switch (type) {
+      case 'longest':
+      case 'maxDay': {
+        if (date) {
+          wx.navigateTo({
+            url: `/pages/session-list/session-list?date=${date}`,
+          })
+        }
+        break
+      }
+      case 'bestMonthMinutes':
+      case 'bestMonthCost': {
+        if (year && month) {
+          setCalendarJump(year, month)
+          wx.switchTab({
+            url: '/pages/calendar/calendar',
+          })
+        }
+        break
+      }
+      case 'streak': {
+        if (end) {
+          this.jumpCalendarByDate(end)
+        }
+        break
+      }
+      case 'champion': {
+        wx.navigateTo({
+          url: '/pages/session-list/session-list?matchRank=1',
+        })
+        break
+      }
+      case 'runnerUp': {
+        wx.navigateTo({
+          url: '/pages/session-list/session-list?matchRank=2',
+        })
+        break
+      }
+      default:
+        break
+    }
+  },
+  jumpCalendarByDate(dateText: string) {
+    const match = /^(\d{4})-(\d{2})/.exec(dateText)
+    if (!match) {
+      return
+    }
+
+    setCalendarJump(Number(match[1]), Number(match[2]))
+    wx.switchTab({
+      url: '/pages/calendar/calendar',
     })
   },
 })

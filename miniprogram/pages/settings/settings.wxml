@@ -1,0 +1,86 @@
+<navigation-bar title="设置" back="{{true}}" color="#05070c" background="transparent"></navigation-bar>
+<scroll-view class="page settings-page" scroll-y type="list">
+  <view wx:if="{{loading}}" class="settings-loading">
+    <text class="settings-loading-text">加载中...</text>
+  </view>
+
+  <view wx:elif="{{loadFailed}}" class="settings-error">
+    <text class="settings-error-text">设置加载失败</text>
+    <button class="settings-retry-button" bindtap="retrySettings">重新加载</button>
+  </view>
+
+  <block wx:else>
+    <view class="settings-card">
+      <view class="card-head">
+        <text class="card-title">记录偏好</text>
+      </view>
+      <view class="setting-row" bindtap="openCourtEditor">
+        <view class="setting-copy">
+          <text class="setting-label">默认球场</text>
+          <text class="setting-sub">新增记录时自动带入</text>
+        </view>
+        <text class="setting-value">{{defaultCourtName || '未设置'}}</text>
+        <text class="setting-arrow">›</text>
+      </view>
+      <view class="setting-row" bindtap="openDurationEditor">
+        <view class="setting-copy">
+          <text class="setting-label">默认时长</text>
+          <text class="setting-sub">新增记录时自动带入</text>
+        </view>
+        <text class="setting-value">{{defaultDurationText}}</text>
+        <text class="setting-arrow">›</text>
+      </view>
+    </view>
+  </block>
+</scroll-view>
+
+<view wx:if="{{showCourtEditor}}" class="settings-popup-mask" bindtap="closeCourtEditor">
+  <view class="settings-popup" catchtap="noop">
+    <view class="settings-popup-header">
+      <text class="settings-popup-title">默认球场</text>
+      <text class="settings-popup-close" bindtap="closeCourtEditor">×</text>
+    </view>
+    <text class="settings-popup-desc">新增记录时会自动带入这个球场，留空则每次手动填写。</text>
+    <input
+      class="settings-popup-input"
+      type="text"
+      value="{{courtDraft}}"
+      placeholder="比如：奥森网球场"
+      maxlength="20"
+      focus="{{courtInputFocus}}"
+      bindfocus="onCourtFocus"
+      bindinput="onCourtInput"
+      bindblur="syncCourtValue"
+      bindconfirm="syncCourtValue"
+    />
+    <button class="save-button" bindtap="saveCourt" loading="{{isSavingCourt}}" disabled="{{isSavingCourt}}">保存</button>
+  </view>
+</view>
+
+<view wx:if="{{showDurationEditor}}" class="settings-popup-mask" bindtap="closeDurationEditor">
+  <view class="settings-popup" catchtap="noop">
+    <view class="settings-popup-header">
+      <text class="settings-popup-title">默认时长</text>
+      <text class="settings-popup-close" bindtap="closeDurationEditor">×</text>
+    </view>
+    <text class="settings-popup-desc">新增记录时会自动带入，留空则保持默认 120 分钟。</text>
+    <view class="duration-preset-row">
+      <button
+        wx:for="{{[90, 120, 150, 180, 240]}}"
+        wx:key="*this"
+        class="duration-preset {{durationDraft === '' + item ? 'active' : ''}}"
+        data-minutes="{{item}}"
+        bindtap="selectDurationPreset"
+      >{{item}} 分钟</button>
+      <button class="duration-preset {{durationDraft === '' ? 'active' : ''}}" bindtap="selectDurationNone">未设置</button>
+    </view>
+    <input
+      class="settings-popup-input"
+      type="number"
+      value="{{durationDraft}}"
+      placeholder="自定义分钟数（30~600）"
+      bindinput="onDurationInput"
+    />
+    <button class="save-button" bindtap="saveDuration" loading="{{isSavingDuration}}" disabled="{{isSavingDuration}}">保存</button>
+  </view>
+</view>

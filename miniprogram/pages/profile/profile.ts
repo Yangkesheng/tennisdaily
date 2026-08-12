@@ -5,12 +5,15 @@ import { getCurrentUserFromApi, requireLoginPage, type UserProfile } from '../..
 import { getPersonalRecordsFromApi } from '../../services/records-api-service'
 import { getRacketStatsFromApi } from '../../services/racket-api-service'
 import { getShoeStatsFromApi } from '../../services/shoe-api-service'
+import { getUserSettingsFromApi } from '../../services/user-settings-service'
 
 interface ProfileData {
   user: UserProfile | null
+  signature: string
   isExpenseVisible: boolean
   streakDays: number
   streakVisible: boolean
+  playingYearsText: string
   totalCount: number
   totalHoursText: string
   totalCostText: string
@@ -28,6 +31,27 @@ const formatMoneyText = (value: number) => {
   return Number.isInteger(value) ? `${value}` : value.toFixed(1)
 }
 
+const getPlayingYearsText = (value?: number | null) => {
+  if (!value || value < 190000) {
+    return ''
+  }
+
+  const startYear = Math.floor(value / 100)
+  const startMonth = value % 100
+  const now = new Date()
+  let totalMonths = (now.getFullYear() - startYear) * 12 + (now.getMonth() + 1 - startMonth)
+  if (totalMonths < 0) {
+    totalMonths = 0
+  }
+
+  const years = Math.floor(totalMonths / 12)
+  const months = totalMonths % 12
+  if (years <= 0 && months <= 0) {
+    return ''
+  }
+  return months > 0 ? `${years} 年 ${months} 个月` : `${years} 年`
+}
+
 const buildRecordsView = (records: PersonalRecords) => {
   return {
     streakDays: records.currentStreakDays,
@@ -42,9 +66,11 @@ const buildRecordsView = (records: PersonalRecords) => {
 Component({
   data: {
     user: null,
+    signature: '',
     isExpenseVisible: true,
     streakDays: 0,
     streakVisible: false,
+    playingYearsText: '',
     totalCount: 0,
     totalHoursText: '0.0',
     totalCostText: '0',
@@ -79,16 +105,19 @@ Component({
       }
 
       try {
-        const [records, dashboard, shoeDashboard, user] = await Promise.all([
+        const [records, dashboard, shoeDashboard, user, settings] = await Promise.all([
           getPersonalRecordsFromApi(),
           getRacketStatsFromApi(),
           getShoeStatsFromApi(),
           getCurrentUserFromApi(),
+          getUserSettingsFromApi(),
         ])
 
         this.setData({
           ...buildRecordsView(records),
           user,
+          signature: settings.signature || '',
+          playingYearsText: getPlayingYearsText(user.startPlayingDate),
           dashboard,
           shoeDashboard,
           gearTotalCostText: formatMoneyText(dashboard.totalCost + shoeDashboard.totalCost),
@@ -133,6 +162,11 @@ Component({
     goPrivacy() {
       wx.navigateTo({
         url: '/pages/privacy/privacy',
+      })
+    },
+    goSettings() {
+      wx.navigateTo({
+        url: '/pages/settings/settings',
       })
     },
     onShareAppMessage() {

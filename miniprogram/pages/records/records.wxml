@@ -24,54 +24,61 @@
       <view class="card-head">
         <text class="card-title">个人记录</text>
       </view>
-      <view class="record-row">
+      <view class="record-row tappable" bindtap="onRecordTap" data-type="longest" data-date="{{longestSessionDetail}}">
         <text class="record-icon clock">⏱</text>
         <view class="record-copy">
           <text class="record-label">最长单次</text>
           <text class="record-value">{{longestSessionText}}<text wx:if="{{longestSessionDetail}}" class="record-detail"> · {{longestSessionDetail}}</text></text>
         </view>
+        <text class="record-arrow">›</text>
       </view>
-      <view class="record-row">
+      <view class="record-row tappable" bindtap="onRecordTap" data-type="bestMonthMinutes" data-year="{{bestMonthYear}}" data-month="{{bestMonthMonth}}">
         <text class="record-icon month">📅</text>
         <view class="record-copy">
           <text class="record-label">单月最高时长</text>
           <text class="record-value">{{bestMonthText}}<text wx:if="{{bestMonthDetail}}" class="record-detail"> · {{bestMonthDetail}}</text></text>
         </view>
+        <text class="record-arrow">›</text>
       </view>
-      <view class="record-row">
+      <view class="record-row tappable" bindtap="onRecordTap" data-type="maxDay" data-date="{{maxSessionsDetail}}">
         <text class="record-icon sessions">🎾</text>
         <view class="record-copy">
           <text class="record-label">单日最高场次</text>
           <text class="record-value">{{maxSessionsText}}<text wx:if="{{maxSessionsDetail}}" class="record-detail"> · {{maxSessionsDetail}}</text></text>
         </view>
+        <text class="record-arrow">›</text>
       </view>
-      <view class="record-row">
+      <view class="record-row tappable" bindtap="onRecordTap" data-type="streak" data-end="{{streakEndDate}}">
         <text class="record-icon streak">🔥</text>
         <view class="record-copy">
           <text class="record-label">历史最长连续</text>
           <text class="record-value">{{longestStreakText}}</text>
         </view>
+        <text class="record-arrow">›</text>
       </view>
-      <view class="record-row">
+      <view class="record-row tappable" bindtap="onRecordTap" data-type="bestMonthCost" data-year="{{bestMonthCostYear}}" data-month="{{bestMonthCostMonth}}">
         <text class="record-icon cost">💰</text>
         <view class="record-copy">
           <text class="record-label">单月最高花费</text>
           <text class="record-value">{{bestMonthCostText}}<text wx:if="{{bestMonthCostDetail}}" class="record-detail"> · {{bestMonthCostDetail}}</text></text>
         </view>
+        <text class="record-arrow">›</text>
       </view>
-      <view class="record-row">
+      <view class="record-row tappable" bindtap="onRecordTap" data-type="champion">
         <text class="record-icon champion">🏆</text>
         <view class="record-copy">
           <text class="record-label">冠军次数</text>
           <text class="record-value">{{championCountText}}</text>
         </view>
+        <text class="record-arrow">›</text>
       </view>
-      <view class="record-row">
+      <view class="record-row tappable" bindtap="onRecordTap" data-type="runnerUp">
         <text class="record-icon runnerup">🥈</text>
         <view class="record-copy">
           <text class="record-label">亚军次数</text>
           <text class="record-value">{{runnerUpCountText}}</text>
         </view>
+        <text class="record-arrow">›</text>
       </view>
     </view>
 

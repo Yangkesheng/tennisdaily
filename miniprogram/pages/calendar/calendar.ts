@@ -2,6 +2,7 @@ import type { StatsBreakdownItem, StatsChartsResult, StatsPeriod } from '../../m
 import { getToken, redirectToLogin } from '../../services/auth-service'
 import { getSessionCalendarFromApi, getSessionYearCalendarFromApi, getTodayText } from '../../services/session-service'
 import { getStatsChartsFromApi } from '../../services/stats-api-service'
+import { takeCalendarJump } from '../../utils/calendar-nav'
 
 interface PickerChangeEvent {
   detail: {
@@ -461,6 +462,20 @@ Component({
   } as CalendarData,
   pageLifetimes: {
     show() {
+      const jump = takeCalendarJump()
+      if (jump) {
+        this.setData({
+          activeTab: 'calendar',
+          calendarPeriod: 'month',
+          currentYear: jump.year,
+          currentMonth: jump.month,
+          yearPickerIndex: getYearPickerIndex(this.data.yearOptions, jump.year),
+          monthPickerIndex: getMonthPickerIndex(jump.month),
+        })
+        calendarPeriodState = 'month'
+        this.refreshCalendar(jump.year, jump.month, 'month')
+        return
+      }
       this.refreshCalendar(this.data.currentYear, this.data.currentMonth, calendarPeriodState)
     },
   },

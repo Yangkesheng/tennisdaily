@@ -8,6 +8,8 @@ interface ApiPersonalRecords {
   totalCost?: number | null
   currentStreakDays?: number | null
   longestStreakDays?: number | null
+  longestStreakStartDate?: string | null
+  longestStreakEndDate?: string | null
   longestSessionMinutes?: number | null
   longestSessionDate?: string | null
   bestMonthYear?: number | null
@@ -34,6 +36,8 @@ const normalizeRecords = (records: ApiPersonalRecords | null | undefined): Perso
   totalCost: normalizeNumber(records?.totalCost),
   currentStreakDays: normalizeNumber(records?.currentStreakDays),
   longestStreakDays: normalizeNumber(records?.longestStreakDays),
+  longestStreakStartDate: records?.longestStreakStartDate || '',
+  longestStreakEndDate: records?.longestStreakEndDate || '',
   longestSessionMinutes: normalizeNumber(records?.longestSessionMinutes),
   longestSessionDate: records?.longestSessionDate || '',
   bestMonthYear: normalizeNumber(records?.bestMonthYear),

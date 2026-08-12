@@ -4,6 +4,8 @@ export interface PersonalRecords {
   totalCost: number
   currentStreakDays: number
   longestStreakDays: number
+  longestStreakStartDate: string
+  longestStreakEndDate: string
   longestSessionMinutes: number
   longestSessionDate: string
   bestMonthYear: number

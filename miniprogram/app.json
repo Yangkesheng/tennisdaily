@@ -6,6 +6,7 @@
     "pages/profile/profile",
     "pages/user-profile/user-profile",
     "pages/records/records",
+    "pages/settings/settings",
     "pages/rackets/rackets",
     "pages/racket-detail/racket-detail",
     "pages/racket-library/racket-library",

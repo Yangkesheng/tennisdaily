@@ -89,6 +89,24 @@
 - 正常：展示数据
 - 空数据：数值展示 0 / “暂无”，不展示异常态
 
+### 4.3 记录点击跳转
+
+每条个人记录支持点击跳转到对应内容，累计数据卡不可点。
+
+| 记录 | 跳转目标 |
+|---|---|
+| 最长单次 | 记录列表 `?date=YYYY-MM-DD`，查看当天记录 |
+| 单月最高时长 / 单月最高花费 | 日历页，定位到对应年月 |
+| 单日最高场次 | 记录列表 `?date=YYYY-MM-DD`，查看当天记录 |
+| 历史最长连续 | 日历页，定位到连续段结束日期所在月份 |
+| 冠军次数 / 亚军次数 | 记录列表 `?matchRank=1` / `?matchRank=2`，查看对应成绩记录 |
+
+实现说明：
+
+- 日历是 tab 页，`switchTab` 不能带参数，使用轻量模块级状态（`utils/calendar-nav.ts`）传递“定位到某年某月”，日历 `show` 时消费。
+- 冠军/亚军列表依赖 `GET /api/sessions?matchRank=N` 过滤参数（后端新增）。
+- 历史最长连续跳转依赖 `longestStreakEndDate` 字段（后端新增）。
+
 ---
 
 ## 5. 数据口径
@@ -144,8 +162,9 @@
 ### 8.1 已实现
 
 - 后端 `GET /api/stats/records`（累计、连续天数、历史最长连续、最长单次、单月最高时长/花费、单日最高场次、冠军/亚军次数）
+- 后端 `GET /api/sessions` 支持 `matchRank` 过滤；`GET /api/stats/records` 返回历史最长连续起止日期
 - “我的”页重做（用户头部、我的坚持、我的装备、常用功能；个人记录入口收敛到常用功能）
-- 个人记录页 `pages/records/records`
+- 个人记录页 `pages/records/records`，每条记录支持点击跳转
 - 前端 model 与 service：`models/records.ts`、`services/records-api-service.ts`
 
 ### 8.2 后续可选

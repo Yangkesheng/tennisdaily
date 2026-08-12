@@ -78,6 +78,25 @@
   white-space: nowrap;
 }
 
+.profile-signature {
+  display: block;
+  max-width: 100%;
+  color: rgba(13, 23, 40, 0.52);
+  font-size: 24rpx;
+  font-weight: 700;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.badges-row {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-wrap: wrap;
+  gap: 14rpx;
+}
+
 .streak-badge {
   display: inline-flex;
   align-items: center;
@@ -94,6 +113,26 @@
 
 .streak-text {
   color: #c15f1d;
+  font-size: 24rpx;
+  font-weight: 800;
+}
+
+.age-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 10rpx;
+  padding: 10rpx 24rpx;
+  border-radius: 999rpx;
+  background: rgba(80, 203, 112, 0.14);
+}
+
+.age-icon {
+  font-size: 24rpx;
+  line-height: 1;
+}
+
+.age-text {
+  color: #2f7d4f;
   font-size: 24rpx;
   font-weight: 800;
 }
@@ -348,6 +387,10 @@
 
 .menu-icon.privacy {
   background: rgba(80, 203, 112, 0.18);
+}
+
+.menu-icon.settings {
+  background: rgba(160, 170, 180, 0.22);
 }
 
 .menu-copy {
