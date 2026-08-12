@@ -24,7 +24,7 @@
   padding: 0;
   align-items: center;
   justify-content: center;
-  overflow: hidden;
+  overflow: visible;
   border: 0;
   border-radius: 50%;
   background: transparent;
@@ -70,7 +70,7 @@
   display: block;
   max-width: 100%;
   font-size: 42rpx;
-  font-weight: 400;
+  font-weight: 700;
   letter-spacing: 2rpx;
   overflow: hidden;
   text-align: center;
@@ -78,124 +78,302 @@
   white-space: nowrap;
 }
 
-.brand-line {
-  display: none;
+.streak-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 10rpx;
+  padding: 10rpx 24rpx;
+  border-radius: 999rpx;
+  background: rgba(255, 120, 40, 0.14);
 }
 
-.dashboard-card {
-  padding: 34rpx;
-  border-radius: 34rpx;
-  background: rgba(255, 255, 255, 0.55);
-  backdrop-filter: blur(20px);
-  box-shadow: inset 0 0 0 1rpx rgba(255, 255, 255, 0.8);
-}
-
-.dashboard-card:active {
-  opacity: 0.78;
-}
-
-.dashboard-card + .dashboard-card {
-  margin-top: 22rpx;
-}
-
-.dashboard-row {
-  display: flex;
-  justify-content: space-between;
-  gap: 24rpx;
-}
-
-.metric-label {
-  color: rgba(13, 23, 40, 0.52);
+.streak-flame {
   font-size: 24rpx;
-  font-weight: 700;
-}
-
-.metric-value-row {
-  display: flex;
-  align-items: flex-end;
-  margin-top: 12rpx;
-}
-
-.metric-value {
-  font-size: 54rpx;
-  font-weight: 900;
   line-height: 1;
 }
 
-.metric-unit {
-  margin-left: 8rpx;
-  margin-bottom: 6rpx;
+.streak-text {
+  color: #c15f1d;
   font-size: 24rpx;
-  font-weight: 700;
+  font-weight: 800;
 }
 
-.cost-list {
-  display: flex;
-  flex-direction: column;
-  gap: 16rpx;
-  margin-top: 34rpx;
+.content-card {
+  padding: 30rpx 30rpx 28rpx;
+  border-radius: 34rpx;
+  background: rgba(255, 255, 255, 0.72);
+  backdrop-filter: blur(20px);
+  box-shadow: inset 0 0 0 1rpx rgba(255, 255, 255, 0.66);
 }
 
-.cost-row {
+.content-card + .content-card {
+  margin-top: 22rpx;
+}
+
+.content-card:active {
+  opacity: 0.86;
+}
+
+.card-head {
   display: flex;
   align-items: center;
   justify-content: space-between;
   gap: 20rpx;
-  color: rgba(13, 23, 40, 0.72);
+}
+
+.card-title {
+  color: rgba(13, 23, 40, 0.78);
   font-size: 28rpx;
   font-weight: 800;
 }
 
-.cost-row text:last-child {
-  color: #05070c;
+.card-sub {
+  color: rgba(13, 23, 40, 0.48);
+  font-size: 22rpx;
+  font-weight: 600;
 }
 
-.enter-tip {
+.stats-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 16rpx;
+  margin-top: 24rpx;
+}
+
+.stat-cell {
+  min-width: 0;
+  padding: 24rpx;
+  border-radius: 26rpx;
+  background: rgba(255, 255, 255, 0.42);
+}
+
+.stat-value-row {
+  display: flex;
+  align-items: center;
+  min-width: 0;
+}
+
+.stat-value {
+  font-size: 44rpx;
+  font-weight: 900;
+  line-height: 1.1;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.stat-unit {
+  flex: none;
+  margin-left: 6rpx;
+  color: rgba(13, 23, 40, 0.55);
+  font-size: 22rpx;
+  font-weight: 700;
+}
+
+.stat-label {
   display: block;
-  margin-top: 18rpx;
-  color: #3778db;
-  font-size: 26rpx;
+  margin-top: 10rpx;
+  color: rgba(13, 23, 40, 0.52);
+  font-size: 22rpx;
+  font-weight: 600;
+}
+
+.expense-eye {
+  flex: none;
+  margin-left: 10rpx;
+  color: rgba(13, 23, 40, 0.42);
+  font-size: 24rpx;
+  font-weight: 800;
+}
+
+.gear-total {
+  display: flex;
+  align-items: baseline;
+  gap: 8rpx;
+}
+
+.gear-total-label {
+  color: rgba(13, 23, 40, 0.48);
+  font-size: 22rpx;
+  font-weight: 600;
+}
+
+.gear-total-value {
+  color: #05070c;
+  font-size: 34rpx;
   font-weight: 900;
 }
 
-.menu-card {
-  margin-top: 22rpx;
-  padding: 30rpx 34rpx;
-  border-radius: 34rpx;
-  background: rgba(255, 255, 255, 0.55);
-  backdrop-filter: blur(20px);
-  box-shadow: inset 0 0 0 1rpx rgba(255, 255, 255, 0.8);
-  box-sizing: border-box;
+.gear-row {
+  display: flex;
+  align-items: center;
+  gap: 20rpx;
+  margin-top: 18rpx;
+  padding: 22rpx;
+  border-radius: 24rpx;
+  background: rgba(255, 255, 255, 0.42);
 }
 
-.menu-card:active {
-  opacity: 0.78;
+.gear-row:active {
+  opacity: 0.72;
+}
+
+.gear-mark {
+  flex: none;
+  width: 68rpx;
+  height: 68rpx;
+  border-radius: 20rpx;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 36rpx;
+}
+
+.gear-mark.t {
+  background: rgba(77, 157, 246, 0.18);
+}
+
+.gear-mark.s {
+  background: rgba(80, 203, 112, 0.18);
+}
+
+.racket-icon {
+  position: relative;
+  width: 44rpx;
+  height: 52rpx;
+}
+
+.racket-head {
+  position: absolute;
+  top: 0;
+  left: 50%;
+  width: 40rpx;
+  height: 34rpx;
+  border: 5rpx solid #3778db;
+  border-radius: 50%;
+  box-sizing: border-box;
+  transform: translateX(-50%);
+}
+
+.racket-string-v,
+.racket-string-h {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  background: #3778db;
+  transform: translate(-50%, -50%);
+}
+
+.racket-string-v {
+  width: 2rpx;
+  height: 22rpx;
+}
+
+.racket-string-h {
+  width: 28rpx;
+  height: 2rpx;
+}
+
+.racket-handle {
+  position: absolute;
+  top: 30rpx;
+  left: 50%;
+  width: 8rpx;
+  height: 20rpx;
+  border-radius: 4rpx;
+  background: #3778db;
+  transform: translateX(-50%);
+}
+
+.gear-copy {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 4rpx;
+}
+
+.gear-name {
+  font-size: 28rpx;
+  font-weight: 800;
+}
+
+.gear-sub {
+  color: rgba(13, 23, 40, 0.52);
+  font-size: 22rpx;
+  font-weight: 600;
+}
+
+.gear-arrow {
+  flex: none;
+  color: rgba(13, 23, 40, 0.42);
+  font-size: 36rpx;
+  font-weight: 700;
+  line-height: 1;
 }
 
 .menu-row {
   display: flex;
   align-items: center;
-  justify-content: space-between;
   gap: 20rpx;
+  padding: 24rpx 2rpx;
+}
+
+.menu-row + .menu-row {
+  border-top: 1rpx solid rgba(13, 23, 40, 0.08);
+}
+
+.menu-icon {
+  flex: none;
+  width: 64rpx;
+  height: 64rpx;
+  border-radius: 20rpx;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 30rpx;
+}
+
+.menu-icon.user {
+  background: rgba(55, 120, 219, 0.16);
+}
+
+.menu-icon.records {
+  background: rgba(255, 201, 40, 0.22);
+}
+
+.menu-icon.feedback {
+  background: rgba(43, 197, 216, 0.16);
+}
+
+.menu-icon.privacy {
+  background: rgba(80, 203, 112, 0.18);
+}
+
+.menu-copy {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 4rpx;
 }
 
 .menu-label {
   color: #05070c;
-  font-size: 30rpx;
-  font-weight: 900;
+  font-size: 28rpx;
+  font-weight: 800;
+}
+
+.menu-sub {
+  color: rgba(13, 23, 40, 0.48);
+  font-size: 22rpx;
+  font-weight: 600;
 }
 
 .menu-arrow {
+  flex: none;
   color: rgba(13, 23, 40, 0.42);
-  font-size: 40rpx;
+  font-size: 36rpx;
   font-weight: 700;
   line-height: 1;
-}
-
-.menu-tip {
-  display: block;
-  margin-top: 12rpx;
-  color: rgba(13, 23, 40, 0.52);
-  font-size: 24rpx;
-  font-weight: 600;
 }

@@ -1,0 +1,101 @@
+<navigation-bar title="个人记录" back="{{true}}" color="#05070c" background="transparent"></navigation-bar>
+<scroll-view class="page records-page" scroll-y type="list">
+  <view wx:if="{{loading}}" class="records-loading">
+    <text class="records-loading-text">加载中...</text>
+  </view>
+
+  <view wx:elif="{{loadFailed}}" class="records-error">
+    <text class="records-error-text">个人记录加载失败</text>
+    <button class="records-retry-button" bindtap="retryRecords">重新加载</button>
+  </view>
+
+  <block wx:else>
+    <view class="streak-hero">
+      <text class="streak-flame">🔥</text>
+      <view class="streak-value-row">
+        <text class="streak-value">{{streakDays}}</text>
+        <text class="streak-unit">天</text>
+      </view>
+      <text class="streak-label">连续打球天数</text>
+      <text class="streak-tip">今天还没打不打断，从昨天往前连续计算</text>
+    </view>
+
+    <view class="records-card">
+      <view class="card-head">
+        <text class="card-title">个人记录</text>
+      </view>
+      <view class="record-row">
+        <text class="record-icon clock">⏱</text>
+        <view class="record-copy">
+          <text class="record-label">最长单次</text>
+          <text class="record-value">{{longestSessionText}}<text wx:if="{{longestSessionDetail}}" class="record-detail"> · {{longestSessionDetail}}</text></text>
+        </view>
+      </view>
+      <view class="record-row">
+        <text class="record-icon month">📅</text>
+        <view class="record-copy">
+          <text class="record-label">单月最高时长</text>
+          <text class="record-value">{{bestMonthText}}<text wx:if="{{bestMonthDetail}}" class="record-detail"> · {{bestMonthDetail}}</text></text>
+        </view>
+      </view>
+      <view class="record-row">
+        <text class="record-icon sessions">🎾</text>
+        <view class="record-copy">
+          <text class="record-label">单日最高场次</text>
+          <text class="record-value">{{maxSessionsText}}<text wx:if="{{maxSessionsDetail}}" class="record-detail"> · {{maxSessionsDetail}}</text></text>
+        </view>
+      </view>
+      <view class="record-row">
+        <text class="record-icon streak">🔥</text>
+        <view class="record-copy">
+          <text class="record-label">历史最长连续</text>
+          <text class="record-value">{{longestStreakText}}</text>
+        </view>
+      </view>
+      <view class="record-row">
+        <text class="record-icon cost">💰</text>
+        <view class="record-copy">
+          <text class="record-label">单月最高花费</text>
+          <text class="record-value">{{bestMonthCostText}}<text wx:if="{{bestMonthCostDetail}}" class="record-detail"> · {{bestMonthCostDetail}}</text></text>
+        </view>
+      </view>
+      <view class="record-row">
+        <text class="record-icon champion">🏆</text>
+        <view class="record-copy">
+          <text class="record-label">冠军次数</text>
+          <text class="record-value">{{championCountText}}</text>
+        </view>
+      </view>
+      <view class="record-row">
+        <text class="record-icon runnerup">🥈</text>
+        <view class="record-copy">
+          <text class="record-label">亚军次数</text>
+          <text class="record-value">{{runnerUpCountText}}</text>
+        </view>
+      </view>
+    </view>
+
+    <view class="records-card">
+      <view class="card-head">
+        <text class="card-title">累计数据</text>
+      </view>
+      <view class="summary-grid">
+        <view class="summary-cell">
+          <text class="summary-value">{{totalCount}}<text class="summary-unit">次</text></text>
+          <text class="summary-label">累计场次</text>
+        </view>
+        <view class="summary-cell">
+          <text class="summary-value">{{totalHoursText}}<text class="summary-unit">小时</text></text>
+          <text class="summary-label">累计时长</text>
+        </view>
+        <view class="summary-cell">
+          <view class="summary-value-row">
+            <text class="summary-value">{{isExpenseVisible ? totalCostText : '****'}}<text class="summary-unit">元</text></text>
+            <text class="summary-eye" catchtap="toggleExpenseVisible">{{isExpenseVisible ? '◉' : '◎'}}</text>
+          </view>
+          <text class="summary-label">累计花费</text>
+        </view>
+      </view>
+    </view>
+  </block>
+</scroll-view>

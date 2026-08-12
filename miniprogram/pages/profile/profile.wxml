@@ -8,56 +8,114 @@
     <view class="profile-title">
       <text class="brand">{{user.nickname || '我的'}}</text>
     </view>
-    <view class="brand-line"></view>
+    <view wx:if="{{streakVisible}}" class="streak-badge">
+      <text class="streak-flame">🔥</text>
+      <text class="streak-text">已连续打球 {{streakDays}} 天</text>
+    </view>
   </view>
 
-  <view class="dashboard-card" bindtap="goRackets">
-    <view class="dashboard-row">
-      <view>
-        <text class="metric-label">球拍</text>
-        <view class="metric-value-row">
-          <text class="metric-value">{{dashboard.racketCount}}</text>
-          <text class="metric-unit">把</text>
+  <view class="content-card">
+    <view class="card-head">
+      <text class="card-title">我的坚持</text>
+      <text class="card-sub">累计数据</text>
+    </view>
+    <view class="stats-grid">
+      <view class="stat-cell">
+        <view class="stat-value-row">
+          <text class="stat-value">{{totalCount}}</text>
+          <text class="stat-unit">次</text>
+        </view>
+        <text class="stat-label">累计场次</text>
+      </view>
+      <view class="stat-cell">
+        <view class="stat-value-row">
+          <text class="stat-value">{{totalHoursText}}</text>
+          <text class="stat-unit">小时</text>
+        </view>
+        <text class="stat-label">累计时长</text>
+      </view>
+      <view class="stat-cell">
+        <view class="stat-value-row">
+          <text class="stat-value">{{isExpenseVisible ? totalCostText : '****'}}</text>
+          <text class="stat-unit">元</text>
+          <text class="expense-eye" catchtap="toggleExpenseVisible">{{isExpenseVisible ? '◉' : '◎'}}</text>
+        </view>
+        <text class="stat-label">累计花费</text>
+      </view>
+      <view class="stat-cell">
+        <view class="stat-value-row">
+          <text class="stat-value">{{championCount}}</text>
+          <text class="stat-unit">次</text>
+        </view>
+        <text class="stat-label">冠军次数</text>
+      </view>
+    </view>
+  </view>
+
+  <view class="content-card gear-card">
+    <view class="card-head">
+      <text class="card-title">我的装备</text>
+      <view class="gear-total">
+        <text class="gear-total-label">总投入</text>
+        <text class="gear-total-value">¥{{gearTotalCostText}}</text>
+      </view>
+    </view>
+    <view class="gear-row" bindtap="goRackets">
+      <view class="gear-mark t">
+        <view class="racket-icon">
+          <view class="racket-head">
+            <view class="racket-string-v"></view>
+            <view class="racket-string-h"></view>
+          </view>
+          <view class="racket-handle"></view>
         </view>
       </view>
-    </view>
-    <view class="cost-list">
-      <view class="cost-row">
-        <text>球拍总消费</text>
-        <text>¥{{dashboard.racketCostText}}</text>
+      <view class="gear-copy">
+        <text class="gear-name">球拍</text>
+        <text class="gear-sub">{{dashboard.racketCount}} 把 · 含穿线 ¥{{dashboard.racketCostText}}</text>
       </view>
-      <view class="cost-row">
-        <text>穿线总消费</text>
-        <text>¥{{dashboard.stringingCostText}}</text>
-      </view>
+      <text class="gear-arrow">›</text>
     </view>
-    <text class="enter-tip">查看球拍</text>
+    <view class="gear-row" bindtap="goShoes">
+      <view class="gear-mark s">👟</view>
+      <view class="gear-copy">
+        <text class="gear-name">球鞋</text>
+        <text class="gear-sub">{{shoeDashboard.shoeCount}} 双 · ¥{{shoeDashboard.shoeCostText}}</text>
+      </view>
+      <text class="gear-arrow">›</text>
+    </view>
   </view>
 
-  <view class="dashboard-card" bindtap="goShoes">
-    <view class="dashboard-row">
-      <view>
-        <text class="metric-label">球鞋</text>
-        <view class="metric-value-row">
-          <text class="metric-value">{{shoeDashboard.shoeCount}}</text>
-          <text class="metric-unit">双</text>
-        </view>
+  <view class="content-card menu-card">
+    <view class="menu-row" bindtap="goUserProfile">
+      <text class="menu-icon user">👤</text>
+      <view class="menu-copy">
+        <text class="menu-label">个人信息</text>
+        <text class="menu-sub">头像、昵称、退出登录</text>
       </view>
-    </view>
-    <view class="cost-list">
-      <view class="cost-row">
-        <text>球鞋总消费</text>
-        <text>¥{{shoeDashboard.shoeCostText}}</text>
-      </view>
-    </view>
-    <text class="enter-tip">查看球鞋</text>
-  </view>
-
-  <view class="menu-card" bindtap="goFeedback">
-    <view class="menu-row">
-      <text class="menu-label">意见反馈</text>
       <text class="menu-arrow">›</text>
     </view>
-    <text class="menu-tip">告诉我们你的想法和建议</text>
+    <view class="menu-row" bindtap="goRecords">
+      <text class="menu-icon records">🏆</text>
+      <view class="menu-copy">
+        <text class="menu-label">个人记录</text>
+      </view>
+      <text class="menu-arrow">›</text>
+    </view>
+    <view class="menu-row" bindtap="goFeedback">
+      <text class="menu-icon feedback">💬</text>
+      <view class="menu-copy">
+        <text class="menu-label">意见反馈</text>
+        <text class="menu-sub">告诉我们你的想法和建议</text>
+      </view>
+      <text class="menu-arrow">›</text>
+    </view>
+    <view class="menu-row" bindtap="goPrivacy">
+      <text class="menu-icon privacy">🛡️</text>
+      <view class="menu-copy">
+        <text class="menu-label">隐私政策</text>
+      </view>
+      <text class="menu-arrow">›</text>
+    </view>
   </view>
 </scroll-view>
