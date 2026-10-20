@@ -1,5 +1,5 @@
 <navigation-bar title="" back="{{false}}" color="#0d1728" background="transparent"></navigation-bar>
-<scroll-view class="page index-page" scroll-y type="list">
+<scroll-view class="page index-page" scroll-y type="list" bindscroll="onFabActivate" bindtouchstart="onFabActivate">
   <view class="hero">
     <view>
       <text class="title">网球</text>
@@ -200,6 +200,6 @@
     <text wx:else class="recent-content">{{latestSessionSummary}}</text>
     <button wx:if="{{!isLoggedIn}}" class="recent-login-button" catchtap="goLogin">登录同步记录</button>
   </view>
-
-  <button class="bottom-action" bindtap="goCreateSession">+</button>
 </scroll-view>
+
+<button class="fab fab--home {{fabShown ? 'fab-shown' : ''}}" bindtap="goCreateSession">＋ 记录打球</button>

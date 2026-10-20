@@ -1,5 +1,5 @@
 <navigation-bar title="我的球拍" back="{{true}}" color="#05070c" background="transparent"></navigation-bar>
-<scroll-view class="page rackets-page" scroll-y type="list">
+<scroll-view class="page rackets-page" scroll-y type="list" bindscroll="onFabActivate" bindtouchstart="onFabActivate">
   <view wx:if="{{visibleRackets.length}}" class="racket-list">
     <view wx:for="{{visibleRackets}}" wx:key="id" class="swipe-row">
       <button wx:if="{{openedRacketId === item.id}}" class="delete-action" data-id="{{item.id}}" catchtap="deleteRacket">删除</button>
@@ -39,6 +39,6 @@
   <view wx:else class="empty-equipment">
     <text>暂无球拍</text>
   </view>
-
-  <button class="add-racket" bindtap="addRacket">+ 新增球拍</button>
 </scroll-view>
+
+<button class="fab {{fabShown ? 'fab-shown' : ''}}" bindtap="addRacket">＋ 新增球拍</button>

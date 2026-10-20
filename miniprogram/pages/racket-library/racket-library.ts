@@ -1,6 +1,7 @@
-import type { RacketBrand, RacketLibraryItem, RacketLibraryStatsBrand, RacketSeries } from '../../models/racket'
+import { RACKET_REVIEW_PENDING, RACKET_REVIEW_APPROVED } from '../../models/racket'
+import type { RacketBrand, RacketLibraryItem, RacketLibraryStatsBrand, RacketSeries, RacketReviewStatus } from '../../models/racket'
 import { getAdminPermissionsFromApi } from '../../services/auth-service'
-import { getRacketLibraryStatsFromApi, listRacketLibraryItemsFromApi } from '../../services/racket-api-service'
+import { getRacketLibraryStatsFromApi, listRacketLibraryItemsFromApi, reviewRacketLibraryFromApi } from '../../services/racket-api-service'
 
 interface RacketLibraryData {
   brands: RacketBrand[]
@@ -13,6 +14,10 @@ interface RacketLibraryData {
   activeRequestKey: string
   showBrands: boolean
   isAdmin: boolean
+  reviewFilter: string
+  saving: boolean
+  savingId: number
+  reviewApproved: number
 }
 
 const encode = (value: string | number) => {
@@ -54,9 +59,15 @@ Component({
     activeRequestKey: '',
     showBrands: false,
     isAdmin: false,
+    reviewFilter: 'all',
+    saving: false,
+    savingId: 0,
+    reviewApproved: RACKET_REVIEW_APPROVED,
   } as RacketLibraryData,
   lifetimes: {
     attached() {
+      for (const key of Object.keys(itemCache)) delete itemCache[key]
+      for (const key of Object.keys(seriesCache)) delete seriesCache[Number(key)]
       this.loadLibrary()
       this.loadAdminStatus()
     },
@@ -74,6 +85,34 @@ Component({
     },
   },
   methods: {
+    reviewStatus(): RacketReviewStatus | undefined {
+      return this.data.reviewFilter === 'pending' ? RACKET_REVIEW_PENDING : this.data.reviewFilter === 'approved' ? RACKET_REVIEW_APPROVED : undefined
+    },
+    async selectReviewFilter(event: WechatMiniprogram.TouchEvent) {
+      if (this.data.loadingBrands || this.data.loadingItems || this.data.saving) return
+      const reviewFilter = String(event.currentTarget.dataset.filter)
+      if (!this.data.isAdmin || !['all', 'pending', 'approved'].includes(reviewFilter)) return
+      this.setData({ reviewFilter })
+      for (const key of Object.keys(itemCache)) delete itemCache[key]
+      for (const key of Object.keys(seriesCache)) delete seriesCache[Number(key)]
+      await this.loadLibrary()
+    },
+    async reviewRacket(event: WechatMiniprogram.TouchEvent) {
+      if (this.data.saving || !this.data.isAdmin) return
+      const item = this.data.visibleItems[Number(event.currentTarget.dataset.index)]
+      if (!item) return
+      this.setData({ saving: true, savingId: item.id })
+      try {
+        await reviewRacketLibraryFromApi(item.id, item.isReviewed === RACKET_REVIEW_APPROVED ? RACKET_REVIEW_PENDING : RACKET_REVIEW_APPROVED)
+        for (const key of Object.keys(itemCache)) delete itemCache[key]
+        await this.loadLibrary()
+        wx.showToast({ title: '审核状态已更新', icon: 'success' })
+      } catch (error) {
+        wx.showToast({ title: error instanceof Error ? error.message : '审核失败', icon: 'none' })
+      } finally {
+        this.setData({ saving: false, savingId: 0 })
+      }
+    },
     async loadAdminStatus() {
       try {
         const permissions = await getAdminPermissionsFromApi()
@@ -93,7 +132,7 @@ Component({
 
       // 管理员新增球拍返回后：刷新品牌下拉，并清空缓存重新拉取当前品牌条目。
       try {
-        const stats = await getRacketLibraryStatsFromApi()
+        const stats = await getRacketLibraryStatsFromApi(this.reviewStatus())
         const brands = mapStatsToBrands(stats)
         cacheStatsSeries(stats)
         const currentBrandId = this.data.brands[this.data.activeBrandIndex]?.id || 0
@@ -146,13 +185,16 @@ Component({
       })
 
       try {
-        const stats = await getRacketLibraryStatsFromApi()
+        const stats = await getRacketLibraryStatsFromApi(this.reviewStatus())
         const brands = mapStatsToBrands(stats)
         cacheStatsSeries(stats)
 
         this.setData({
           brands,
           activeBrandIndex: 0,
+          series: [],
+          visibleItems: [],
+          activeRequestKey: '',
           activeSeriesIndex: getFirstSeriesId(brands[0]?.id || 0) ? 0 : -1,
         })
 
@@ -175,7 +217,7 @@ Component({
         return
       }
 
-      const cacheKey = `${brandId}-${seriesId}`
+      const cacheKey = `${brandId}-${seriesId}-${this.data.reviewFilter}`
       const cachedItems = itemCache[cacheKey]
       const cachedSeries = seriesCache[brandId] || []
 
@@ -194,7 +236,7 @@ Component({
       })
 
       try {
-        const items = await listRacketLibraryItemsFromApi(brandId, seriesId || undefined)
+        const items = await listRacketLibraryItemsFromApi(brandId, seriesId || undefined, this.reviewStatus())
         const series = seriesCache[brandId] || []
 
         seriesCache[brandId] = series
@@ -279,6 +321,10 @@ Component({
         return
       }
 
+      if (item.isReviewed !== RACKET_REVIEW_APPROVED) {
+        wx.showToast({ title: '请先审核通过再添加', icon: 'none' })
+        return
+      }
       skipRefreshOnReturn = true
       wx.navigateTo({
         url:

@@ -217,3 +217,7 @@
   line-height: 300rpx;
   text-align: center;
 }
+
+.review-filters { display: flex; gap: 12rpx; padding: 12rpx 24rpx; flex-wrap: wrap; }
+.review-label { color: #777; font-size: 22rpx; }
+.review-button { margin-top: 12rpx; font-size: 24rpx; line-height: 2.4; }

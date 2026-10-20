@@ -813,27 +813,3 @@
 .recent-login-button:active {
   opacity: 0.78;
 }
-
-.bottom-action {
-  position: fixed;
-  left: 50%;
-  bottom: calc(120rpx + env(safe-area-inset-bottom));
-  width: 104rpx;
-  height: 104rpx;
-  padding: 0;
-  border-radius: 38rpx;
-  background: rgba(255, 255, 255, 0.95);
-  color: #3778db;
-  font-size: 60rpx;
-  font-weight: 800;
-  line-height: 102rpx;
-  text-align: center;
-  transform: translateX(-50%);
-  box-shadow: 0 20rpx 52rpx rgba(68, 112, 173, 0.35);
-  transition: transform 0.1s ease;
-}
-
-.bottom-action:active {
-  opacity: 0.9;
-  transform: translateX(-50%) scale(0.92);
-}

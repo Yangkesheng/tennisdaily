@@ -14,7 +14,11 @@ interface RacketsData {
   touchStartY: number
   openedRacketId: number
   isSwipeAction: boolean
+  fabShown: boolean
 }
+
+const FAB_IDLE_MS = 3000
+const fabHideTimers = new WeakMap<WechatMiniprogram.Component.TrivialInstance, number>()
 
 const getStringingText = (racket: Racket) => {
   if (!racket.stringName) {
@@ -49,13 +53,49 @@ Component({
     touchStartY: 0,
     openedRacketId: 0,
     isSwipeAction: false,
+    fabShown: false,
   } as RacketsData,
   pageLifetimes: {
     show() {
       this.refreshRackets()
+      this.showFab()
+    },
+    hide() {
+      this.clearFabTimer()
+    },
+  },
+  lifetimes: {
+    detached() {
+      this.clearFabTimer()
     },
   },
   methods: {
+    showFab() {
+      if (!this.data.fabShown) {
+        this.setData({ fabShown: true })
+      }
+      const oldTimer = fabHideTimers.get(this)
+      if (oldTimer) {
+        clearTimeout(oldTimer)
+      }
+      fabHideTimers.set(
+        this,
+        setTimeout(() => {
+          fabHideTimers.delete(this)
+          this.setData({ fabShown: false })
+        }, FAB_IDLE_MS)
+      )
+    },
+    clearFabTimer() {
+      const oldTimer = fabHideTimers.get(this)
+      if (oldTimer) {
+        clearTimeout(oldTimer)
+        fabHideTimers.delete(this)
+      }
+    },
+    onFabActivate() {
+      this.showFab()
+    },
     async refreshRackets() {
       try {
         const rackets = await listRacketsFromApi(true)

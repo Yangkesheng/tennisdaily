@@ -79,7 +79,12 @@ export interface RacketDraft {
   lastStringCost: number
 }
 
+export const RACKET_REVIEW_PENDING = 0
+export const RACKET_REVIEW_APPROVED = 1
+export type RacketReviewStatus = typeof RACKET_REVIEW_PENDING | typeof RACKET_REVIEW_APPROVED
+
 export interface RacketLibraryItem {
+  isReviewed: RacketReviewStatus
   id: number
   brandId: number
   brand: string

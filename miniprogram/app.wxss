@@ -26,3 +26,43 @@ button::after {
 scroll-view.page {
   height: 100vh;
 }
+
+/* 全局统一：底部新增按钮 FAB（首页/球拍/球鞋共用）
+ * 默认淡出且不可交互；页面出现/滑动/触摸时通过 .fab-shown 显现，
+ * 闲置一段时间后缓慢淡出，保证页面截图干净 */
+.fab {
+  position: fixed;
+  right: 32rpx;
+  bottom: calc(64rpx + env(safe-area-inset-bottom));
+  height: 88rpx;
+  padding: 0 36rpx;
+  border-radius: 999rpx;
+  background: #2b61b3;
+  color: #fff;
+  font-size: 30rpx;
+  font-weight: 800;
+  line-height: 88rpx;
+  text-align: center;
+  box-shadow: 0 18rpx 42rpx rgba(43, 97, 179, 0.38);
+  z-index: 50;
+  opacity: 0;
+  pointer-events: none;
+  transform: translateY(24rpx);
+  transition: opacity 0.9s ease, transform 0.9s ease;
+}
+
+.fab.fab-shown {
+  opacity: 1;
+  pointer-events: auto;
+  transform: translateY(0);
+  transition-duration: 0.35s;
+}
+
+.fab:active {
+  opacity: 0.85;
+}
+
+/* 首页存在 tabBar，FAB 贴近 tabBar 上方，避免遮住“最近打球”卡片 */
+.fab--home {
+  bottom: 32rpx;
+}

@@ -53,7 +53,11 @@ interface IndexData {
   isExpenseVisible: boolean
   currentYear: number
   isLoggedIn: boolean
+  fabShown: boolean
 }
+
+const FAB_IDLE_MS = 3000
+const fabHideTimers = new WeakMap<WechatMiniprogram.Component.TrivialInstance, number>()
 
 const getSessionTypeLabel = (type: TennisSessionType) => {
   switch (type) {
@@ -304,13 +308,49 @@ Component({
     isExpenseVisible: true,
     currentYear: new Date().getFullYear(),
     isLoggedIn: false,
+    fabShown: false,
   } as IndexData,
   pageLifetimes: {
     show() {
       this.refreshData()
+      this.showFab()
+    },
+    hide() {
+      this.clearFabTimer()
+    },
+  },
+  lifetimes: {
+    detached() {
+      this.clearFabTimer()
     },
   },
   methods: {
+    showFab() {
+      if (!this.data.fabShown) {
+        this.setData({ fabShown: true })
+      }
+      const oldTimer = fabHideTimers.get(this)
+      if (oldTimer) {
+        clearTimeout(oldTimer)
+      }
+      fabHideTimers.set(
+        this,
+        setTimeout(() => {
+          fabHideTimers.delete(this)
+          this.setData({ fabShown: false })
+        }, FAB_IDLE_MS)
+      )
+    },
+    clearFabTimer() {
+      const oldTimer = fabHideTimers.get(this)
+      if (oldTimer) {
+        clearTimeout(oldTimer)
+        fabHideTimers.delete(this)
+      }
+    },
+    onFabActivate() {
+      this.showFab()
+    },
     async refreshData() {
       const currentYear = new Date().getFullYear()
 

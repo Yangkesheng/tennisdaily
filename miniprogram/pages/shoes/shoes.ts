@@ -13,7 +13,11 @@ interface ShoesData {
   touchStartY: number
   openedShoeId: number
   isSwipeAction: boolean
+  fabShown: boolean
 }
+
+const FAB_IDLE_MS = 3000
+const fabHideTimers = new WeakMap<WechatMiniprogram.Component.TrivialInstance, number>()
 
 const createShoeView = (shoe: Shoe): ShoeView => {
   return {
@@ -31,13 +35,49 @@ Component({
     touchStartY: 0,
     openedShoeId: 0,
     isSwipeAction: false,
+    fabShown: false,
   } as ShoesData,
   pageLifetimes: {
     show() {
       this.refreshShoes()
+      this.showFab()
+    },
+    hide() {
+      this.clearFabTimer()
+    },
+  },
+  lifetimes: {
+    detached() {
+      this.clearFabTimer()
     },
   },
   methods: {
+    showFab() {
+      if (!this.data.fabShown) {
+        this.setData({ fabShown: true })
+      }
+      const oldTimer = fabHideTimers.get(this)
+      if (oldTimer) {
+        clearTimeout(oldTimer)
+      }
+      fabHideTimers.set(
+        this,
+        setTimeout(() => {
+          fabHideTimers.delete(this)
+          this.setData({ fabShown: false })
+        }, FAB_IDLE_MS)
+      )
+    },
+    clearFabTimer() {
+      const oldTimer = fabHideTimers.get(this)
+      if (oldTimer) {
+        clearTimeout(oldTimer)
+        fabHideTimers.delete(this)
+      }
+    },
+    onFabActivate() {
+      this.showFab()
+    },
     async refreshShoes() {
       try {
         const shoes = await listShoesFromApi(true)

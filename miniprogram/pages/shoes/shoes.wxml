@@ -1,5 +1,5 @@
 <navigation-bar title="我的球鞋" back="{{true}}" color="#05070c" background="transparent"></navigation-bar>
-<scroll-view class="page shoes-page" scroll-y type="list">
+<scroll-view class="page shoes-page" scroll-y type="list" bindscroll="onFabActivate" bindtouchstart="onFabActivate">
   <view wx:if="{{visibleShoes.length}}" class="shoe-list">
     <view wx:for="{{visibleShoes}}" wx:key="id" class="swipe-row">
       <button wx:if="{{openedShoeId === item.id}}" class="delete-action" data-id="{{item.id}}" catchtap="deleteShoe">删除</button>
@@ -38,6 +38,6 @@
   <view wx:else class="empty-equipment">
     <text>暂无球鞋</text>
   </view>
-
-  <button class="add-shoe" bindtap="addShoe">+ 新增球鞋</button>
 </scroll-view>
+
+<button class="fab {{fabShown ? 'fab-shown' : ''}}" bindtap="addShoe">＋ 新增球鞋</button>

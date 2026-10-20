@@ -1,4 +1,4 @@
-import type { CreateRacketLibraryPayload, CreateRacketLibraryResult, Racket, RacketDraft, RacketLibraryGroup, RacketLibraryItem, RacketLibraryStatsBrand, RacketSeries, StringHealth, StringingRecord } from '../models/racket'
+import type { CreateRacketLibraryPayload, CreateRacketLibraryResult, Racket, RacketDraft, RacketLibraryGroup, RacketLibraryItem, RacketLibraryStatsBrand, RacketReviewStatus, RacketSeries, StringHealth, StringingRecord } from '../models/racket'
 import { ensureLogin } from './auth-service'
 import { request } from './request'
 
@@ -92,6 +92,7 @@ interface ApiRacketSeries {
 }
 
 export interface ApiRacketLibraryItem {
+  isReviewed: RacketReviewStatus
   id: number
   brandId?: number
   brand?: string
@@ -217,6 +218,7 @@ const mapDraftToPayload = (draft: RacketDraft): ApiRacketPayload => {
 const mapApiLibraryItem = (item: ApiRacketLibraryItem, group?: ApiRacketLibraryGroup): RacketLibraryItem => {
   return {
     id: item.id,
+    isReviewed: item.isReviewed,
     brandId: item.brandId || group?.brandId || 0,
     brand: item.brand || group?.brand || '',
     seriesId: item.seriesId || 0,
@@ -265,10 +267,10 @@ export const createRacketFromApi = async (draft: RacketDraft): Promise<Racket> =
   return mapApiRacket(racket)
 }
 
-export const getRacketLibraryStatsFromApi = async (): Promise<RacketLibraryStatsBrand[]> => {
+export const getRacketLibraryStatsFromApi = async (isReviewed?: RacketReviewStatus): Promise<RacketLibraryStatsBrand[]> => {
   await ensureLogin()
   const stats = await request<ApiRacketLibraryStatsBrand[]>({
-    url: '/api/racket-library/stats',
+    url: `/api/racket-library/stats${isReviewed === undefined ? '' : `?isReviewed=${isReviewed}`}`,
   })
 
   return stats.map((brand) => ({
@@ -285,11 +287,12 @@ export const getRacketLibraryStatsFromApi = async (): Promise<RacketLibraryStats
   }))
 }
 
-export const listRacketLibraryFromApi = async (brandId?: number, seriesId?: number): Promise<RacketLibraryGroup[]> => {
+export const listRacketLibraryFromApi = async (brandId?: number, seriesId?: number, isReviewed?: RacketReviewStatus): Promise<RacketLibraryGroup[]> => {
   await ensureLogin()
   const params = [
     brandId ? `brandId=${brandId}` : '',
     seriesId ? `seriesId=${seriesId}` : '',
+    isReviewed === undefined ? '' : `isReviewed=${isReviewed}`,
   ].filter(Boolean)
   const groups = await request<ApiRacketLibraryGroup[]>({
     url: `/api/racket-library${params.length ? `?${params.join('&')}` : ''}`,
@@ -298,8 +301,8 @@ export const listRacketLibraryFromApi = async (brandId?: number, seriesId?: numb
   return mapLibraryGroups(groups)
 }
 
-export const listRacketLibraryItemsFromApi = async (brandId: number, seriesId?: number): Promise<RacketLibraryItem[]> => {
-  const groups = await listRacketLibraryFromApi(brandId, seriesId)
+export const listRacketLibraryItemsFromApi = async (brandId: number, seriesId?: number, isReviewed?: RacketReviewStatus): Promise<RacketLibraryItem[]> => {
+  const groups = await listRacketLibraryFromApi(brandId, seriesId, isReviewed)
 
   return groups.reduce<RacketLibraryItem[]>((items, group) => items.concat(group.items), [])
 }
@@ -435,4 +438,9 @@ export const deleteStringingRecordFromApi = async (racketId: number, recordId: n
     url: `/api/rackets/${racketId}/stringing-records/${recordId}`,
     method: 'DELETE',
   })
+}
+
+export const reviewRacketLibraryFromApi = async (id: number, isReviewed: RacketReviewStatus): Promise<void> => {
+  await ensureLogin()
+  await request<ApiRacketLibraryItem>({ url: `/api/admin/racket-library/${id}/review`, method: 'PUT', data: { isReviewed } })
 }

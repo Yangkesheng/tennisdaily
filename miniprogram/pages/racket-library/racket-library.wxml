@@ -20,6 +20,12 @@
       <view wx:if="{{isAdmin}}" class="brand-option admin-option" bindtap="goAdminEdit">新增球拍</view>
     </scroll-view>
   </view>
+  <view wx:if="{{isAdmin}}" class="review-filters">
+    <view class="series-chip {{reviewFilter === 'all' ? 'active' : ''}}" data-filter="all" bindtap="selectReviewFilter">全部</view>
+    <view class="series-chip {{reviewFilter === 'pending' ? 'active' : ''}}" data-filter="pending" bindtap="selectReviewFilter">待审核</view>
+    <view class="series-chip {{reviewFilter === 'approved' ? 'active' : ''}}" data-filter="approved" bindtap="selectReviewFilter">已审核</view>
+    <view class="series-chip" bindtap="goAdminEdit">新增球拍</view>
+  </view>
   <view class="library-body">
     <view class="product-panel">
       <scroll-view wx:if="{{series.length}}" class="series-tabs" scroll-x enhanced show-scrollbar="{{false}}">
@@ -48,12 +54,14 @@
               <image wx:if="{{item.imageUrl}}" class="product-image" src="{{item.imageUrl}}" mode="aspectFit"></image>
               <text wx:else class="product-mark">{{item.brand}}</text>
             </view>
+            <text wx:if="{{isAdmin}}" class="review-label">{{item.isReviewed === reviewApproved ? '已审核' : '待审核'}}</text>
             <text class="product-name">{{item.model}}</text>
             <view class="product-specs">
               <text wx:if="{{item.headSize}}">{{item.headSize}} in²</text>
               <text wx:if="{{item.weight}}">{{item.weight}}g</text>
               <text wx:if="{{item.stringPattern}}">{{item.stringPattern}}</text>
             </view>
+            <button wx:if="{{isAdmin}}" class="review-button" data-index="{{index}}" catchtap="reviewRacket" loading="{{saving && savingId === item.id}}" disabled="{{saving}}">{{item.isReviewed === reviewApproved ? '撤回审核' : '审核通过'}}</button>
           </view>
         </view>
         <view wx:else class="empty-library">暂无球拍</view>
